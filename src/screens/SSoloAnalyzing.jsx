@@ -8,7 +8,7 @@ export default function SSoloAnalyzing() {
   const nav = useNavigate()
 
   useEffect(() => {
-    const t = setTimeout(() => nav('/paywall'), 4000)
+    const t = setTimeout(() => nav('/paywall'), 6500)
     return () => clearTimeout(t)
   }, [nav])
 
