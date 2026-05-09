@@ -210,14 +210,14 @@ export default function S05Analyzing() {
 
           {/* Title */}
           <div style={{ marginTop: 18, textAlign: 'center' }}>
-            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 32, fontWeight: 700, letterSpacing: -0.2, lineHeight: 1.1, color: X.text }}>
+            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 32, fontWeight: 400, letterSpacing: -0.8, lineHeight: 1.1, color: X.text }}>
               {isCompleted ? (
                 <>A calcular{' '}
-                <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 32, fontWeight: 700, letterSpacing: -0.2, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>o veredicto.</em>
+                <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 32, fontWeight: 400, letterSpacing: -1, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>o veredicto.</em>
                 </>
               ) : (
                 <>A pesar{' '}
-                <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 32, fontWeight: 700, letterSpacing: -0.2, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>os dois lados.</em>
+                <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 32, fontWeight: 400, letterSpacing: -1, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>os dois lados.</em>
                 </>
               )}
             </h1>

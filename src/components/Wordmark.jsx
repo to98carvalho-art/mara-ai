@@ -4,7 +4,7 @@ export default function Wordmark({ size = 28, color = X.text }) {
   return (
     <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
       <span style={{
-        fontFamily: FED, fontSize: size, fontWeight: 700, fontStyle: 'italic',
+        fontFamily: FED, fontSize: size, fontWeight: 500, fontStyle: 'italic',
         letterSpacing: -0.6, color,
       }}>mara</span>
       <span style={{

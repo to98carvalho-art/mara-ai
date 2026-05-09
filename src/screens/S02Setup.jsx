@@ -61,14 +61,14 @@ export default function S02Setup() {
         {/* Title */}
         <div style={{ marginTop: 20 }}>
           <h1 style={{
-            margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 700,
-            letterSpacing: -0.2, lineHeight: 1.05, color: X.text,
+            margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 400,
+            letterSpacing: -1.2, lineHeight: 1.05, color: X.text,
           }}>
             Que tipo de{' '}
             <em style={{
               display: 'inline-block',
-              fontFamily: FED, fontSize: 36, fontWeight: 700, fontStyle: 'italic',
-              letterSpacing: -0.2, lineHeight: 1.1, paddingRight: 4,
+              fontFamily: FED, fontSize: 36, fontWeight: 400, fontStyle: 'italic',
+              letterSpacing: -1, lineHeight: 1.1, paddingRight: 4,
               background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>relação?</em>
           </h1>
