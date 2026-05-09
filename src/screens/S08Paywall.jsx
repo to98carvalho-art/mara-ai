@@ -169,7 +169,7 @@ export default function S08Paywall() {
       {/* Sticky bottom CTA */}
       <div style={{ padding: '14px 24px 28px', background: `linear-gradient(to bottom, transparent, ${X.ink} 30%)`, borderTop: `1px solid ${X.line}` }}>
         <div style={{ textAlign: 'center', marginBottom: 10 }}>
-          <span style={{ fontFamily: FNUM, fontSize: 38, fontWeight: 300, letterSpacing: -0.5, color: X.text }}>€4,99</span>
+          <span style={{ fontFamily: FNUM, fontSize: 32, fontWeight: 300, letterSpacing: -0.5, color: X.text }}>R$9,99</span>
           <span style={{ fontSize: 12, color: X.textMute, marginLeft: 8 }}>· pagamento único</span>
         </div>
         <XBtn primary onClick={() => nav('/verdict')}>
