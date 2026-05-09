@@ -119,7 +119,7 @@ export default function S04Invite() {
 
           {/* Opção B — só a tua versão */}
           <div
-            onClick={() => { update({ skippedInvite: true }); nav('/analyzing') }}
+            onClick={() => { update({ skippedInvite: true }); nav('/solo') }}
             style={{ position: 'relative', borderRadius: 22, padding: '20px 20px', cursor: 'pointer',
               background: `linear-gradient(145deg, ${X.acc2}14 0%, ${X.acc2}06 100%)`,
               border: `1px solid ${X.acc2}45`,

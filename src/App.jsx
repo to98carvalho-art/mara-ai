@@ -6,7 +6,8 @@ import S02Setup      from './screens/S02Setup'
 import S03Chat       from './screens/S03Chat'
 import S03bChat      from './screens/S03bChat'
 import S04Invite     from './screens/S04Invite'
-import S05Analyzing  from './screens/S05Analyzing'
+import S05Analyzing   from './screens/S05Analyzing'
+import SSoloAnalyzing from './screens/SSoloAnalyzing'
 import S06Replied    from './screens/S06Replied'
 import S07Complete   from './screens/S07Complete'
 import S08Paywall    from './screens/S08Paywall'
@@ -60,6 +61,7 @@ function AnimatedRoutes() {
         <Route path="/chat2"      element={<AnimatedPage><S03bChat /></AnimatedPage>} />
         <Route path="/invite"     element={<AnimatedPage><S04Invite /></AnimatedPage>} />
         <Route path="/analyzing"  element={<AnimatedPage><S05Analyzing /></AnimatedPage>} />
+        <Route path="/solo"       element={<AnimatedPage><SSoloAnalyzing /></AnimatedPage>} />
         <Route path="/replied"    element={<AnimatedPage><S06Replied /></AnimatedPage>} />
         <Route path="/complete"   element={<AnimatedPage><S07Complete /></AnimatedPage>} />
         <Route path="/paywall"    element={<AnimatedPage><S08Paywall /></AnimatedPage>} />
