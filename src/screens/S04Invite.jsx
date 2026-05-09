@@ -80,20 +80,14 @@ export default function S04Invite() {
             </h1>
           </div>
 
-          {/* Opção A — convidar — card principal */}
+          {/* Opção A — convidar */}
           <div
             onClick={() => setStep('whatsapp')}
-            style={{ position: 'relative', borderRadius: 24, padding: '26px 22px', cursor: 'pointer', overflow: 'hidden',
-              background: `linear-gradient(145deg, ${X.acc1}18 0%, ${X.acc1}08 60%, transparent 100%)`,
+            style={{ position: 'relative', borderRadius: 24, padding: '26px 22px', cursor: 'pointer',
+              background: `linear-gradient(145deg, ${X.acc1}18 0%, ${X.acc1}06 100%)`,
               border: `1px solid ${X.acc1}50`,
-              boxShadow: `0 8px 40px ${X.acc1}18`,
             }}
           >
-            {/* badge recomendado */}
-            <div style={{ position: 'absolute', top: 16, right: 16, padding: '3px 10px', borderRadius: 999, fontSize: 9.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1, background: `${X.acc1}18`, border: `1px solid ${X.acc1}35` }}>
-              recomendado
-            </div>
-
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1, marginBottom: 10 }}>
               veredicto completo
             </div>
@@ -101,50 +95,45 @@ export default function S04Invite() {
               Convidar o{' '}
               <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{name2}</em>
             </h2>
-            <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6, maxWidth: 280 }}>
+            <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6 }}>
               Ouvimos os dois lados. O veredicto fica muito mais preciso e justo.
             </p>
-
-            <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
-              {['2 perspetivas', 'mais preciso', 'análise completa'].map(tag => (
-                <div key={tag} style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, color: X.acc1, background: `${X.acc1}14`, border: `1px solid ${X.acc1}28` }}>
-                  {tag}
-                </div>
-              ))}
-            </div>
-
-            <div style={{ marginTop: 18, height: 44, borderRadius: 999, background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: `0 6px 20px ${X.acc1}35` }}>
-              <span style={{ fontSize: 14, fontWeight: 600, color: '#fff', fontFamily: FUI }}>Convidar pelo WhatsApp</span>
-              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ width: 34, height: 34, borderRadius: 17, background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc1}35` }}>
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
             </div>
           </div>
 
           {/* Separador */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '16px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '14px 0' }}>
             <div style={{ flex: 1, height: 1, background: X.line }}/>
             <span style={{ fontSize: 11, color: X.textMute, fontWeight: 600, letterSpacing: 1 }}>OU</span>
             <div style={{ flex: 1, height: 1, background: X.line }}/>
           </div>
 
-          {/* Opção B — só a tua versão — linha */}
+          {/* Opção B — só a tua versão */}
           <div
             onClick={() => { update({ skippedInvite: true }); nav('/analyzing') }}
-            style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 20px', borderRadius: 20, cursor: 'pointer',
-              background: 'rgba(255,255,255,0.025)', border: `1px solid ${X.line}`,
+            style={{ position: 'relative', borderRadius: 24, padding: '26px 22px', cursor: 'pointer',
+              background: `linear-gradient(145deg, ${X.acc2}14 0%, ${X.acc2}06 100%)`,
+              border: `1px solid ${X.acc2}45`,
             }}
           >
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 15, fontWeight: 600, color: X.text, letterSpacing: -0.2, fontFamily: FED }}>
-                Ver veredicto agora
-              </div>
-              <div style={{ fontSize: 12.5, color: X.textMute, marginTop: 3, lineHeight: 1.4 }}>
-                Baseado só na tua versão · menos preciso
-              </div>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc2, marginBottom: 10 }}>
+              só a tua versão
             </div>
-            <div style={{ width: 34, height: 34, borderRadius: 17, background: `${X.acc2}18`, border: `1px solid ${X.acc2}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke={X.acc2} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
+            <h2 style={{ margin: 0, fontFamily: FED, fontSize: 26, fontWeight: 400, letterSpacing: -0.8, lineHeight: 1.1, color: X.text }}>
+              Ver o veredicto{' '}
+              <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>agora</em>
+            </h2>
+            <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6 }}>
+              A Mara analisa o conflito com base no que partilhaste e dá-te o resultado já.
+            </p>
+            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ width: 34, height: 34, borderRadius: 17, background: `linear-gradient(135deg, ${X.acc2}, ${X.accDeep})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc2}35` }}>
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </div>
             </div>
           </div>
 
