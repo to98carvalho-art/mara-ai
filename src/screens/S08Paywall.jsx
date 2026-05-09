@@ -124,46 +124,17 @@ export default function S08Paywall() {
         </div>
 
         {/* Verdict teaser */}
-        <Card raised style={{ marginTop: 20, padding: '20px 20px', position: 'relative', overflow: 'hidden' }}>
-          {/* blurred fake content behind */}
-          <div style={{ filter: 'blur(14px)', userSelect: 'none', pointerEvents: 'none', opacity: 0.5 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-              <div>
-                <div style={{ fontSize: 11, color: X.textSoft, marginBottom: 3 }}>{name1.toLowerCase()}</div>
-                <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, color: X.acc1, lineHeight: 1 }}>██%</div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 11, color: X.textSoft, marginBottom: 3 }}>{name2.toLowerCase()}</div>
-                <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, color: X.acc2, lineHeight: 1 }}>██%</div>
-              </div>
-            </div>
-            <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', display: 'flex' }}>
-              <div style={{ width: '40%', background: X.acc1 }}/>
-              <div style={{ flex: 1, background: X.acc2 }}/>
-            </div>
+        <Card raised style={{ marginTop: 20, padding: '18px 18px' }}>
+          <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.3, textTransform: 'uppercase', color: X.acc1, marginBottom: 14 }}>
+            pré-visualização · desbloqueie para ver
           </div>
-
-          {/* overlay com mensagem */}
-          <div style={{
-            position: 'absolute', inset: 0,
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center', gap: 8,
-            backdropFilter: 'blur(2px)',
-          }}>
-            <div style={{
-              width: 40, height: 40, borderRadius: 20,
-              background: `${X.acc1}22`, border: `1px solid ${X.acc1}50`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <svg width="16" height="18" viewBox="0 0 16 18" fill="none">
-                <path d="M4 7V5a4 4 0 018 0v2" stroke={X.acc1} strokeWidth="1.5"/>
-                <rect x="1.5" y="7" width="13" height="10" rx="2" stroke={X.acc1} strokeWidth="1.5"/>
-                <circle cx="8" cy="12" r="1.5" fill={X.acc1}/>
-              </svg>
-            </div>
-            <div style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 17, fontWeight: 400, color: X.text, letterSpacing: -0.4, textAlign: 'center', lineHeight: 1.3 }}>
-              A Mara decidiu.<br/>Descobre quem.
-            </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 12 }}>
+            <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, color: X.acc1, lineHeight: 1, filter: 'blur(8px)', userSelect: 'none' }}>35%</div>
+            <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, color: X.acc2, lineHeight: 1, filter: 'blur(8px)', userSelect: 'none' }}>65%</div>
+          </div>
+          <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', display: 'flex' }}>
+            <div style={{ width: '35%', background: X.acc1 }}/>
+            <div style={{ flex: 1, background: X.acc2 }}/>
           </div>
         </Card>
 
