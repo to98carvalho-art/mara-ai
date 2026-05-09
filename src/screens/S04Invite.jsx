@@ -77,7 +77,7 @@ export default function S04Invite() {
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.6, textTransform: 'uppercase', color: X.acc1, marginBottom: 10 }}>
               como queres continuar?
             </div>
-            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 38, fontWeight: 400, letterSpacing: -1.4, lineHeight: 1.0, color: X.text }}>
+            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 38, fontWeight: 700, letterSpacing: -0.3, lineHeight: 1.0, color: X.text }}>
               Ouvir os dois lados<br/>
               <em style={{
                 fontFamily: FED, fontStyle: 'italic', fontSize: 38,
@@ -199,15 +199,15 @@ export default function S04Invite() {
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.6, textTransform: 'uppercase', color: X.acc2 }}>
             passo 2 de 3
           </div>
-          <h1 style={{ margin: '10px 0 0', fontFamily: FED, fontSize: 34, fontWeight: 400, letterSpacing: -1.2, lineHeight: 1.05, color: X.text }}>
+          <h1 style={{ margin: '10px 0 0', fontFamily: FED, fontSize: 34, fontWeight: 700, letterSpacing: -0.2, lineHeight: 1.05, color: X.text }}>
             Agora vamos contactar<br/>
             <em style={{
-              display: 'inline-block', fontFamily: FED, fontSize: 34, fontWeight: 400,
-              fontStyle: 'italic', letterSpacing: -1, lineHeight: 1.1, paddingRight: 4,
+              display: 'inline-block', fontFamily: FED, fontSize: 34, fontWeight: 700,
+              fontStyle: 'italic', letterSpacing: -0.2, lineHeight: 1.1, paddingRight: 4,
               background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>o {name2}</em>
-            <span style={{ fontFamily: FED, fontSize: 34, fontWeight: 400, color: X.text }}> e ouvir</span><br/>
-            <span style={{ fontFamily: FED, fontSize: 34, fontWeight: 400, color: X.text }}>a versão dele.</span>
+            <span style={{ fontFamily: FED, fontSize: 34, fontWeight: 700, color: X.text }}> e ouvir</span><br/>
+            <span style={{ fontFamily: FED, fontSize: 34, fontWeight: 700, color: X.text }}>a versão dele.</span>
           </h1>
           <p style={{ margin: '12px 0 0', fontSize: 14, color: X.textSoft, lineHeight: 1.5, maxWidth: 300 }}>
             Vamos enviar uma mensagem ao {name2} via WhatsApp — já está tudo escrito, ele recebe o código e responde quando quiser.

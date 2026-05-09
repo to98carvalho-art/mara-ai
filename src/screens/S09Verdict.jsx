@@ -116,14 +116,14 @@ export default function S09Verdict() {
             a balança decidiu
           </div>
           <h1 style={{
-            margin: 0, fontFamily: FED, fontSize: 46, fontWeight: 400,
-            letterSpacing: -1.8, lineHeight: 0.95, color: X.text,
+            margin: 0, fontFamily: FED, fontSize: 46, fontWeight: 700,
+            letterSpacing: -0.4, lineHeight: 0.95, color: X.text,
           }}>
             {v?.verdict_title
               ? <em style={{
                   display: 'inline-block',
-                  fontFamily: FED, fontSize: 46, fontWeight: 400, fontStyle: 'italic',
-                  letterSpacing: -1.5, lineHeight: 1, paddingRight: 4,
+                  fontFamily: FED, fontSize: 46, fontWeight: 700, fontStyle: 'italic',
+                  letterSpacing: -0.3, lineHeight: 1, paddingRight: 4,
                   background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
                 }}>{v.verdict_title}</em>
               : <>{moreResponsible} esteve<br/><em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>mais errado/a.</em></>
@@ -139,13 +139,13 @@ export default function S09Verdict() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
             <div>
               <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: X.textSoft, textTransform: 'uppercase' }}>{name1.toLowerCase()}</div>
-              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, color: X.acc1, lineHeight: 1 }}>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -0.2, color: X.acc1, lineHeight: 1 }}>
                 {pct1}<span style={{ fontSize: 16, color: X.textSoft }}>%</span>
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: X.textSoft, textTransform: 'uppercase' }}>{name2.toLowerCase()}</div>
-              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, color: X.acc2, lineHeight: 1 }}>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -0.2, color: X.acc2, lineHeight: 1 }}>
                 {pct2}<span style={{ fontSize: 16, color: X.textSoft }}>%</span>
               </div>
             </div>

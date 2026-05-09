@@ -59,19 +59,19 @@ export default function S10Resolution() {
         {/* Title */}
         <div style={{ marginTop: 22 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.6, color: X.acc1, textTransform: 'uppercase' }}>resolução</div>
-          <h1 style={{ margin: '8px 0 0', fontFamily: FED, fontSize: 30, fontWeight: 400, letterSpacing: -0.9, lineHeight: 1.05, color: X.text }}>
+          <h1 style={{ margin: '8px 0 0', fontFamily: FED, fontSize: 30, fontWeight: 700, letterSpacing: -0.2, lineHeight: 1.05, color: X.text }}>
             {isSalvageable ? (
               <>Não basta saber quem.<br/>
               <em style={{
-                fontFamily: FED, fontSize: 30, fontWeight: 400, fontStyle: 'italic',
-                letterSpacing: -1, lineHeight: 1,
+                fontFamily: FED, fontSize: 30, fontWeight: 700, fontStyle: 'italic',
+                letterSpacing: -0.2, lineHeight: 1,
                 background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>Importa o como.</em></>
             ) : (
               <>A coragem de{' '}
               <em style={{
-                fontFamily: FED, fontSize: 30, fontWeight: 400, fontStyle: 'italic',
-                letterSpacing: -1, lineHeight: 1,
+                fontFamily: FED, fontSize: 30, fontWeight: 700, fontStyle: 'italic',
+                letterSpacing: -0.2, lineHeight: 1,
                 background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>te escolheres.</em></>
             )}

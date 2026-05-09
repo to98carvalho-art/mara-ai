@@ -34,11 +34,11 @@ export default function S08Paywall() {
               <rect x="2" y="10" width="18" height="13" rx="2.5" stroke={X.acc1} strokeWidth="1.6"/>
             </svg>
           </div>
-          <h1 style={{ margin: 0, fontFamily: FED, fontSize: 32, fontWeight: 400, letterSpacing: -0.9, lineHeight: 1.1, color: X.text }}>
+          <h1 style={{ margin: 0, fontFamily: FED, fontSize: 32, fontWeight: 700, letterSpacing: -0.2, lineHeight: 1.1, color: X.text }}>
             O resultado<br/>
             <em style={{
-              fontFamily: FED, fontSize: 32, fontWeight: 400, fontStyle: 'italic',
-              letterSpacing: -1, lineHeight: 1,
+              fontFamily: FED, fontSize: 32, fontWeight: 700, fontStyle: 'italic',
+              letterSpacing: -0.2, lineHeight: 1,
               background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>está pronto.</em>
           </h1>
@@ -52,12 +52,12 @@ export default function S08Paywall() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, color: X.textSoft, fontFamily: FED, fontStyle: 'italic' }}>Ana</div>
-              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, lineHeight: 1, color: X.acc1, filter: 'blur(10px)' }}>30%</div>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -0.2, lineHeight: 1, color: X.acc1, filter: 'blur(10px)' }}>30%</div>
             </div>
             <div style={{ width: 1, height: 48, background: X.line }}/>
             <div style={{ flex: 1, textAlign: 'right' }}>
               <div style={{ fontSize: 12, color: X.textSoft, fontFamily: FED, fontStyle: 'italic' }}>Rui</div>
-              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, lineHeight: 1, color: X.acc2, filter: 'blur(10px)' }}>70%</div>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -0.2, lineHeight: 1, color: X.acc2, filter: 'blur(10px)' }}>70%</div>
             </div>
           </div>
           <div style={{ marginTop: 14, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', display: 'flex', filter: 'blur(2px)' }}>
@@ -69,7 +69,7 @@ export default function S08Paywall() {
         {/* Price */}
         <div style={{ marginTop: 22, textAlign: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 8 }}>
-            <span style={{ fontFamily: FED, fontSize: 44, fontWeight: 400, letterSpacing: -1.6, lineHeight: 1, color: X.text }}>€4,99</span>
+            <span style={{ fontFamily: FED, fontSize: 44, fontWeight: 700, letterSpacing: -0.5, lineHeight: 1, color: X.text }}>€4,99</span>
           </div>
           <div style={{ fontSize: 12, color: X.textMute, marginTop: 4 }}>Pagamento único · sem subscrições</div>
         </div>

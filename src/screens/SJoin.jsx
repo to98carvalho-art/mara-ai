@@ -105,14 +105,14 @@ export default function SJoin() {
               convite recebido
             </div>
             <h1 style={{
-              margin: 0, fontFamily: FED, fontSize: 40, fontWeight: 400,
-              letterSpacing: -1.4, lineHeight: 1.05, color: X.text,
+              margin: 0, fontFamily: FED, fontSize: 40, fontWeight: 700,
+              letterSpacing: -0.3, lineHeight: 1.05, color: X.text,
             }}>
               A tua versão<br/>
               <em style={{
                 display: 'inline-block',
-                fontFamily: FED, fontSize: 40, fontWeight: 400, fontStyle: 'italic',
-                letterSpacing: -1, lineHeight: 1.1, paddingRight: 4,
+                fontFamily: FED, fontSize: 40, fontWeight: 700, fontStyle: 'italic',
+                letterSpacing: -0.2, lineHeight: 1.1, paddingRight: 4,
                 background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>também conta.</em>
             </h1>
@@ -136,7 +136,7 @@ export default function SJoin() {
                 onPaste={i === 0 ? handlePaste : undefined}
                 style={{
                   width: 58, height: 68, textAlign: 'center',
-                  fontFamily: FED, fontSize: 28, fontWeight: 400, letterSpacing: 0,
+                  fontFamily: FED, fontSize: 28, fontWeight: 700, letterSpacing: 0,
                   color: X.text, textTransform: 'uppercase',
                   background: c ? 'rgba(155,123,255,0.08)' : 'rgba(255,255,255,0.03)',
                   border: `1.5px solid ${c ? X.acc1 : X.line}`,

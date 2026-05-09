@@ -31,13 +31,13 @@ export default function S06Replied() {
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.6, color: X.acc2, textTransform: 'uppercase' }}>respondeu</div>
             <h1 style={{
-              margin: '10px 0 0', fontFamily: FED, fontSize: 44, fontWeight: 400,
-              letterSpacing: -1.4, lineHeight: 1.0, color: X.text,
+              margin: '10px 0 0', fontFamily: FED, fontSize: 44, fontWeight: 700,
+              letterSpacing: -0.3, lineHeight: 1.0, color: X.text,
             }}>
               {name2} partilhou<br/>
               <em style={{
-                fontFamily: FED, fontSize: 44, fontWeight: 400, fontStyle: 'italic',
-                letterSpacing: -1, lineHeight: 1,
+                fontFamily: FED, fontSize: 44, fontWeight: 700, fontStyle: 'italic',
+                letterSpacing: -0.2, lineHeight: 1,
                 background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>a versão dele.</em>
             </h1>

@@ -33,14 +33,14 @@ export default function S01Welcome() {
               color: X.acc1, textTransform: 'uppercase', marginBottom: 12,
             }}>mediação imparcial</div>
             <h1 style={{
-              margin: 0, fontFamily: FED, fontSize: 52, fontWeight: 400,
+              margin: 0, fontFamily: FED, fontSize: 52, fontWeight: 700,
               letterSpacing: -2, lineHeight: 1.05, color: X.text,
             }}>
               Quem tem<br/>
               <em style={{
                 display: 'inline-block',
-                fontFamily: FED, fontSize: 52, fontWeight: 400, fontStyle: 'italic',
-                letterSpacing: -1, lineHeight: 1.1, paddingRight: 6,
+                fontFamily: FED, fontSize: 52, fontWeight: 700, fontStyle: 'italic',
+                letterSpacing: -0.2, lineHeight: 1.1, paddingRight: 6,
                 background: GRAD_TXT,
                 WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>razão?</em>

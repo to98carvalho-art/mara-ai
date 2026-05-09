@@ -110,8 +110,8 @@ export default function SCodeEntry() {
 
           <div style={{ textAlign: 'center' }}>
             <h1 style={{
-              margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 400,
-              letterSpacing: -1.2, lineHeight: 1.05, color: X.text,
+              margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 700,
+              letterSpacing: -0.2, lineHeight: 1.05, color: X.text,
             }}>
               Introduz o teu<br/>código de acesso
             </h1>
@@ -138,7 +138,7 @@ export default function SCodeEntry() {
                 onPaste={i === 0 ? handlePaste : undefined}
                 style={{
                   width: 62, height: 68, textAlign: 'center',
-                  fontFamily: FED, fontSize: 28, fontWeight: 400, letterSpacing: 0,
+                  fontFamily: FED, fontSize: 28, fontWeight: 700, letterSpacing: 0,
                   color: c ? X.text : X.textMute, textTransform: 'uppercase',
                   background: c ? `${X.acc1}12` : 'rgba(255,255,255,0.03)',
                   border: `1.5px solid ${error ? '#FF4B6E' : c ? X.acc1 : X.line}`,

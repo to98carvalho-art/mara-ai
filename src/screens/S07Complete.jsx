@@ -17,13 +17,13 @@ export default function S07Complete() {
         <div style={{ marginTop: 18 }}>
           <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: 1.6, color: X.acc1, textTransform: 'uppercase' }}>análise concluída</div>
           <h1 style={{
-            margin: '10px 0 0', fontFamily: FED, fontSize: 44, fontWeight: 400,
-            letterSpacing: -1.4, lineHeight: 1.0, color: X.text,
+            margin: '10px 0 0', fontFamily: FED, fontSize: 44, fontWeight: 700,
+            letterSpacing: -0.3, lineHeight: 1.0, color: X.text,
           }}>
             Interrogação<br/>
             <em style={{
-              fontFamily: FED, fontSize: 44, fontWeight: 400, fontStyle: 'italic',
-              letterSpacing: -1, lineHeight: 1,
+              fontFamily: FED, fontSize: 44, fontWeight: 700, fontStyle: 'italic',
+              letterSpacing: -0.2, lineHeight: 1,
               background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
             }}>completa.</em>
           </h1>
@@ -37,7 +37,7 @@ export default function S07Complete() {
           {[{ v: '2', l: 'versões' }, { v: '28', l: 'perguntas' }, { v: '1', l: 'veredicto' }].map((s, i) => (
             <Card key={i} style={{ padding: '20px 12px', textAlign: 'center' }}>
               <div style={{
-                fontFamily: FED, fontSize: 44, fontWeight: 400, letterSpacing: -1.5, lineHeight: 1,
+                fontFamily: FED, fontSize: 44, fontWeight: 700, letterSpacing: -0.3, lineHeight: 1,
                 background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
               }}>{s.v}</div>
               <div style={{ fontSize: 11, color: X.textSoft, marginTop: 8, letterSpacing: 1.2, textTransform: 'uppercase' }}>{s.l}</div>
