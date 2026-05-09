@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_in_Chrome__browser_batch",
+      "mcp__Claude_in_Chrome__computer",
+      "mcp__Claude_in_Chrome__navigate",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "WebSearch",
+      "Bash(vercel --prod)",
+      "Bash(copy \"C:\\\\Users\\\\35191\\\\mara-ai\\\\mara.html\" \"C:\\\\Users\\\\35191\\\\mara-ai\\\\public\\\\index.html\")",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(npx vercel *)",
+      "PowerShell($r = Invoke-RestMethod -Uri 'https://y-swart-theta.vercel.app/api/chat' -Method GET -SkipHttpErrorCheck -StatusCodeVariable sc; Write-Host \"Status: $sc\")",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri 'https://y-swart-theta.vercel.app/api/chat' -Method GET; \"Status: \" + $r.StatusCode } catch { \"Status: \" + $_.Exception.Response.StatusCode.value__ + \" \" + $_.Exception.Response.StatusCode })",
+      "mcp__Claude_in_Chrome__javascript_tool",
+      "Bash(fc \"C:\\\\Users\\\\35191\\\\mara-ai\\\\mara.html\" \"C:\\\\Users\\\\35191\\\\mara-ai\\\\public\\\\index.html\")",
+      "PowerShell(Copy-Item \"C:\\\\Users\\\\35191\\\\mara-ai\\\\mara.html\" \"C:\\\\Users\\\\35191\\\\mara-ai\\\\public\\\\index.html\" -Force)",
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\35191\\\\mara-ai\\\\mara.html\"\\).Count)",
+      "Read(//mnt/c/Users/35191/**)",
+      "Bash(npm run *)"
+    ]
+  }
+}

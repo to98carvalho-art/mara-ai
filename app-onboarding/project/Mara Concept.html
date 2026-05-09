@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <title>Mara AI — Concept</title>
+  <meta name="viewport" content="width=1400" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; background: #07051A; font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="mara-screens.jsx"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    function Header() {
+      return (
+        <div style={{
+          padding: '60px 80px 40px', color: '#F4F1FF',
+          fontFamily: "'Inter', sans-serif",
+          background: 'linear-gradient(180deg, #07051A 0%, #15102E 100%)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
+            <window.Lens size={40} intensity={0.9} />
+            <window.Wordmark size={32} />
+            <span style={{
+              marginLeft: 14, padding: '4px 10px', borderRadius: 999,
+              background: 'rgba(155,123,255,0.18)', color: '#C9B8FF',
+              fontSize: 11, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase',
+            }}>v2 · editorial</span>
+          </div>
+          <h1 style={{
+            margin: 0, fontFamily: "'Fraunces', serif", fontSize: 60, lineHeight: 1.0,
+            fontWeight: 500, letterSpacing: -2, maxWidth: 920, textWrap: 'balance',
+          }}>
+            Quem tem <em style={{
+              fontStyle: 'italic',
+              background: 'linear-gradient(90deg, #8B5CFF, #FF4FB7)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            }}>razão?</em> A Mara analisa. Tu decides.
+          </h1>
+          <p style={{
+            margin: '20px 0 0', maxWidth: 720, fontSize: 18, lineHeight: 1.5,
+            color: 'rgba(228,222,255,0.62)',
+          }}>
+            Fluxo completo de 10 ecrãs: onboarding → chat → convite → análise → veredicto → resolução. Mascote Mara é uma orb abstrata (sem rosto, sem personagem humano), pronta para passar como referência ao Claude Code.
+          </p>
+        </div>
+      );
+    }
+
+    function App() {
+      return (
+        <div>
+          <Header />
+          <window.DesignCanvas background="#07051A">
+            <window.DCSection id="intake" title="Intake — começar a conversa">
+              <window.DCArtboard id="s01" label="01 · Welcome" width={390} height={844}><window.S01Welcome /></window.DCArtboard>
+              <window.DCArtboard id="s02" label="02 · Setup (tipo de relação)" width={390} height={844}><window.S02Setup /></window.DCArtboard>
+              <window.DCArtboard id="s03" label="03 · Chat com Mara" width={390} height={844}><window.S03Chat /></window.DCArtboard>
+            </window.DCSection>
+            <window.DCSection id="other" title="Convite e análise">
+              <window.DCArtboard id="s04" label="04 · Convidar Rui" width={390} height={844}><window.S04Invite /></window.DCArtboard>
+              <window.DCArtboard id="s05" label="05 · A analisar (73%)" width={390} height={844}><window.S05Analyzing /></window.DCArtboard>
+              <window.DCArtboard id="s06" label="06 · Rui respondeu" width={390} height={844}><window.S06Replied /></window.DCArtboard>
+              <window.DCArtboard id="s07" label="07 · Interrogação concluída" width={390} height={844}><window.S07Complete /></window.DCArtboard>
+            </window.DCSection>
+            <window.DCSection id="verdict" title="Veredicto e resolução">
+              <window.DCArtboard id="s08" label="08 · Paywall" width={390} height={844}><window.S08Paywall /></window.DCArtboard>
+              <window.DCArtboard id="s09" label="09 · Veredicto" width={390} height={844}><window.S09Verdict /></window.DCArtboard>
+              <window.DCArtboard id="s10" label="10 · Resolução" width={390} height={844}><window.S10Resolution /></window.DCArtboard>
+            </window.DCSection>
+          </window.DesignCanvas>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

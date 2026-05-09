@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <title>Verra — AI Mediator Concept</title>
+  <meta name="viewport" content="width=1400" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
+  <style>
+    html, body { margin: 0; padding: 0; background: #05090C; font-family: 'Inter', system-ui, sans-serif; }
+  </style>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="design-canvas.jsx"></script>
+  <script type="text/babel" src="verra-screens.jsx"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel" data-presets="react">
+    function Header() {
+      return (
+        <div style={{
+          padding: '60px 80px 40px', color: '#F0F7F8',
+          fontFamily: "'Inter', sans-serif",
+          background: 'linear-gradient(180deg, #05090C 0%, #0A1419 100%)',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 22 }}>
+            <svg width="34" height="34" viewBox="0 0 32 32">
+              <polygon points="16,4 28,26 4,26" fill="none" stroke="#19D7B0" strokeWidth="2.4" strokeLinejoin="round"/>
+              <line x1="10" y1="22" x2="22" y2="22" stroke="#FF7A5A" strokeWidth="2.2" strokeLinecap="round"/>
+            </svg>
+            <span style={{ fontFamily: "'Fraunces', serif", fontSize: 30, fontWeight: 600, letterSpacing: -0.5 }}>verra</span>
+            <span style={{
+              marginLeft: 14, padding: '4px 10px', borderRadius: 999,
+              background: 'rgba(25,215,176,0.12)', color: '#19D7B0',
+              fontSize: 11, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase',
+            }}>Conceito original</span>
+          </div>
+          <h1 style={{
+            margin: 0, fontFamily: "'Fraunces', serif", fontSize: 64, lineHeight: 1.0,
+            fontWeight: 500, letterSpacing: -2, maxWidth: 900, textWrap: 'balance',
+          }}>
+            Um mediador de IA que <em style={{ color: '#19D7B0', fontStyle: 'italic' }}>escuta os dois lados</em> antes de decidir.
+          </h1>
+          <p style={{
+            margin: '20px 0 0', maxWidth: 720, fontSize: 18, lineHeight: 1.5,
+            color: 'rgba(220,240,242,0.62)',
+          }}>
+            Marca, paleta e mascote totalmente originais. O fluxo segue a mesma estrutura do app de referência (intake → convite → análise → veredicto → resolução), mas a expressão visual é distinta — pronto para passar ao Claude Code como referência sem violar IP de terceiros.
+          </p>
+          <div style={{ display: 'flex', gap: 36, marginTop: 32, flexWrap: 'wrap' }}>
+            {[
+              ['Mascote', 'Prisma de som — não é personagem'],
+              ['Paleta', 'Mint #19D7B0 + coral #FF7A5A em fundo teal'],
+              ['Tom', 'Sereno, judicial, direto'],
+              ['Type', 'Fraunces (display) + Inter (UI)'],
+            ].map(([k, v]) => (
+              <div key={k} style={{ minWidth: 180 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase', color: '#19D7B0' }}>{k}</div>
+                <div style={{ fontSize: 14, color: '#F0F7F8', marginTop: 4, lineHeight: 1.4 }}>{v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      return (
+        <div>
+          <Header />
+          <DesignCanvas background="#05090C">
+            <DCSection id="flow" title="Fluxo principal — 6 ecrãs">
+              <DCArtboard id="s1" label="01 · Welcome" width={390} height={844}><window.S1Welcome /></DCArtboard>
+              <DCArtboard id="s2" label="02 · Intake (voz)" width={390} height={844}><window.S2Voice /></DCArtboard>
+              <DCArtboard id="s3" label="03 · Convite ao outro lado" width={390} height={844}><window.S3Invite /></DCArtboard>
+              <DCArtboard id="s4" label="04 · Análise" width={390} height={844}><window.S4Analyzing /></DCArtboard>
+              <DCArtboard id="s5" label="05 · Veredicto (paywall)" width={390} height={844}><window.S5Verdict /></DCArtboard>
+              <DCArtboard id="s6" label="06 · Resolução" width={390} height={844}><window.S6Resolution /></DCArtboard>
+            </DCSection>
+          </DesignCanvas>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
