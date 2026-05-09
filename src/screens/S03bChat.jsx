@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { X, FUI, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { X, FUI, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import Lens from '../components/Lens'
 import XStatus from '../components/XStatus'
 import Card from '../components/Card'
@@ -327,7 +327,7 @@ export default function S03bChat() {
           {/* Progress indicator */}
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: X.textMute, textTransform: 'uppercase' }}>lado 2</div>
-            <div style={{ fontSize: 11, color: X.acc2, fontWeight: 600 }}>{Math.round((qCount / MAX_Q) * 100)}%</div>
+            <div style={{ fontFamily: FNUM, fontSize: 12, color: X.acc2, fontWeight: 500, letterSpacing: -0.3 }}>{Math.round((qCount / MAX_Q) * 100)}%</div>
           </div>
         </div>
 

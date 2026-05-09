@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { X, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { X, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import XBtn from '../components/XBtn'
@@ -112,7 +112,7 @@ export default function S10Resolution() {
                   width: 36, height: 36, borderRadius: 12,
                   background: `${accent}1f`, color: accent,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontFamily: FED, fontSize: 16, fontWeight: 500, fontStyle: 'italic', flexShrink: 0,
+                  fontFamily: FNUM, fontSize: 16, fontWeight: 600, flexShrink: 0,
                   border: `1px solid ${accent}40`,
                 }}>{i + 1}</div>
                 <div style={{ flex: 1 }}>

@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { X, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { X, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import XBtn from '../components/XBtn'
 import Card from '../components/Card'
@@ -52,12 +52,12 @@ export default function S08Paywall() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 12, color: X.textSoft, fontFamily: FED, fontStyle: 'italic' }}>Ana</div>
-              <div style={{ fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.4, lineHeight: 1, color: X.acc1, filter: 'blur(10px)' }}>30%</div>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, lineHeight: 1, color: X.acc1, filter: 'blur(10px)' }}>30%</div>
             </div>
             <div style={{ width: 1, height: 48, background: X.line }}/>
             <div style={{ flex: 1, textAlign: 'right' }}>
               <div style={{ fontSize: 12, color: X.textSoft, fontFamily: FED, fontStyle: 'italic' }}>Rui</div>
-              <div style={{ fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.4, lineHeight: 1, color: X.acc2, filter: 'blur(10px)' }}>70%</div>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, lineHeight: 1, color: X.acc2, filter: 'blur(10px)' }}>70%</div>
             </div>
           </div>
           <div style={{ marginTop: 14, height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.06)', overflow: 'hidden', display: 'flex', filter: 'blur(2px)' }}>

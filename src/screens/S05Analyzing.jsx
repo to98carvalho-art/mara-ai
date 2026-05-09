@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { X, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { X, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Card from '../components/Card'
@@ -331,8 +331,8 @@ export default function S05Analyzing() {
                     <div
                       key={pctDisplay}
                       style={{
-                        fontFamily: FED, fontSize: 64, fontWeight: 400,
-                        letterSpacing: -2.5, lineHeight: 1, color: X.text,
+                        fontFamily: FNUM, fontSize: 64, fontWeight: 300,
+                        letterSpacing: -2, lineHeight: 1, color: X.text,
                         animation: isChatting || isCompleted ? 'numPop .35s ease' : 'none',
                       }}
                     >

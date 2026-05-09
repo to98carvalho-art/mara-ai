@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { X, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { X, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Card from '../components/Card'
@@ -139,13 +139,13 @@ export default function S09Verdict() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
             <div>
               <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: X.textSoft, textTransform: 'uppercase' }}>{name1.toLowerCase()}</div>
-              <div style={{ fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.4, color: X.acc1, lineHeight: 1 }}>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, color: X.acc1, lineHeight: 1 }}>
                 {pct1}<span style={{ fontSize: 16, color: X.textSoft }}>%</span>
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: X.textSoft, textTransform: 'uppercase' }}>{name2.toLowerCase()}</div>
-              <div style={{ fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.4, color: X.acc2, lineHeight: 1 }}>
+              <div style={{ fontFamily: FNUM, fontSize: 36, fontWeight: 300, letterSpacing: -1, color: X.acc2, lineHeight: 1 }}>
                 {pct2}<span style={{ fontSize: 16, color: X.textSoft }}>%</span>
               </div>
             </div>

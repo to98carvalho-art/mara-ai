@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
-import { X, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { X, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Lens from '../components/Lens'
@@ -68,7 +68,7 @@ export default function S06Replied() {
             </svg>
           </div>
           <div style={{
-            fontFamily: FED, fontSize: 26, fontWeight: 400, fontStyle: 'italic',
+            fontFamily: FNUM, fontSize: 26, fontWeight: 400,
             background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
           }}>99%</div>
         </Card>

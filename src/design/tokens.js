@@ -17,5 +17,6 @@ export const X = {
 
 export const FUI = '"Inter", -apple-system, "SF Pro Text", system-ui, sans-serif'
 export const FED = '"Fraunces", "Times New Roman", Georgia, serif'
+export const FNUM = '"Outfit", "Inter", system-ui, sans-serif'
 export const GRAD = `linear-gradient(135deg, ${X.acc1} 0%, ${X.acc2} 100%)`
 export const GRAD_TXT = `linear-gradient(90deg, ${X.acc1}, ${X.acc2})`
