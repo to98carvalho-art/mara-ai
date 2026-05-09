@@ -70,36 +70,41 @@ export default function S04Invite() {
           <div style={{ marginTop: 10 }}><XBack onClick={() => nav('/chat')} /></div>
 
           {/* Título */}
-          <div style={{ marginTop: 28, marginBottom: 32 }}>
+          <div style={{ marginTop: 28, marginBottom: 28 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: X.acc1, marginBottom: 12 }}>
-              próximo passo
+              como queres continuar?
             </div>
-            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.2, lineHeight: 1.05, color: X.text }}>
-              Como queres o teu{' '}
-              <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>veredicto?</em>
+            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 38, fontWeight: 400, letterSpacing: -1.4, lineHeight: 1.0, color: X.text }}>
+              Ouvir os dois lados<br/>
+              <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 38, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>ou só o teu?</em>
             </h1>
           </div>
 
           {/* Opção A — convidar */}
           <div
             onClick={() => setStep('whatsapp')}
-            style={{ position: 'relative', borderRadius: 24, padding: '26px 22px', cursor: 'pointer',
+            style={{ position: 'relative', borderRadius: 22, padding: '20px 20px', cursor: 'pointer',
               background: `linear-gradient(145deg, ${X.acc1}18 0%, ${X.acc1}06 100%)`,
               border: `1px solid ${X.acc1}50`,
             }}
           >
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1, marginBottom: 10 }}>
-              veredicto completo
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1 }}>
+                veredicto completo
+              </div>
+              <div style={{ padding: '3px 9px', borderRadius: 999, fontSize: 9.5, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: X.acc1, background: `${X.acc1}18`, border: `1px solid ${X.acc1}35` }}>
+                recomendado
+              </div>
             </div>
-            <h2 style={{ margin: 0, fontFamily: FED, fontSize: 26, fontWeight: 400, letterSpacing: -0.8, lineHeight: 1.1, color: X.text }}>
+            <h2 style={{ margin: 0, fontFamily: FED, fontSize: 24, fontWeight: 400, letterSpacing: -0.6, lineHeight: 1.1, color: X.text }}>
               Convidar o{' '}
               <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{name2}</em>
             </h2>
-            <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6 }}>
+            <p style={{ margin: '8px 0 0', fontSize: 13, color: X.textSoft, lineHeight: 1.55 }}>
               Ouvimos os dois lados. O veredicto fica muito mais preciso e justo.
             </p>
-            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-              <div style={{ width: 34, height: 34, borderRadius: 17, background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc1}35` }}>
+            <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 16, background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc1}35` }}>
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
             </div>
@@ -115,23 +120,23 @@ export default function S04Invite() {
           {/* Opção B — só a tua versão */}
           <div
             onClick={() => { update({ skippedInvite: true }); nav('/analyzing') }}
-            style={{ position: 'relative', borderRadius: 24, padding: '26px 22px', cursor: 'pointer',
+            style={{ position: 'relative', borderRadius: 22, padding: '20px 20px', cursor: 'pointer',
               background: `linear-gradient(145deg, ${X.acc2}14 0%, ${X.acc2}06 100%)`,
               border: `1px solid ${X.acc2}45`,
             }}
           >
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc2, marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc2, marginBottom: 8 }}>
               só a tua versão
             </div>
-            <h2 style={{ margin: 0, fontFamily: FED, fontSize: 26, fontWeight: 400, letterSpacing: -0.8, lineHeight: 1.1, color: X.text }}>
+            <h2 style={{ margin: 0, fontFamily: FED, fontSize: 24, fontWeight: 400, letterSpacing: -0.6, lineHeight: 1.1, color: X.text }}>
               Ver o veredicto{' '}
               <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>agora</em>
             </h2>
-            <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6 }}>
+            <p style={{ margin: '8px 0 0', fontSize: 13, color: X.textSoft, lineHeight: 1.55 }}>
               A Mara analisa o conflito com base no que partilhaste e dá-te o resultado já.
             </p>
-            <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
-              <div style={{ width: 34, height: 34, borderRadius: 17, background: `linear-gradient(135deg, ${X.acc2}, ${X.accDeep})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc2}35` }}>
+            <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-end' }}>
+              <div style={{ width: 32, height: 32, borderRadius: 16, background: `linear-gradient(135deg, ${X.acc2}, ${X.accDeep})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc2}35` }}>
                 <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </div>
             </div>
