@@ -62,118 +62,93 @@ export default function S04Invite() {
     return (
       <div style={{ position: 'relative', flex: 1, background: X.ink, display: 'flex', flexDirection: 'column', height: '100%' }}>
         <XStatus />
-        <div style={{
-          position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)',
-          width: 500, height: 500, borderRadius: '50%',
-          background: `radial-gradient(circle, ${X.acc1}18 0%, transparent 65%)`,
-          filter: 'blur(60px)', pointerEvents: 'none',
-        }}/>
+        {/* glows */}
+        <div style={{ position: 'absolute', top: -60, left: '30%', width: 340, height: 340, borderRadius: '50%', background: `radial-gradient(circle, ${X.acc1}20 0%, transparent 70%)`, filter: 'blur(60px)', pointerEvents: 'none' }}/>
+        <div style={{ position: 'absolute', bottom: 60, right: -40, width: 260, height: 260, borderRadius: '50%', background: `radial-gradient(circle, ${X.acc2}18 0%, transparent 70%)`, filter: 'blur(50px)', pointerEvents: 'none' }}/>
 
         <div style={{ position: 'relative', padding: '16px 24px 36px', flex: 1, display: 'flex', flexDirection: 'column' }}>
           <div style={{ marginTop: 10 }}><XBack onClick={() => nav('/chat')} /></div>
 
           {/* Título */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingBottom: 16 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.6, textTransform: 'uppercase', color: X.acc1, marginBottom: 10 }}>
-              como queres continuar?
+          <div style={{ marginTop: 28, marginBottom: 32 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: X.acc1, marginBottom: 12 }}>
+              próximo passo
             </div>
-            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 38, fontWeight: 400, letterSpacing: -1.4, lineHeight: 1.0, color: X.text }}>
-              Ouvir os dois lados<br/>
-              <em style={{
-                fontFamily: FED, fontStyle: 'italic', fontSize: 38,
-                background: GRAD_TXT, WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              }}>ou só o teu?</em>
+            <h1 style={{ margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.2, lineHeight: 1.05, color: X.text }}>
+              Como queres o teu{' '}
+              <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>veredicto?</em>
             </h1>
-            <p style={{ margin: '12px 0 0', fontSize: 14, color: X.textSoft, lineHeight: 1.5, maxWidth: 290 }}>
-              Escolhe como queres obter o teu veredicto.
-            </p>
           </div>
 
-          {/* Opção A — convidar */}
+          {/* Opção A — convidar — card principal */}
           <div
             onClick={() => setStep('whatsapp')}
-            style={{
-              borderRadius: 22,
-              border: `1.5px solid ${X.acc1}55`,
-              background: `linear-gradient(135deg, ${X.acc1}0D 0%, ${X.acc1}06 100%)`,
-              padding: '20px 20px', cursor: 'pointer',
+            style={{ position: 'relative', borderRadius: 24, padding: '26px 22px', cursor: 'pointer', overflow: 'hidden',
+              background: `linear-gradient(145deg, ${X.acc1}18 0%, ${X.acc1}08 60%, transparent 100%)`,
+              border: `1px solid ${X.acc1}50`,
+              boxShadow: `0 8px 40px ${X.acc1}18`,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-              <div style={{
-                width: 42, height: 42, borderRadius: 21, background: GRAD, flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: `0 4px 16px ${X.acc1}40`,
-              }}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <circle cx="7.5" cy="6.5" r="3" stroke="#fff" strokeWidth="1.5"/>
-                  <circle cx="14" cy="7.5" r="2.2" stroke="#fff" strokeWidth="1.3"/>
-                  <path d="M1 17c0-3 2.9-4.5 6.5-4.5s6.5 1.5 6.5 4.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-                  <path d="M14 14.5c1.7.4 3.5 1.2 3.5 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round"/>
-                </svg>
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 15.5, fontWeight: 700, color: X.text, letterSpacing: -0.3 }}>
-                  Convidar o {name2}
-                </div>
-                <div style={{ fontSize: 12.5, color: X.acc1, marginTop: 2, fontWeight: 500 }}>
-                  Veredicto com os dois lados
-                </div>
-              </div>
-              <div style={{ width: 28, height: 28, borderRadius: 14, background: `${X.acc1}20`, border: `1px solid ${X.acc1}40`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                  <path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke={X.acc1} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              </div>
+            {/* badge recomendado */}
+            <div style={{ position: 'absolute', top: 16, right: 16, padding: '3px 10px', borderRadius: 999, fontSize: 9.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1, background: `${X.acc1}18`, border: `1px solid ${X.acc1}35` }}>
+              recomendado
             </div>
-            <div style={{ fontSize: 13, color: X.textMute, lineHeight: 1.55, paddingLeft: 54 }}>
-              Enviamos ao {name2} uma mensagem com o código de acesso. Assim que ele partilhar o seu lado, o veredicto fica completo.
+
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1, marginBottom: 10 }}>
+              veredicto completo
+            </div>
+            <h2 style={{ margin: 0, fontFamily: FED, fontSize: 26, fontWeight: 400, letterSpacing: -0.8, lineHeight: 1.1, color: X.text }}>
+              Convidar o{' '}
+              <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{name2}</em>
+            </h2>
+            <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6, maxWidth: 280 }}>
+              Ouvimos os dois lados. O veredicto fica muito mais preciso e justo.
+            </p>
+
+            <div style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 8 }}>
+              {['2 perspetivas', 'mais preciso', 'análise completa'].map(tag => (
+                <div key={tag} style={{ padding: '4px 10px', borderRadius: 999, fontSize: 11, fontWeight: 600, color: X.acc1, background: `${X.acc1}14`, border: `1px solid ${X.acc1}28` }}>
+                  {tag}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 18, height: 44, borderRadius: 999, background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: `0 6px 20px ${X.acc1}35` }}>
+              <span style={{ fontSize: 14, fontWeight: 600, color: '#fff', fontFamily: FUI }}>Convidar pelo WhatsApp</span>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </div>
           </div>
 
-          {/* Opção B — só o meu lado */}
+          {/* Separador */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '16px 0' }}>
+            <div style={{ flex: 1, height: 1, background: X.line }}/>
+            <span style={{ fontSize: 11, color: X.textMute, fontWeight: 600, letterSpacing: 1 }}>OU</span>
+            <div style={{ flex: 1, height: 1, background: X.line }}/>
+          </div>
+
+          {/* Opção B — só a tua versão — linha */}
           <div
             onClick={() => { update({ skippedInvite: true }); nav('/analyzing') }}
-            style={{
-              marginTop: 12, borderRadius: 22,
-              border: `1.5px solid ${X.acc2}55`,
-              background: `linear-gradient(135deg, ${X.acc2}0D 0%, ${X.acc2}06 100%)`,
-              padding: '20px 20px', cursor: 'pointer',
+            style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '18px 20px', borderRadius: 20, cursor: 'pointer',
+              background: 'rgba(255,255,255,0.025)', border: `1px solid ${X.line}`,
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-              <div style={{
-                width: 42, height: 42, borderRadius: 21, flexShrink: 0,
-                background: `linear-gradient(135deg, ${X.acc2}, ${X.accDeep})`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: `0 4px 16px ${X.acc2}40`,
-              }}>
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <circle cx="10" cy="7" r="3.2" stroke="#fff" strokeWidth="1.5"/>
-                  <path d="M3 17c0-3.2 3.1-4.8 7-4.8s7 1.6 7 4.8" stroke="#fff" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 15, fontWeight: 600, color: X.text, letterSpacing: -0.2, fontFamily: FED }}>
+                Ver veredicto agora
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 15.5, fontWeight: 700, color: X.text, letterSpacing: -0.3 }}>
-                  Ver veredicto sem o {name2}
-                </div>
-                <div style={{ fontSize: 12.5, color: X.acc2, marginTop: 2, fontWeight: 500 }}>
-                  Baseado só na tua versão
-                </div>
-              </div>
-              <div style={{ width: 28, height: 28, borderRadius: 14, background: `${X.acc2}20`, border: `1px solid ${X.acc2}40`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                  <path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke={X.acc2} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <div style={{ fontSize: 12.5, color: X.textMute, marginTop: 3, lineHeight: 1.4 }}>
+                Baseado só na tua versão · menos preciso
               </div>
             </div>
-            <div style={{ fontSize: 13, color: X.textMute, lineHeight: 1.55, paddingLeft: 54 }}>
-              A Mara analisa o conflito com base no que partilhaste e dá-te o veredicto agora.
+            <div style={{ width: 34, height: 34, borderRadius: 17, background: `${X.acc2}18`, border: `1px solid ${X.acc2}35`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                <path d="M3 6.5h7m0 0L7 3.5m3 3l-3 3" stroke={X.acc2} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
             </div>
           </div>
 
-          <div style={{ marginTop: 20, textAlign: 'center', fontSize: 12, color: X.textMute }}>
+          <div style={{ marginTop: 18, textAlign: 'center', fontSize: 12, color: X.textMute }}>
             🔒 tudo o que partilhaste é confidencial
           </div>
         </div>
