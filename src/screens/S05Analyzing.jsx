@@ -143,7 +143,7 @@ export default function S05Analyzing() {
         setNavigated(true)
         clearInterval(pollRef.current)
         // Brief pause to show 100% before navigating
-        setTimeout(() => nav('/verdict'), 2000)
+        setTimeout(() => nav('/solo'), 2000)
       }
     }
 

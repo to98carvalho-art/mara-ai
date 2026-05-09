@@ -1,11 +1,16 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useApp } from '../context/AppContext'
 import { X, FED, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import Lens from '../components/Lens'
 
 export default function SSoloAnalyzing() {
   const nav = useNavigate()
+  const { data } = useApp()
+
+  // Two sides = chat2 exists and invite wasn't skipped
+  const bothSides = !!data.chat2 && !data.skippedInvite
 
   useEffect(() => {
     const t = setTimeout(() => nav('/paywall'), 6500)
@@ -38,15 +43,22 @@ export default function SSoloAnalyzing() {
           margin: 0, fontFamily: FED, fontSize: 28, fontWeight: 400,
           letterSpacing: -0.8, lineHeight: 1.15, color: X.text,
         }}>
-          Aguarda enquanto a Mara{' '}
-          <em style={{
-            fontFamily: FED, fontStyle: 'italic',
-            background: GRAD_TXT, WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-          }}>conclui o veredicto.</em>
+          {bothSides ? (
+            <>A calcular o veredicto{' '}
+            <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              com as duas versões.
+            </em></>
+          ) : (
+            <>Aguarda enquanto a Mara{' '}
+            <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              conclui o veredicto.
+            </em></>
+          )}
         </h1>
         <p style={{ margin: '14px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6 }}>
-          A cruzar o que partilhaste com padrões clínicos de psicologia relacional.
+          {bothSides
+            ? 'A cruzar as duas perspetivas com base em psicologia clínica e frameworks de Gottman.'
+            : 'A cruzar o que partilhaste com padrões clínicos de psicologia relacional.'}
         </p>
       </div>
 
