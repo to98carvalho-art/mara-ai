@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useRef } from 'react'
 import { AppProvider } from './context/AppContext'
 import S01Welcome    from './screens/S01Welcome'
 import S02Setup      from './screens/S02Setup'
@@ -18,22 +19,44 @@ import SCodeEntry    from './screens/SCodeEntry'
 import SDevSeed      from './screens/SDevSeed'
 import DesignCanvas  from './design/DesignCanvas'
 
-const variants = {
-  initial:  { opacity: 0, y: 22, filter: 'blur(3px)' },
-  animate:  { opacity: 1, y: 0,  filter: 'blur(0px)' },
-  exit:     { opacity: 0, y: -10, filter: 'blur(2px)' },
+// Route order — used to determine slide direction
+const ROUTE_ORDER = {
+  '/':           0,
+  '/join':       0,
+  '/code':       0,
+  '/setup':      1,
+  '/chat':       2,
+  '/chat2':      3,
+  '/invite':     3,
+  '/analyzing':  4,
+  '/solo':       4,
+  '/replied':    5,
+  '/complete':   6,
+  '/paywall':    7,
+  '/verdict':    8,
+  '/resolution': 9,
 }
-const transition = { duration: 0.28, ease: [0.25, 0.1, 0.25, 1] }
 
-function AnimatedPage({ children }) {
+const ease = [0.32, 0.72, 0, 1] // iOS-like spring feel
+
+function makeVariants(dir) {
+  return {
+    initial:  { x: dir * 60, opacity: 0, filter: 'blur(4px)' },
+    animate:  { x: 0,        opacity: 1, filter: 'blur(0px)' },
+    exit:     { x: dir * -40, opacity: 0, filter: 'blur(3px)' },
+  }
+}
+
+function AnimatedPage({ children, dir }) {
   return (
     <motion.div
-      variants={variants}
+      custom={dir}
+      variants={makeVariants(dir)}
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={transition}
-      style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}
+      transition={{ duration: 0.32, ease }}
+      style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', willChange: 'transform' }}
     >
       {children}
     </motion.div>
@@ -48,25 +71,36 @@ function Shell({ children }) {
 
 function AnimatedRoutes() {
   const loc = useLocation()
+  const prevPath = useRef(loc.pathname)
+
+  const prevOrder = ROUTE_ORDER[prevPath.current] ?? 0
+  const currOrder = ROUTE_ORDER[loc.pathname]    ?? 0
+  const dir = currOrder >= prevOrder ? 1 : -1
+
+  // update after render
+  prevPath.current = loc.pathname
+
+  const P = ({ children }) => <AnimatedPage dir={dir}>{children}</AnimatedPage>
+
   return (
     <AnimatePresence mode="wait">
       <Routes location={loc} key={loc.pathname}>
         <Route path="/design"     element={<DesignCanvas />} />
-        <Route path="/"           element={<AnimatedPage><S01Welcome /></AnimatedPage>} />
-        <Route path="/join"       element={<AnimatedPage><SJoin /></AnimatedPage>} />
-        <Route path="/code"       element={<AnimatedPage><SCodeEntry /></AnimatedPage>} />
-        <Route path="/dev/seed"   element={<AnimatedPage><SDevSeed /></AnimatedPage>} />
-        <Route path="/setup"      element={<AnimatedPage><S02Setup /></AnimatedPage>} />
-        <Route path="/chat"       element={<AnimatedPage><S03Chat /></AnimatedPage>} />
-        <Route path="/chat2"      element={<AnimatedPage><S03bChat /></AnimatedPage>} />
-        <Route path="/invite"     element={<AnimatedPage><S04Invite /></AnimatedPage>} />
-        <Route path="/analyzing"  element={<AnimatedPage><S05Analyzing /></AnimatedPage>} />
-        <Route path="/solo"       element={<AnimatedPage><SSoloAnalyzing /></AnimatedPage>} />
-        <Route path="/replied"    element={<AnimatedPage><S06Replied /></AnimatedPage>} />
-        <Route path="/complete"   element={<AnimatedPage><S07Complete /></AnimatedPage>} />
-        <Route path="/paywall"    element={<AnimatedPage><S08Paywall /></AnimatedPage>} />
-        <Route path="/verdict"    element={<AnimatedPage><S09Verdict /></AnimatedPage>} />
-        <Route path="/resolution" element={<AnimatedPage><S10Resolution /></AnimatedPage>} />
+        <Route path="/"           element={<P><S01Welcome /></P>} />
+        <Route path="/join"       element={<P><SJoin /></P>} />
+        <Route path="/code"       element={<P><SCodeEntry /></P>} />
+        <Route path="/dev/seed"   element={<P><SDevSeed /></P>} />
+        <Route path="/setup"      element={<P><S02Setup /></P>} />
+        <Route path="/chat"       element={<P><S03Chat /></P>} />
+        <Route path="/chat2"      element={<P><S03bChat /></P>} />
+        <Route path="/invite"     element={<P><S04Invite /></P>} />
+        <Route path="/analyzing"  element={<P><S05Analyzing /></P>} />
+        <Route path="/solo"       element={<P><SSoloAnalyzing /></P>} />
+        <Route path="/replied"    element={<P><S06Replied /></P>} />
+        <Route path="/complete"   element={<P><S07Complete /></P>} />
+        <Route path="/paywall"    element={<P><S08Paywall /></P>} />
+        <Route path="/verdict"    element={<P><S09Verdict /></P>} />
+        <Route path="/resolution" element={<P><S10Resolution /></P>} />
         <Route path="*"           element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
