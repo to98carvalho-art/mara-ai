@@ -69,7 +69,7 @@ const REPORTS = [
     ),
     accent: '#FF4B6E',
     label: 'Padrões de Gottman',
-    title: 'Os 4 cavaleiros detetados',
+    title: 'Os 4 cavaleiros detectados',
     preview: 'Crítica, desprezo, defensividade e bloqueio — quais estão presentes e em quem.',
   },
   {
@@ -115,11 +115,11 @@ export default function S08Paywall() {
             <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1 }}>relatório pronto</span>
           </div>
           <h1 style={{ margin: 0, fontFamily: FED, fontSize: 30, fontWeight: 400, letterSpacing: -0.9, lineHeight: 1.1, color: X.text }}>
-            O teu relatório completo<br/>
+            O seu relatório completo<br/>
             <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>está pronto.</em>
           </h1>
           <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.5 }}>
-            Desbloqueia para aceder a todos os resultados.
+            Desbloqueie para acessar a todos os resultados.
           </p>
         </div>
 

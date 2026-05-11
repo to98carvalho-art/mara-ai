@@ -1,22 +1,41 @@
 import { createContext, useContext, useState } from 'react'
 
 const AppContext = createContext(null)
+const SESSION_KEY = 'mara_ctx'
 
 const initial = {
-  name1: '',    // user name
-  name2: '',    // partner name
-  rel:   '',    // relationship type: casal | amigos | familia | trabalho
-  duration: 40, // slider 0-100
-  topic: '',    // conflict topic (from S01 input or S03 chat)
-  chat1: [],    // user's chat messages
-  chat2: [],    // partner's chat messages
-  code:  '',    // invite code
+  name1: '',
+  name2: '',
+  rel:   '',
+  duration: 40,
+  topic: '',
+  chat1: [],
+  chat2: [],
+  code:  '',
+}
+
+function loadInitial() {
+  try {
+    const saved = sessionStorage.getItem(SESSION_KEY)
+    if (saved) return { ...initial, ...JSON.parse(saved) }
+  } catch {}
+  return initial
 }
 
 export function AppProvider({ children }) {
-  const [data, setData] = useState(initial)
-  const update = (patch) => setData(prev => ({ ...prev, ...patch }))
-  const reset  = ()      => setData(initial)
+  const [data, setData] = useState(loadInitial)
+
+  const update = (patch) => setData(prev => {
+    const next = { ...prev, ...patch }
+    try { sessionStorage.setItem(SESSION_KEY, JSON.stringify(next)) } catch {}
+    return next
+  })
+
+  const reset = () => {
+    try { sessionStorage.removeItem(SESSION_KEY) } catch {}
+    setData(initial)
+  }
+
   return (
     <AppContext.Provider value={{ data, update, reset }}>
       {children}

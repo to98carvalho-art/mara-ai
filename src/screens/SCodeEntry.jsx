@@ -113,7 +113,7 @@ export default function SCodeEntry() {
               margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 400,
               letterSpacing: -1.2, lineHeight: 1.05, color: X.text,
             }}>
-              Introduz o teu<br/>código de acesso
+              Digite o seu<br/>código de acesso
             </h1>
             <p style={{ margin: '12px 0 0', fontSize: 14, color: X.textSoft, lineHeight: 1.5, maxWidth: 260 }}>
               O código de 4 caracteres está na mensagem que recebeste via WhatsApp.

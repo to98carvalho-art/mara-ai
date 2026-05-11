@@ -58,24 +58,36 @@ export default function SJoin() {
     e.preventDefault()
   }
 
-  function handleSubmit(code = chars.join('')) {
-    if (code.length !== 4) return setError('Introduz o código de 4 caracteres.')
+  async function handleSubmit(code = chars.join('')) {
+    if (code.length !== 4) return setError('Digite o código de 4 caracteres.')
     setLoading(true)
 
+    // 1. localStorage (mesmo dispositivo)
     const stored = localStorage.getItem(`ct_${code}`)
-    if (!stored) {
-      setLoading(false)
-      return setError('Código inválido ou expirado. Verifica e tenta novamente.')
+    if (stored) {
+      try {
+        const sessionData = JSON.parse(stored)
+        update({ ...sessionData, side: 2, code })
+        nav('/chat2')
+        return
+      } catch { /* JSON inválido — tenta servidor */ }
     }
 
+    // 2. Servidor (Upstash Redis — cross-device)
     try {
-      const sessionData = JSON.parse(stored)
-      update({ ...sessionData, side: 2, code })
-      nav('/chat2')
-    } catch {
-      setLoading(false)
-      setError('Erro ao carregar sessão. Tenta novamente.')
+      const res = await fetch(`/api/session?c=${code}`)
+      if (res.ok) {
+        const sessionData = await res.json()
+        update({ ...sessionData, side: 2, code })
+        nav('/chat2')
+        return
+      }
+    } catch (err) {
+      console.warn('Session server error:', err.message)
     }
+
+    setLoading(false)
+    setError('Código inválido ou expirado. Verifique e tente novamente.')
   }
 
   const filled = chars.every(c => c)
@@ -108,7 +120,7 @@ export default function SJoin() {
               margin: 0, fontFamily: FED, fontSize: 40, fontWeight: 400,
               letterSpacing: -1.4, lineHeight: 1.05, color: X.text,
             }}>
-              A tua versão<br/>
+              A sua versão<br/>
               <em style={{
                 display: 'inline-block',
                 fontFamily: FED, fontSize: 40, fontWeight: 400, fontStyle: 'italic',
@@ -117,7 +129,7 @@ export default function SJoin() {
               }}>também conta.</em>
             </h1>
             <p style={{ margin: '14px 0 0', fontSize: 14, color: X.textSoft, lineHeight: 1.5, maxWidth: 260 }}>
-              Introduz o código de 4 caracteres que recebeste para entrares na sessão.
+              Digite o código de 4 caracteres que recebeste para entrares na sessão.
             </p>
           </div>
 
@@ -178,7 +190,7 @@ export default function SJoin() {
         </button>
 
         <div style={{ marginTop: 12, textAlign: 'center', fontSize: 12, color: X.textMute }}>
-          🔒 A tua resposta é estritamente confidencial
+          🔒 A sua resposta é estritamente confidencial
         </div>
       </div>
     </div>

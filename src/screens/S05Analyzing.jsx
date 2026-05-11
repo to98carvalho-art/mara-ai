@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { X, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
+import { art } from '../utils/gender'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Card from '../components/Card'
@@ -225,7 +226,7 @@ export default function S05Analyzing() {
               {isCompleted
                 ? 'Os dois lados estão cruzados. A criar análise…'
                 : isWaiting
-                  ? `Aguarda que o ${name2} entre na conversa.`
+                  ? `Aguarde que ${art(name2)} ${name2} entre na conversa.`
                   : 'Quanto mais contexto, mais justo o veredicto.'}
             </p>
           </div>
@@ -384,7 +385,7 @@ export default function S05Analyzing() {
                 <path d="M9 2l6 3v4c0 4-3 5.5-6 6-3-.5-6-2-6-6V5z" stroke={X.acc1} strokeWidth="1.5"/>
               </svg>
               <div style={{ fontSize: 13, color: X.textSoft, lineHeight: 1.4 }}>
-                Avisamos-te assim que o {name2} responder. Podes fechar o ecrã.
+                Te avisamos assim que {art(name2)} {name2} responder. Pode fechar o ecrã.
               </div>
             </Card>
           ) : (

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { X, FUI, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { art, dArt, parceiro } from '../utils/gender'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import XBtn from '../components/XBtn'
@@ -33,8 +34,8 @@ export default function S02Setup() {
   const [error,    setError]    = useState('')
 
   function handleContinue() {
-    if (!name1.trim()) return setError('Introduz o teu nome para continuar.')
-    if (!name2.trim()) return setError('Introduz o nome do/a parceiro/a.')
+    if (!name1.trim()) return setError('Digite o seu nome para continuar.')
+    if (!name2.trim()) return setError('Digite o nome da outra pessoa para continuar.')
     setError('')
     update({ name1: name1.trim(), name2: name2.trim(), rel, duration })
     nav('/chat')
@@ -80,8 +81,8 @@ export default function S02Setup() {
         {/* Names */}
         <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
           {[
-            { label: 'O teu nome',          placeholder: 'Ex: Ana', value: name1, set: setName1 },
-            { label: 'Nome do/a parceiro/a', placeholder: 'Ex: Rui', value: name2, set: setName2 },
+            { label: 'O seu nome',                                                          placeholder: 'Ex: Ana', value: name1, set: setName1 },
+            { label: name2.trim() ? `Nome ${dArt(name2)} ${name2.trim()}` : 'Nome da outra pessoa', placeholder: 'Ex: Rui', value: name2, set: setName2 },
           ].map(({ label, placeholder, value, set }) => (
             <div key={label}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: X.textMute, marginBottom: 5 }}>{label}</div>
@@ -94,7 +95,7 @@ export default function S02Setup() {
                 style={{
                   width: '100%', background: 'rgba(255,255,255,0.04)',
                   border: `1px solid ${X.line}`, borderRadius: 13,
-                  padding: '11px 15px', color: X.text, fontFamily: FUI, fontSize: 15,
+                  padding: '11px 15px', color: X.text, fontFamily: FUI, fontSize: 16,
                   outline: 'none', boxSizing: 'border-box',
                 }}
               />

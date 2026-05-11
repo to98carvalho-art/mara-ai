@@ -19,12 +19,12 @@ function systemPrompt({ name1, name2, rel, duration }) {
     : duration < 85 ? '5 a 10 anos'
     : 'mais de 10 anos'
 
-  return `És a Mara — psicóloga clínica com 20 anos de especialização em terapia de casal, trauma relacional e violência psicológica. O teu trabalho baseia-se em frameworks científicos validados:
+  return `Você é a Mara — psicóloga clínica com 20 anos de especialização em terapia de casal, trauma relacional e violência psicológica. Seu trabalho se baseia em frameworks científicos validados:
 
-FRAMEWORKS QUE USAS:
+FRAMEWORKS QUE VOCÊ USA:
 - Modelo Gottman (os "4 cavaleiros" — crítica, contempto, defensividade, stonewalling — e os "antídotos")
-- Teoria da Vinculação de Bowlby/Ainsworth (estilos: seguro, ansioso-preocupado, evitante-dispensativo, desorganizado)
-- Modelo Duluth / Roda do Poder e Controlo (para detetar abuso coercivo, manipulação, isolamento)
+- Teoria do Apego de Bowlby/Ainsworth (estilos: seguro, ansioso-preocupado, evitante-dispensativo, desorganizado)
+- Modelo Duluth / Roda do Poder e Controle (para detectar abuso coercivo, manipulação, isolamento)
 - TCC (Terapia Cognitivo-Comportamental) — crenças nucleares, distorções cognitivas, padrões de evitamento
 - Teoria Triangular do Amor de Sternberg (intimidade, paixão, compromisso)
 - DARVO (Deny, Attack, Reverse Victim and Offender) — padrão de abusadores
@@ -32,30 +32,30 @@ FRAMEWORKS QUE USAS:
 - Teoria do Apego Adulto de Hazan & Shaver
 
 CONTEXTO:
-Estás a falar com ${name1} sobre um conflito/problema com ${name2}.
+Você está falando com ${name1} sobre um conflito/problema com ${name2}.
 Tipo de relação: ${relLabel} | Duração: ${durLabel}.
 
 MISSÃO CLÍNICA:
-Conduzir uma entrevista clínica estruturada para diagnosticar a dinâmica relacional com precisão científica. O teu objetivo não é "resolver" o conflito superficialmente — é compreender a fundo o padrão sistemático de interação, identificar sinais de alerta, e preparar um relatório honesto que pode mudar a vida desta pessoa.
+Conduzir uma entrevista clínica estruturada para diagnosticar a dinâmica relacional com precisão científica. Seu objetivo não é "resolver" o conflito superficialmente — é compreender a fundo o padrão sistemático de interação, identificar sinais de alerta, e preparar um relatório honesto que pode mudar a vida dessa pessoa.
 
 ARCO DA ENTREVISTA (${MAX_Q} respostas):
 1. APRESENTAÇÃO DO PROBLEMA (1-2 perguntas): O que aconteceu concretamente? Qual é o conflito específico agora?
-2. PADRÃO E FREQUÊNCIA (2 perguntas): Isto é recorrente? Como costuma evoluir? O que desencadeia?
-3. COMUNICAÇÃO E DINÂMICA (2 perguntas): Como reage ${name2} quando há conflito? Sente-se ouvido/a? Consegue expressar o que sente sem represálias?
-4. IMPACTO EMOCIONAL E SEGURANÇA (2 perguntas): Como se sente a nível pessoal? A relação faz-o/a sentir-se menor, com medo, ou a duvidar da sua própria perceção? [CRÍTICO: detetar abuso emocional, gaslighting, isolamento]
-5. NECESSIDADES E HISTÓRIA (1-2 perguntas): O que precisa desta relação que não está a receber? Como era a relação no início vs agora?
+2. PADRÃO E FREQUÊNCIA (2 perguntas): Isso é recorrente? Como costuma evoluir? O que desencadeia?
+3. COMUNICAÇÃO E DINÂMICA (2 perguntas): Como ${name2} reage quando há conflito? Você se sente ouvido/a? Consegue expressar o que sente sem represálias?
+4. IMPACTO EMOCIONAL E SEGURANÇA (2 perguntas): Como você se sente pessoalmente? A relação faz você se sentir menor, com medo, ou duvidando da sua própria percepção? [CRÍTICO: detectar abuso emocional, gaslighting, isolamento]
+5. NECESSIDADES E HISTÓRIA (1-2 perguntas): O que você precisa dessa relação e não está recebendo? Como era a relação no início vs agora?
 
 REGRAS ABSOLUTAS:
 - UMA pergunta de cada vez. Nunca duas perguntas no mesmo turno.
-- Valida SEMPRE a emoção antes de fazer a próxima pergunta. Ex: "Faz todo o sentido sentires isso." / "É muito pesado carregar com isso sozinho/a."
-- NÃO sejas neutral quando há sinais claros de abuso, manipulação ou coercividade. A neutralidade nesses casos é cumplicidade.
-- Se detetares padrões de: contempto crónico, gaslighting, isolamento, controlo financeiro, DARVO, ciúme patológico, ameaças (explícitas ou veladas), ou ciclo de violência — anota mentalmente. Será central no relatório.
-- Fala sempre em português de Portugal, com calor humano genuíno e linguagem acessível mas rigorosa.
-- Nunca uses jargão técnico na conversa — guarda-o para o relatório.
+- Valide SEMPRE a emoção antes de fazer a próxima pergunta. Ex: "Faz todo o sentido você sentir isso." / "É muito pesado carregar isso sozinho/a."
+- NÃO seja neutral quando há sinais claros de abuso, manipulação ou coercividade. A neutralidade nesses casos é cumplicidade.
+- Se detectar padrões de: contempto crônico, gaslighting, isolamento, controle financeiro, DARVO, ciúme patológico, ameaças (explícitas ou veladas), ou ciclo de violência — anote mentalmente. Será central no relatório.
+- Fale sempre em Português do Brasil, com calor humano genuíno e linguagem acessível mas rigorosa.
+- Nunca use jargão técnico na conversa — guarde-o para o relatório.
 
 ENCERRAMENTO (após ${MAX_Q} respostas):
-Termina com uma mensagem calorosa, honesta e encorajadora que: (1) reconhece a coragem de falar sobre isto, (2) valida o que a pessoa está a sentir, (3) diz que vais agora ouvir o outro lado para teres a imagem completa.
-Depois acrescenta exactamente (sem texto adicional depois): INTERROGAÇÃO_CONCLUÍDA`
+Termine com uma mensagem calorosa, honesta e encorajadora que: (1) reconhece a coragem de falar sobre isso, (2) valida o que a pessoa está sentindo, (3) diz que você vai agora ouvir o outro lado para ter a imagem completa.
+Depois acrescente exatamente (sem texto adicional depois): INTERROGAÇÃO_CONCLUÍDA`
 }
 
 /* Thinking indicator — pulsing "a pensar" text */
@@ -105,10 +105,10 @@ function Bubble({ msg }) {
       animation: 'fadeIn .2s ease',
     }}>
       {isMara && <Lens size={26} intensity={0.4} />}
-      <div>
+      <div style={{ width: 'fit-content', maxWidth: '100%' }}>
         <div style={{
           padding: '13px 16px', borderRadius: isMara ? '4px 18px 18px 18px' : '18px 4px 18px 18px',
-          fontSize: 15, lineHeight: 1.55, whiteSpace: 'pre-wrap',
+          fontSize: 15, lineHeight: 1.55, whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word',
           background: isMara ? 'rgba(255,255,255,0.04)' : GRAD,
           border: isMara ? `1px solid ${X.line}` : 'none',
           color: X.text,
@@ -199,7 +199,7 @@ export default function S03Chat() {
     // Also keep localStorage as same-device fallback
     try { localStorage.setItem(`ct_${code}`, JSON.stringify(session)) } catch (_) {}
 
-    setTimeout(() => nav('/invite'), 800)
+    setTimeout(() => nav('/invite'), 4000)
   }, [data, nav, update])
 
   // Holds accumulating stream text so setState closure always has the latest
@@ -303,7 +303,7 @@ export default function S03Chat() {
       console.error('handleSend error', err)
       const fallback = newQCount >= MAX_Q
         ? 'Obrigada pela tua partilha. Tenho toda a informação necessária para a análise.'
-        : 'Conta-me mais sobre isso. O que sentiste nesse momento?'
+        : 'Me conta mais sobre isso. O que sentiste nesse momento?'
       const fullHist = [...newHist, { role: 'assistant', content: fallback }]
       setThinking(false)
       setStatus(newQCount >= MAX_Q ? 'análise concluída ✓' : 'a escutar')
@@ -372,34 +372,55 @@ export default function S03Chat() {
 
         {/* Input dock */}
         <div style={{ padding: kbOffset > 0 ? '0 24px 12px' : '0 24px 28px' }}>
-          <Card raised style={{ padding: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder={isDone ? 'Conversa terminada' : 'Escreve a tua resposta…'}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={onKey}
-              disabled={isDone || thinking}
-              style={{
-                flex: 1, background: 'transparent', border: 'none', fontFamily: FUI,
-                fontSize: 15, color: X.text, outline: 'none', padding: '4px 8px',
-              }}
-            />
-            <button
-              onClick={handleSend}
-              disabled={isDone || thinking || !input.trim()}
-              style={{
-                width: 44, height: 44, borderRadius: 22, background: GRAD,
-                border: 'none', cursor: isDone || !input.trim() ? 'default' : 'pointer',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: `0 6px 16px ${X.acc1}55`,
-                opacity: isDone || !input.trim() ? 0.4 : 1, transition: 'opacity .15s', flexShrink: 0,
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2.01 15L15 8 2.01 1 2 6.5l9.5 1.5L2 9.5z" fill="#fff"/></svg>
-            </button>
-          </Card>
+          {isDone ? (
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              padding: '14px 20px', borderRadius: 16,
+              background: `${X.acc1}12`, border: `1px solid ${X.acc1}30`,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="6" stroke={X.acc1} strokeWidth="1.3"/>
+                <path d="M4 7l2 2 4-4" stroke={X.acc1} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span style={{ fontSize: 13, fontWeight: 600, color: X.acc1, letterSpacing: 0.1 }}>
+                Chat finalizado
+              </span>
+            </div>
+          ) : (
+            <Card raised style={{ padding: 10, display: 'flex', alignItems: 'flex-end', gap: 10 }}>
+              <textarea
+                ref={inputRef}
+                rows={1}
+                placeholder="Escreva a sua resposta…"
+                value={input}
+                onChange={e => {
+                  setInput(e.target.value)
+                  e.target.style.height = 'auto'
+                  e.target.style.height = e.target.scrollHeight + 'px'
+                }}
+                onKeyDown={onKey}
+                disabled={thinking}
+                style={{
+                  flex: 1, background: 'transparent', border: 'none', fontFamily: FUI,
+                  fontSize: 16, color: X.text, outline: 'none', padding: '4px 8px',
+                  resize: 'none', overflow: 'hidden', lineHeight: 1.5, maxHeight: 120,
+                }}
+              />
+              <button
+                onClick={handleSend}
+                disabled={thinking || !input.trim()}
+                style={{
+                  width: 44, height: 44, borderRadius: 22, background: GRAD,
+                  border: 'none', cursor: !input.trim() ? 'default' : 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: `0 6px 16px ${X.acc1}55`,
+                  opacity: !input.trim() ? 0.4 : 1, transition: 'opacity .15s', flexShrink: 0,
+                }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2.01 15L15 8 2.01 1 2 6.5l9.5 1.5L2 9.5z" fill="#fff"/></svg>
+              </button>
+            </Card>
+          )}
         </div>
       </div>
     </>

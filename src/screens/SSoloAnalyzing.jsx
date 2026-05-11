@@ -49,7 +49,7 @@ export default function SSoloAnalyzing() {
               com as duas versões.
             </em></>
           ) : (
-            <>Aguarda enquanto a Mara{' '}
+            <>Aguarde enquanto a Mara{' '}
             <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               conclui o veredicto.
             </em></>
@@ -58,7 +58,7 @@ export default function SSoloAnalyzing() {
         <p style={{ margin: '14px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6 }}>
           {bothSides
             ? 'A cruzar as duas perspetivas com base em psicologia clínica e frameworks de Gottman.'
-            : 'A cruzar o que partilhaste com padrões clínicos de psicologia relacional.'}
+            : 'A cruzar o que você compartilhou com padrões clínicos de psicologia relacional.'}
         </p>
       </div>
 

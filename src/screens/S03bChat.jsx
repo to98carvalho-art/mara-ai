@@ -25,22 +25,22 @@ ${chat1}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
     : ''
 
-  return `És a Mara — psicóloga clínica com 20 anos de especialização em terapia de casal, trauma relacional e violência psicológica. Trabalhas com os frameworks de Gottman, Bowlby/Ainsworth, Duluth, TCC, DARVO e Ciclo de Walker.
+  return `Você é a Mara — psicóloga clínica com 20 anos de especialização em terapia de casal, trauma relacional e violência psicológica. Você trabalha com os frameworks de Gottman, Bowlby/Ainsworth, Duluth, TCC, DARVO e Ciclo de Walker.
 ${chat1Section}
 CONTEXTO DA SESSÃO:
-Estás a falar com ${name2 || 'a segunda pessoa'} — o/a outro/a lado do conflito com ${name1 || 'a outra pessoa'}.
+Você está falando com ${name2 || 'a segunda pessoa'} — o/a outro/a lado do conflito com ${name1 || 'a outra pessoa'}.
 Relação: ${relLabel} | Duração: ${durLabel}
 
-A TUA VANTAGEM CLÍNICA:
-Já tens a versão de ${name1 || 'a outra pessoa'}. Isso dá-te uma capacidade única: podes fazer perguntas cirúrgicas que cruzam perspetivas sem nunca revelar o que sabes. A tua missão é validar, contradizer ou aprofundar os temas que emergiram do lado 1 — tudo de forma natural, como se estivesses a ouvir pela primeira vez.
+SUA VANTAGEM CLÍNICA:
+Você já tem a versão de ${name1 || 'a outra pessoa'}. Isso te dá uma capacidade única: pode fazer perguntas cirúrgicas que cruzam perspectivas sem nunca revelar o que sabe. Sua missão é validar, contradizer ou aprofundar os temas que emergiram do lado 1 — tudo de forma natural, como se estivesse ouvindo pela primeira vez.
 
 REGRAS DE OURO — INVIOLÁVEIS:
-1. NUNCA digas que já falaste com ${name1 || 'a outra pessoa'}. Nunca. Nem por referência, nem por alusão.
-2. NUNCA cites, parafrasees ou insinues nada do que ${name1 || 'a outra pessoa'} disse.
-3. Age sempre como se esta fosse a tua primeira conversa sobre este conflito.
+1. NUNCA diga que já falou com ${name1 || 'a outra pessoa'}. Nunca. Nem por referência, nem por alusão.
+2. NUNCA cite, parafraseie ou insinue nada do que ${name1 || 'a outra pessoa'} disse.
+3. Aja sempre como se esta fosse a primeira conversa sobre este conflito.
 4. UMA pergunta por turno. Sempre.
-5. Valida a emoção antes de perguntar.
-6. Português de Portugal, calor humano genuíno.
+5. Valide a emoção antes de perguntar.
+6. Português do Brasil, calor humano genuíno.
 
 ESTRATÉGIA DE INTERROGAÇÃO INFORMADA:
 Usa o que sabes do lado 1 para construir perguntas que toquem os mesmos temas sem os revelar. Exemplos de técnica:
@@ -53,13 +53,13 @@ Usa o que sabes do lado 1 para construir perguntas que toquem os mesmos temas se
 ARCO DA ENTREVISTA (${MAX_Q} respostas — mais curto porque já tens contexto):
 1. ABERTURA (1 pergunta): Pede a versão desta pessoa sobre o conflito — deixa-a falar livremente.
 2. PADRÃO RELACIONAL (2 perguntas): Explora como é a dinâmica habitual, como se resolve o conflito, o que desencadeia tensão.
-3. COMUNICAÇÃO E PODER (2 perguntas): Baseado no que sabes do lado 1, aprofunda a comunicação, a capacidade de expressão, o equilíbrio de poder.
-4. IMPACTO E SEGURANÇA (2 perguntas): Como esta pessoa se sente na relação? Há medo, pressão, ou sensação de estar a "pisar em ovos"?
-5. ENCERRAMENTO (1 pergunta): O que precisaria de mudar para a relação funcionar?
+3. COMUNICAÇÃO E PODER (2 perguntas): Com base no que você sabe do lado 1, aprofunde a comunicação, a capacidade de expressão, o equilíbrio de poder.
+4. IMPACTO E SEGURANÇA (2 perguntas): Como essa pessoa se sente na relação? Há medo, pressão, ou sensação de estar "pisando em ovos"?
+5. ENCERRAMENTO (1 pergunta): O que precisaria mudar para a relação funcionar?
 
 ENCERRAMENTO (após ${MAX_Q} respostas):
-Mensagem calorosa que: (1) agradece a coragem de participar, (2) diz que tens agora tudo o que precisas para uma análise completa e justa, (3) explica que o veredicto será apresentado em breve.
-Depois acrescenta exactamente, sem texto adicional: INTERROGAÇÃO_CONCLUÍDA`
+Mensagem calorosa que: (1) agradece a coragem de participar, (2) diz que você agora tem tudo que precisa para uma análise completa e justa, (3) explica que o veredicto será apresentado em breve.
+Depois acrescente exatamente, sem texto adicional: INTERROGAÇÃO_CONCLUÍDA`
 }
 
 /* ── Shared UI components ─────────────────────────── */
@@ -88,8 +88,8 @@ function Bubble({ msg }) {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, alignSelf: isMara ? 'flex-start' : 'flex-end', flexDirection: isMara ? 'row' : 'row-reverse', maxWidth: '86%', animation: 'fadeIn .2s ease' }}>
       {isMara && <Lens size={26} intensity={0.4} />}
-      <div>
-        <div style={{ padding: '13px 16px', borderRadius: isMara ? '4px 18px 18px 18px' : '18px 4px 18px 18px', fontSize: 15, lineHeight: 1.55, whiteSpace: 'pre-wrap', background: isMara ? 'rgba(255,255,255,0.04)' : GRAD, border: isMara ? `1px solid ${X.line}` : 'none', color: X.text, boxShadow: isMara ? 'none' : `0 8px 24px ${X.acc1}30`, fontWeight: isMara ? 400 : 450 }}>
+      <div style={{ width: 'fit-content', maxWidth: '100%' }}>
+        <div style={{ padding: '13px 16px', borderRadius: isMara ? '4px 18px 18px 18px' : '18px 4px 18px 18px', fontSize: 15, lineHeight: 1.55, whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflowWrap: 'break-word', background: isMara ? 'rgba(255,255,255,0.04)' : GRAD, border: isMara ? `1px solid ${X.line}` : 'none', color: X.text, boxShadow: isMara ? 'none' : `0 8px 24px ${X.acc1}30`, fontWeight: isMara ? 400 : 450 }}>
           {msg.content}{msg.streaming && <StreamCursor />}
           {!msg.streaming && <div style={{ fontSize: 10.5, color: isMara ? X.textMute : 'rgba(255,255,255,0.6)', marginTop: 6, letterSpacing: 0.3 }}>{msg.time}{!isMara && ' ✓✓'}</div>}
         </div>
@@ -165,7 +165,7 @@ export default function S03bChat() {
     patchStatus({ status: 'opened', openedAt: Date.now() })
     const n2 = data.name2 ? `, ${data.name2}` : ''
     const n1 = data.name1 || 'a outra pessoa'
-    const opening = `Olá${n2}. Obrigada por estares aqui — sei que não é fácil entrar numa conversa destas.\n\nSou a Mara. O meu trabalho é ouvir-te com total atenção e sem julgamentos. Existe uma situação entre ti e o/a ${n1} que precisa de ser analisada — e a tua versão é essencial para que o resultado seja justo.\n\nComeçemos pelo mais importante: da tua perspetiva, o que é que se passa entre vocês? Conta-me como tens vivido esta situação.`
+    const opening = `Olá${n2}. Obrigada por estares aqui — sei que não é fácil entrar numa conversa destas.\n\nSou a Mara. O meu trabalho é ouvir-te com total atenção e sem julgamentos. Existe uma situação entre ti e o/a ${n1} que precisa de ser analisada — e a sua versão é essencial para que o resultado seja justo.\n\nComeçemos pelo mais importante: da sua perspetiva, o que é que se passa entre vocês? Me conta como tens vivido esta situação.`
     setThinking(true)
     const t = setTimeout(() => {
       setThinking(false)
@@ -200,7 +200,7 @@ export default function S03bChat() {
       if (code) localStorage.setItem(`ct_${code}`, JSON.stringify(updatedSession))
     } catch (_) {}
 
-    setTimeout(() => nav('/replied'), 800)
+    setTimeout(() => nav('/solo'), 4000)
   }, [data, nav, update])
 
   const handleSend = useCallback(async () => {
@@ -288,7 +288,7 @@ export default function S03bChat() {
     } catch (err) {
       const fallback = newQCount >= MAX_Q
         ? 'Obrigada pela tua partilha. Tenho toda a informação de que preciso.'
-        : 'Conta-me mais sobre isso. O que sentiste nesse momento?'
+        : 'Me conta mais sobre isso. O que sentiste nesse momento?'
       const fullHist = [...newHist, { role: 'assistant', content: fallback }]
       setThinking(false)
       setStatus(newQCount >= MAX_Q ? 'análise concluída ✓' : 'a escutar')
@@ -340,25 +340,45 @@ export default function S03bChat() {
 
         {/* Input */}
         <div style={{ padding: kbOffset > 0 ? '0 24px 12px' : '0 24px 28px' }}>
-          <Card raised style={{ padding: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <input
-              ref={inputRef}
-              type="text"
-              placeholder={isDone ? 'Conversa terminada' : 'Escreve a tua resposta…'}
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={onKey}
-              disabled={isDone || thinking}
-              style={{ flex: 1, background: 'transparent', border: 'none', fontFamily: FUI, fontSize: 15, color: X.text, outline: 'none', padding: '4px 8px' }}
-            />
-            <button
-              onClick={handleSend}
-              disabled={isDone || thinking || !input.trim()}
-              style={{ width: 44, height: 44, borderRadius: 22, background: GRAD, border: 'none', cursor: isDone || !input.trim() ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 6px 16px ${X.acc1}55`, opacity: isDone || !input.trim() ? 0.4 : 1, transition: 'opacity .15s', flexShrink: 0 }}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2.01 15L15 8 2.01 1 2 6.5l9.5 1.5L2 9.5z" fill="#fff"/></svg>
-            </button>
-          </Card>
+          {isDone ? (
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              padding: '14px 20px', borderRadius: 16,
+              background: `${X.acc1}12`, border: `1px solid ${X.acc1}30`,
+            }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="6" stroke={X.acc1} strokeWidth="1.3"/>
+                <path d="M4 7l2 2 4-4" stroke={X.acc1} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span style={{ fontSize: 13, fontWeight: 600, color: X.acc1, letterSpacing: 0.1 }}>
+                Chat finalizado
+              </span>
+            </div>
+          ) : (
+            <Card raised style={{ padding: 10, display: 'flex', alignItems: 'flex-end', gap: 10 }}>
+              <textarea
+                ref={inputRef}
+                rows={1}
+                placeholder="Escreva a sua resposta…"
+                value={input}
+                onChange={e => {
+                  setInput(e.target.value)
+                  e.target.style.height = 'auto'
+                  e.target.style.height = e.target.scrollHeight + 'px'
+                }}
+                onKeyDown={onKey}
+                disabled={thinking}
+                style={{ flex: 1, background: 'transparent', border: 'none', fontFamily: FUI, fontSize: 16, color: X.text, outline: 'none', padding: '4px 8px', resize: 'none', overflow: 'hidden', lineHeight: 1.5, maxHeight: 120 }}
+              />
+              <button
+                onClick={handleSend}
+                disabled={thinking || !input.trim()}
+                style={{ width: 44, height: 44, borderRadius: 22, background: GRAD, border: 'none', cursor: !input.trim() ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 6px 16px ${X.acc1}55`, opacity: !input.trim() ? 0.4 : 1, transition: 'opacity .15s', flexShrink: 0 }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2.01 15L15 8 2.01 1 2 6.5l9.5 1.5L2 9.5z" fill="#fff"/></svg>
+              </button>
+            </Card>
+          )}
         </div>
       </div>
     </>

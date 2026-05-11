@@ -34,7 +34,7 @@ export default function S06Replied() {
               margin: '10px 0 0', fontFamily: FED, fontSize: 44, fontWeight: 400,
               letterSpacing: -1.4, lineHeight: 1.0, color: X.text,
             }}>
-              {name2} partilhou<br/>
+              {name2} compartilhou<br/>
               <em style={{
                 fontFamily: FED, fontSize: 44, fontWeight: 400, fontStyle: 'italic',
                 letterSpacing: -1, lineHeight: 1,
