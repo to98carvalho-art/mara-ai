@@ -1,4 +1,4 @@
-const CACHE = 'mara-v3'
+const CACHE = 'mara-v4'
 const SHELL = [
   '/',
   '/index.html',
