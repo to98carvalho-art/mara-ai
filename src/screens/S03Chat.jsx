@@ -295,15 +295,15 @@ export default function S03Chat() {
       ansioso: 'ansioso/a', exausto: 'exausto/a',
     }
 
-    let opening = `Obrigada por partilhares isso, ${name1} — sei que não é fácil.\n\n`
+    let opening = `Obrigada por compartilhar isso, ${name1} — sei que não é fácil.\n\n`
 
     if (trigger && feeling) {
-      opening += `Percebo que estás ${feelingMap[feeling] || ''} por causa de ${triggerMap[trigger] || 'algo importante'}. Não vou julgar ninguém nem dizer logo quem tem razão — o meu trabalho é entender o que está realmente a acontecer entre vocês dois.\n\n`
+      opening += `Percebo que você está ${feelingMap[feeling] || ''} por causa de ${triggerMap[trigger] || 'algo importante'}. Não vou julgar ninguém nem dizer logo quem tem razão — meu trabalho é entender o que está realmente acontecendo entre vocês dois.\n\n`
     } else {
-      opening += `O meu trabalho não é julgar ninguém nem dizer quem tem "mais razão" — é entender o que está realmente a acontecer entre vocês dois, com honestidade.\n\n`
+      opening += `Meu trabalho não é julgar ninguém nem dizer quem tem "mais razão" — é entender o que está realmente acontecendo entre vocês dois, com honestidade.\n\n`
     }
 
-    opening += `Me conta: o que aconteceu concretamente? Descreve a situação que te trouxe aqui hoje.`
+    opening += `Me conta: o que aconteceu? Descreve a situação que te trouxe aqui hoje.`
 
     setMessages(prev => [...prev, { role: 'mara', content: opening, time: now() }])
     setHistory([{ role: 'assistant', content: opening }])
@@ -373,11 +373,11 @@ export default function S03Chat() {
       nextPhase = 'ask_trigger'
     } else if (phaseKey === 'ask_trigger') {
       chatData.current.trigger = value
-      nextQuestion = 'Como te sentes agora em relação a esta situação?'
+      nextQuestion = 'Como você se sente agora em relação a essa situação?'
       nextPhase = 'ask_feeling'
     } else if (phaseKey === 'ask_feeling') {
       chatData.current.feeling = value
-      nextQuestion = 'E a outra pessoa — como se chama?'
+      nextQuestion = 'E a outra pessoa — como ela se chama?'
       nextPhase = 'ask_name2'
     }
 
@@ -450,7 +450,7 @@ export default function S03Chat() {
       setThinking(true)
       setTimeout(() => {
         setThinking(false)
-        setMessages(prev => [...prev, { role: 'mara', content: `Prazer, ${name}! 😊\n\nQue tipo de relação está envolvida neste conflito?`, time: now() }])
+        setMessages(prev => [...prev, { role: 'mara', content: `Prazer, ${name}! 😊\n\nQue tipo de relação está envolvida nesse conflito?`, time: now() }])
         setPhase('ask_rel')
         sending.current = false
       }, 650)
