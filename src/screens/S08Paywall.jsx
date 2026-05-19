@@ -5,7 +5,7 @@ import { X, FED, FNUM, FUI, GRAD, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import XBtn from '../components/XBtn'
 import Card from '../components/Card'
-import { track } from '../utils/analytics'
+import { track, pixel } from '../utils/analytics'
 
 const LOCK = (
   <svg width="11" height="12" viewBox="0 0 11 12" fill="none">
@@ -97,6 +97,7 @@ export default function S08Paywall() {
   useEffect(() => {
     const bothSides = !!data.chat2
     track('payment_shown', { both_sides: bothSides })
+    pixel('payment_shown', { both_sides: bothSides })
     // detect return from Stripe cancel
     const params = new URLSearchParams(window.location.search)
     if (params.get('abandoned') === '1') track('checkout_abandoned')
@@ -146,6 +147,7 @@ export default function S08Paywall() {
       return
     }
     track('checkout_opened', { promo_applied: !!promoResult?.valid })
+    pixel('checkout_opened', { promo_applied: !!promoResult?.valid })
     setLoading(true)
     setError('')
     try {

@@ -6,7 +6,7 @@ import Lens from '../components/Lens'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Card from '../components/Card'
-import { track } from '../utils/analytics'
+import { track, pixel } from '../utils/analytics'
 
 const MAX_Q = 10
 const now = () => new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })

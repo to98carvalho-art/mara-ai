@@ -7,7 +7,7 @@ import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Card from '../components/Card'
 import Lens from '../components/Lens'
-import { track } from '../utils/analytics'
+import { track, pixel } from '../utils/analytics'
 
 const LOADING_STEPS = [
   { text: 'A cruzar os dois lados do conflito…',      sub: 'comparando versões e pontos de tensão'     },
@@ -220,6 +220,7 @@ export default function S09Verdict() {
     const params = new URLSearchParams(window.location.search)
     if (params.get('paid') === '1') {
       track('purchase_completed', { both_sides: !!data.chat2 })
+      pixel('purchase_completed', { value: 9.99, currency: 'BRL', both_sides: !!data.chat2 })
       update({ paid: true })
     }
     track('verdict_viewed', { both_sides: !!data.chat2 })
