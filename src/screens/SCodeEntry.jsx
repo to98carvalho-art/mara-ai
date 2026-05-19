@@ -116,7 +116,7 @@ export default function SCodeEntry() {
               Digite o seu<br/>código de acesso
             </h1>
             <p style={{ margin: '12px 0 0', fontSize: 14, color: X.textSoft, lineHeight: 1.5, maxWidth: 260 }}>
-              O código de 4 caracteres está na mensagem que recebeste via WhatsApp.
+              O código de 4 caracteres está na mensagem que você recebeu via WhatsApp.
             </p>
           </div>
 
@@ -172,13 +172,13 @@ export default function SCodeEntry() {
           }}
         >
           {loading
-            ? <><span style={{ width: 16, height: 16, borderRadius: 8, border: `2px solid rgba(255,255,255,0.3)`, borderTopColor: '#fff', display: 'inline-block', animation: 'spin .7s linear infinite' }} /> a verificar…</>
+            ? <><span style={{ width: 16, height: 16, borderRadius: 8, border: `2px solid rgba(255,255,255,0.3)`, borderTopColor: '#fff', display: 'inline-block', animation: 'spin .7s linear infinite' }} /> verificando…</>
             : <>Entrar na sessão{filled && <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>}</>
           }
         </div>
 
         <div style={{ marginTop: 14, textAlign: 'center', fontSize: 12, color: X.textMute }}>
-          🔒 os teus dados são estritamente confidenciais
+          🔒 os seus dados são estritamente confidenciais
         </div>
       </div>
     </div>

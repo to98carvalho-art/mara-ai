@@ -6,18 +6,20 @@ import Lens from '../components/Lens'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Card from '../components/Card'
+import { track } from '../utils/analytics'
 
 const MAX_Q = 10
 const now = () => new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
 
-function systemPrompt({ name1, name2, rel, duration }) {
+const REL_OPTIONS = [
+  { k: 'casal',    emoji: '💑', label: 'Casal' },
+  { k: 'amigos',   emoji: '👫', label: 'Amigos' },
+  { k: 'familia',  emoji: '👨‍👩‍👧', label: 'Família' },
+  { k: 'trabalho', emoji: '💼', label: 'Trabalho' },
+]
+
+function systemPrompt({ name1, name2, rel }) {
   const relLabel = rel || 'casal'
-  const durLabel = duration < 15 ? 'menos de 6 meses'
-    : duration < 30 ? 'entre 6 meses e 1 ano'
-    : duration < 50 ? '1 a 3 anos'
-    : duration < 70 ? '3 a 5 anos'
-    : duration < 85 ? '5 a 10 anos'
-    : 'mais de 10 anos'
 
   return `Você é a Mara — psicóloga clínica com 20 anos de especialização em terapia de casal, trauma relacional e violência psicológica. Seu trabalho se baseia em frameworks científicos validados:
 
@@ -32,8 +34,8 @@ FRAMEWORKS QUE VOCÊ USA:
 - Teoria do Apego Adulto de Hazan & Shaver
 
 CONTEXTO:
-Você está falando com ${name1} sobre um conflito/problema com ${name2}.
-Tipo de relação: ${relLabel} | Duração: ${durLabel}.
+Você está falando com ${name1} sobre um conflito/problema com ${name2 || 'a outra pessoa'}.
+Tipo de relação: ${relLabel}.
 
 MISSÃO CLÍNICA:
 Conduzir uma entrevista clínica estruturada para diagnosticar a dinâmica relacional com precisão científica. Seu objetivo não é "resolver" o conflito superficialmente — é compreender a fundo o padrão sistemático de interação, identificar sinais de alerta, e preparar um relatório honesto que pode mudar a vida dessa pessoa.
@@ -41,7 +43,7 @@ Conduzir uma entrevista clínica estruturada para diagnosticar a dinâmica relac
 ARCO DA ENTREVISTA (${MAX_Q} respostas):
 1. APRESENTAÇÃO DO PROBLEMA (1-2 perguntas): O que aconteceu concretamente? Qual é o conflito específico agora?
 2. PADRÃO E FREQUÊNCIA (2 perguntas): Isso é recorrente? Como costuma evoluir? O que desencadeia?
-3. COMUNICAÇÃO E DINÂMICA (2 perguntas): Como ${name2} reage quando há conflito? Você se sente ouvido/a? Consegue expressar o que sente sem represálias?
+3. COMUNICAÇÃO E DINÂMICA (2 perguntas): Como ${name2 || 'a outra pessoa'} reage quando há conflito? Você se sente ouvido/a? Consegue expressar o que sente sem represálias?
 4. IMPACTO EMOCIONAL E SEGURANÇA (2 perguntas): Como você se sente pessoalmente? A relação faz você se sentir menor, com medo, ou duvidando da sua própria percepção? [CRÍTICO: detectar abuso emocional, gaslighting, isolamento]
 5. NECESSIDADES E HISTÓRIA (1-2 perguntas): O que você precisa dessa relação e não está recebendo? Como era a relação no início vs agora?
 
@@ -58,7 +60,7 @@ Termine com uma mensagem calorosa, honesta e encorajadora que: (1) reconhece a c
 Depois acrescente exatamente (sem texto adicional depois): INTERROGAÇÃO_CONCLUÍDA`
 }
 
-/* Thinking indicator — pulsing "a pensar" text */
+/* Thinking indicator */
 function Thinking() {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
@@ -76,13 +78,12 @@ function Thinking() {
             }} />
           ))}
         </div>
-        <span style={{ fontSize: 12.5, color: X.textMute, letterSpacing: 0.2, animation: 'fadeIn .3s ease' }}>a analisar</span>
+        <span style={{ fontSize: 12.5, color: X.textMute, letterSpacing: 0.2, animation: 'fadeIn .3s ease' }}>a pensar</span>
       </div>
     </div>
   )
 }
 
-/* Streaming cursor that blinks at end of message */
 function StreamCursor() {
   return (
     <span style={{
@@ -93,7 +94,6 @@ function StreamCursor() {
   )
 }
 
-/* Single message bubble */
 function Bubble({ msg }) {
   const isMara = msg.role === 'mara'
   return (
@@ -127,55 +127,161 @@ function Bubble({ msg }) {
   )
 }
 
+/* Quick-reply chips for relationship type selection */
+function RelButtons({ onSelect, disabled }) {
+  return (
+    <div style={{
+      display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center',
+      padding: '4px 0 8px',
+      animation: 'fadeIn .3s ease',
+    }}>
+      {REL_OPTIONS.map(opt => (
+        <button
+          key={opt.k}
+          onClick={() => !disabled && onSelect(opt.k)}
+          disabled={disabled}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 7,
+            padding: '10px 16px', borderRadius: 99,
+            background: 'rgba(255,255,255,0.05)',
+            border: `1.5px solid ${X.line}`,
+            color: X.text, fontFamily: FUI, fontSize: 14.5, fontWeight: 600,
+            cursor: disabled ? 'default' : 'pointer',
+            transition: 'all .15s',
+            letterSpacing: -0.2,
+          }}
+          onMouseEnter={e => { if (!disabled) { e.currentTarget.style.borderColor = X.acc1; e.currentTarget.style.background = `${X.acc1}15` } }}
+          onMouseLeave={e => { e.currentTarget.style.borderColor = X.line; e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }}
+        >
+          <span style={{ fontSize: 18 }}>{opt.emoji}</span>
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export default function S03Chat() {
   const nav = useNavigate()
   const { data, update } = useApp()
 
-  const [messages,  setMessages]  = useState([])
-  const [history,   setHistory]   = useState([])
-  const [input,     setInput]     = useState('')
-  const [thinking,  setThinking]  = useState(false)
-  const [isDone,    setIsDone]    = useState(false)
-  const [qCount,    setQCount]    = useState(0)
-  const [status,    setStatus]    = useState('a escutar')
+  // phase: 'ask_name' | 'ask_rel' | 'ask_name2' | 'chatting'
+  const [phase, setPhase]     = useState(() => data.name1 ? 'chatting' : 'ask_name')
+  const [messages, setMessages] = useState([])
+  const [history,  setHistory]  = useState([])
+  const [input,    setInput]    = useState('')
+  const [thinking, setThinking] = useState(false)
+  const [isDone,   setIsDone]   = useState(false)
+  const [qCount,   setQCount]   = useState(0)
+  const [status,   setStatus]   = useState('escutando')
 
   const bottomRef  = useRef(null)
   const inputRef   = useRef(null)
   const sending    = useRef(false)
   const initiated  = useRef(false)
 
-  // Track keyboard height via visualViewport so input stays above keyboard on iOS
+  // Ref that holds finalized onboarding data so handleSend never has stale closures
+  const chatData = useRef({
+    name1: data.name1 || '',
+    rel:   data.rel   || 'casal',
+    name2: data.name2 || '',
+  })
+
+  // Visual viewport offset for keyboard on iOS
   const [kbOffset, setKbOffset] = useState(0)
   useEffect(() => {
     const vv = window.visualViewport
     if (!vv) return
-    const update = () => {
+    const onResize = () => {
       const offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
       setKbOffset(offset)
-      // scroll to bottom when keyboard opens
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
-    vv.addEventListener('resize', update)
-    vv.addEventListener('scroll', update)
-    return () => { vv.removeEventListener('resize', update); vv.removeEventListener('scroll', update) }
+    vv.addEventListener('resize', onResize)
+    vv.addEventListener('scroll', onResize)
+    return () => { vv.removeEventListener('resize', onResize); vv.removeEventListener('scroll', onResize) }
   }, [])
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, thinking])
 
+  // Transition to clinical interview after onboarding is done
+  const startClinicalInterview = useCallback(() => {
+    const { name1 } = chatData.current
+    const greeting  = name1 ? `${name1}, obrigada` : 'Obrigada'
+    const opening   = `${greeting} por estar aqui — sei que não é fácil.\n\nMeu trabalho não é julgar ninguém nem dizer quem tem "mais razão". É entender o que está realmente acontecendo entre vocês dois — com honestidade e com base em anos de estudo de dinâmicas relacionais.\n\nMe conta: o que aconteceu? Descreve a situação que te trouxe aqui hoje.`
+    setMessages(prev => [...prev, { role: 'mara', content: opening, time: now() }])
+    setHistory([{ role: 'assistant', content: opening }])
+    setPhase('chatting')
+    inputRef.current?.focus()
+  }, [])
+
+  // Called when all onboarding data is collected
+  const finishOnboarding = useCallback(() => {
+    const { name1, rel, name2 } = chatData.current
+    update({ name1, rel, name2 })
+    track('step1_completed', { rel_type: rel, has_name2: !!name2, via: 'chat_onboarding' })
+    setThinking(true)
+    setTimeout(() => {
+      setThinking(false)
+      startClinicalInterview()
+    }, 900)
+  }, [update, startClinicalInterview])
+
+  // Initialization effect — runs once
   useEffect(() => {
     if (initiated.current) return
     initiated.current = true
-    const name = data.name1 ? `, ${data.name1}` : ''
-    const opening = `Olá${name}. Obrigada por estares aqui — sei que não é fácil.\n\nO meu trabalho não é julgar ninguém nem dizer quem tem "mais razão". É perceber o que está realmente a acontecer entre vocês dois — com honestidade e com base em anos de estudo de dinâmicas relacionais.\n\nConta-me: o que aconteceu? Descreve a situação que te trouxe aqui hoje.`
+
+    if (chatData.current.name1) {
+      // Already have context (e.g. navigating back) — skip onboarding
+      setThinking(true)
+      setTimeout(() => {
+        setThinking(false)
+        startClinicalInterview()
+      }, 600)
+    } else {
+      // Start onboarding
+      setThinking(true)
+      setTimeout(() => {
+        setThinking(false)
+        setMessages([{ role: 'mara', content: 'Olá! 👋 Como posso te chamar?', time: now() }])
+        inputRef.current?.focus()
+      }, 800)
+    }
+  }, [startClinicalInterview])
+
+  // chat_abandoned — fires when user leaves mid-interview
+  useEffect(() => {
+    return () => {
+      if (!isDone && qCount > 0) track('chat_abandoned', { messages_sent: qCount })
+    }
+  }, [isDone, qCount])
+
+  // Handle relationship quick-reply button tap
+  const selectRel = useCallback((relKey) => {
+    if (phase !== 'ask_rel') return
+    const opt = REL_OPTIONS.find(r => r.k === relKey)
+    chatData.current.rel = relKey
+
+    const userMsg = { role: 'user', content: `${opt.emoji} ${opt.label}`, time: now() }
+    setMessages(prev => [...prev, userMsg])
     setThinking(true)
-    const t = setTimeout(() => {
+    setTimeout(() => {
       setThinking(false)
-      setMessages([{ role: 'mara', content: opening, time: now() }])
-      setHistory([{ role: 'assistant', content: opening }])
+      const resp = `Anotado. 📝\n\nE como se chama a pessoa com quem tiveste esse conflito?`
+      setMessages(prev => [...prev, { role: 'mara', content: resp, time: now() }])
+      setPhase('ask_name2')
       inputRef.current?.focus()
-    }, 900)
-    return () => clearTimeout(t)
-  }, [])
+    }, 700)
+  }, [phase])
+
+  // Skip name2
+  const skipName2 = useCallback(() => {
+    if (phase !== 'ask_name2') return
+    chatData.current.name2 = ''
+    setMessages(prev => [...prev, { role: 'user', content: 'Prefiro não dizer', time: now() }])
+    finishOnboarding()
+  }, [phase, finishOnboarding])
 
   const finishChat = useCallback(async (hist) => {
     setIsDone(true)
@@ -184,25 +290,43 @@ export default function S03Chat() {
     const code  = Array.from({ length: 4 }, () =>
       'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]
     ).join('')
-    const session = { ...data, chat1, code }
+    const cd = chatData.current
+    const session = {
+      ...data,
+      name1: cd.name1 || data.name1,
+      rel:   cd.rel   || data.rel,
+      name2: cd.name2 || data.name2,
+      chat1,
+      code,
+    }
     update({ chat1, code })
 
-    // Save to server (Upstash Redis — works cross-device for App Store users)
     try {
       await fetch('/api/session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(session),
       })
-    } catch (_) { /* non-fatal — fallback below */ }
+    } catch (_) {}
 
-    // Also keep localStorage as same-device fallback
     try { localStorage.setItem(`ct_${code}`, JSON.stringify(session)) } catch (_) {}
+
+    // Pre-generate verdict in background so it's ready when user arrives at /verdict
+    // Fire-and-forget — if it fails here, S09Verdict will generate on demand
+    fetch('/api/verdict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name1: session.name1, name2: session.name2,
+        rel: session.rel, duration: session.duration || 50,
+        chat1: session.chat1, chat2: session.chat2 || null,
+        code,
+      }),
+    }).catch(() => {})
 
     setTimeout(() => nav('/invite'), 4000)
   }, [data, nav, update])
 
-  // Holds accumulating stream text so setState closure always has the latest
   const streamText = useRef('')
 
   const handleSend = useCallback(async () => {
@@ -211,15 +335,43 @@ export default function S03Chat() {
     sending.current = true
     setInput('')
 
+    const userMsg = { role: 'user', content: text, time: now() }
+    setMessages(prev => [...prev, userMsg])
+
+    // ── Onboarding: collect name ──────────────────────────────
+    if (phase === 'ask_name') {
+      const name = text.trim()
+      chatData.current.name1 = name
+      setThinking(true)
+      setTimeout(() => {
+        setThinking(false)
+        const resp = `Prazer, ${name}! 😊\n\nQue tipo de relação está envolvida neste conflito?`
+        setMessages(prev => [...prev, { role: 'mara', content: resp, time: now() }])
+        setPhase('ask_rel')
+        sending.current = false
+      }, 700)
+      return
+    }
+
+    // ── Onboarding: collect name2 ─────────────────────────────
+    if (phase === 'ask_name2') {
+      chatData.current.name2 = text.trim()
+      finishOnboarding()
+      sending.current = false
+      return
+    }
+
+    // ── Clinical interview (chatting phase) ───────────────────
     const newQCount = qCount + 1
-    const userMsg   = { role: 'user', content: text, time: now() }
     const newHist   = [...history, { role: 'user', content: text }]
 
-    setMessages(prev => [...prev, userMsg])
+    if (newQCount === 1) track('chat_started', { rel_type: chatData.current.rel })
+    track('chat_message_sent', { message_number: newQCount })
+
     setHistory(newHist)
     setQCount(newQCount)
     setThinking(true)
-    setStatus('a analisar…')
+    setStatus('analisando…')
 
     try {
       const res = await fetch('/api/chat', {
@@ -228,13 +380,12 @@ export default function S03Chat() {
         body: JSON.stringify({
           model:      'claude-haiku-4-5-20251001',
           max_tokens: 600,
-          system:     systemPrompt(data),
+          system:     systemPrompt(chatData.current),
           messages:   newHist,
         }),
       })
 
       if (!res.ok || !res.body) {
-        // Try to read error body
         const errText = await res.text().catch(() => 'unknown')
         console.error('API error', res.status, errText)
         throw new Error(`API ${res.status}`)
@@ -247,7 +398,7 @@ export default function S03Chat() {
       let streamingAdded = false
 
       setThinking(false)
-      setStatus('a responder…')
+      setStatus('respondendo…')
 
       while (true) {
         const { done, value } = await reader.read()
@@ -287,14 +438,13 @@ export default function S03Chat() {
       const clean    = fullText.replace('INTERROGAÇÃO_CONCLUÍDA', '').trim()
       const fullHist = [...newHist, { role: 'assistant', content: clean }]
 
-      // Finalise — remove streaming cursor, set final text
       setMessages(prev => {
         const arr = [...prev]
         arr[arr.length - 1] = { role: 'mara', content: clean, time: now(), streaming: false }
         return arr
       })
       setHistory(fullHist)
-      setStatus(finished ? 'análise concluída ✓' : 'a escutar')
+      setStatus(finished ? 'análise concluída ✓' : 'escutando')
 
       if (finished) finishChat(fullHist)
       else inputRef.current?.focus()
@@ -306,9 +456,8 @@ export default function S03Chat() {
         : 'Me conta mais sobre isso. O que sentiste nesse momento?'
       const fullHist = [...newHist, { role: 'assistant', content: fallback }]
       setThinking(false)
-      setStatus(newQCount >= MAX_Q ? 'análise concluída ✓' : 'a escutar')
+      setStatus(newQCount >= MAX_Q ? 'análise concluída ✓' : 'escutando')
       setMessages(prev => {
-        // Replace streaming placeholder if exists, else append
         const arr = [...prev]
         const last = arr[arr.length - 1]
         if (last?.streaming) arr[arr.length - 1] = { role: 'mara', content: fallback, time: now(), streaming: false }
@@ -319,9 +468,17 @@ export default function S03Chat() {
       if (newQCount >= MAX_Q) finishChat(fullHist)
     }
     sending.current = false
-  }, [input, isDone, qCount, history, data, finishChat])
+  }, [input, isDone, qCount, history, finishChat, finishOnboarding, phase])
 
   const onKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }
+
+  const inputPlaceholder = phase === 'ask_name'  ? 'O teu nome…'
+    : phase === 'ask_name2' ? 'Nome dela/dele… (opcional)'
+    : 'Escreve a tua resposta…'
+
+  const showTextInput = phase !== 'ask_rel' && !isDone
+  const showRelButtons = phase === 'ask_rel'
+  const showSkipBtn = phase === 'ask_name2'
 
   return (
     <>
@@ -338,8 +495,10 @@ export default function S03Chat() {
         transition: 'padding-bottom 0.22s ease',
       }}>
         <XStatus />
+
+        {/* Header */}
         <div style={{ padding: '20px 24px 0', display: 'flex', alignItems: 'center', gap: 12 }}>
-          <XBack onClick={() => nav('/setup')} />
+          <XBack onClick={() => nav('/')} />
           <Lens size={32} intensity={0.6} />
           <div style={{ flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -372,7 +531,14 @@ export default function S03Chat() {
 
         {/* Input dock */}
         <div style={{ padding: kbOffset > 0 ? '0 24px 12px' : '0 24px 28px' }}>
-          {isDone ? (
+
+          {/* Relationship quick-reply buttons */}
+          {showRelButtons && (
+            <RelButtons onSelect={selectRel} disabled={thinking} />
+          )}
+
+          {/* Done state */}
+          {isDone && (
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
               padding: '14px 20px', borderRadius: 16,
@@ -386,12 +552,15 @@ export default function S03Chat() {
                 Chat finalizado
               </span>
             </div>
-          ) : (
+          )}
+
+          {/* Text input */}
+          {showTextInput && (
             <Card raised style={{ padding: 10, display: 'flex', alignItems: 'flex-end', gap: 10 }}>
               <textarea
                 ref={inputRef}
                 rows={1}
-                placeholder="Escreva a sua resposta…"
+                placeholder={inputPlaceholder}
                 value={input}
                 onChange={e => {
                   setInput(e.target.value)
@@ -420,6 +589,24 @@ export default function S03Chat() {
                 <svg width="16" height="16" viewBox="0 0 16 16"><path d="M2.01 15L15 8 2.01 1 2 6.5l9.5 1.5L2 9.5z" fill="#fff"/></svg>
               </button>
             </Card>
+          )}
+
+          {/* Skip name2 button */}
+          {showSkipBtn && (
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <button
+                onClick={skipName2}
+                disabled={thinking}
+                style={{
+                  background: 'none', border: 'none', cursor: 'pointer',
+                  fontSize: 12.5, color: X.textMute, fontFamily: FUI,
+                  padding: '4px 12px', letterSpacing: 0.2,
+                  opacity: thinking ? 0.4 : 1,
+                }}
+              >
+                Prefiro não dizer →
+              </button>
+            </div>
           )}
         </div>
       </div>

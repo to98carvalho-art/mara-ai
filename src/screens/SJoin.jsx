@@ -129,7 +129,7 @@ export default function SJoin() {
               }}>também conta.</em>
             </h1>
             <p style={{ margin: '14px 0 0', fontSize: 14, color: X.textSoft, lineHeight: 1.5, maxWidth: 260 }}>
-              Digite o código de 4 caracteres que recebeste para entrares na sessão.
+              Digite o código de 4 caracteres que você recebeu para entrar na sessão.
             </p>
           </div>
 
@@ -183,7 +183,7 @@ export default function SJoin() {
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
           }}
         >
-          {loading ? 'A carregar…' : 'Entrar na sessão'}
+          {loading ? 'Carregando…' : 'Entrar na sessão'}
           {!loading && filled && (
             <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
           )}

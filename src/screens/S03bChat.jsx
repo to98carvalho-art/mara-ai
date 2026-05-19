@@ -5,6 +5,7 @@ import { X, FUI, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import Lens from '../components/Lens'
 import XStatus from '../components/XStatus'
 import Card from '../components/Card'
+import { track } from '../utils/analytics'
 
 const MAX_Q = 8
 const now = () => new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
@@ -73,7 +74,7 @@ function Thinking() {
             <div key={d} style={{ width: 6, height: 6, background: X.acc1, borderRadius: '50%', animation: `dt 1.1s ${d}s ease-in-out infinite` }} />
           ))}
         </div>
-        <span style={{ fontSize: 12.5, color: X.textMute, letterSpacing: 0.2 }}>a analisar</span>
+        <span style={{ fontSize: 12.5, color: X.textMute, letterSpacing: 0.2 }}>analisando</span>
       </div>
     </div>
   )
@@ -109,7 +110,7 @@ export default function S03bChat() {
   const [thinking,  setThinking]  = useState(false)
   const [isDone,    setIsDone]    = useState(false)
   const [qCount,    setQCount]    = useState(0)
-  const [status,    setStatus]    = useState('a escutar')
+  const [status,    setStatus]    = useState('escutando')
 
   const bottomRef  = useRef(null)
   const inputRef   = useRef(null)
@@ -165,7 +166,7 @@ export default function S03bChat() {
     patchStatus({ status: 'opened', openedAt: Date.now() })
     const n2 = data.name2 ? `, ${data.name2}` : ''
     const n1 = data.name1 || 'a outra pessoa'
-    const opening = `Olá${n2}. Obrigada por estares aqui — sei que não é fácil entrar numa conversa destas.\n\nSou a Mara. O meu trabalho é ouvir-te com total atenção e sem julgamentos. Existe uma situação entre ti e o/a ${n1} que precisa de ser analisada — e a sua versão é essencial para que o resultado seja justo.\n\nComeçemos pelo mais importante: da sua perspetiva, o que é que se passa entre vocês? Me conta como tens vivido esta situação.`
+    const opening = `Olá${n2}. Obrigada por estar aqui — sei que não é fácil entrar numa conversa dessas.\n\nSou a Mara. Meu trabalho é ouvir você com total atenção e sem julgamentos. Existe uma situação entre você e ${n1} que precisa ser analisada — e a sua versão é essencial para que o resultado seja justo.\n\nVamos começar pelo mais importante: da sua perspectiva, o que está acontecendo entre vocês? Me conta como você tem vivido essa situação.`
     setThinking(true)
     const t = setTimeout(() => {
       setThinking(false)
@@ -213,11 +214,13 @@ export default function S03bChat() {
     const userMsg   = { role: 'user', content: text, time: now() }
     const newHist   = [...history, { role: 'user', content: text }]
 
+    track('chat_message_sent', { message_number: newQCount, side: 2 })
+
     setMessages(prev => [...prev, userMsg])
     setHistory(newHist)
     setQCount(newQCount)
     setThinking(true)
-    setStatus('a analisar…')
+    setStatus('analisando…')
 
     // Emit chatting progress so S05Analyzing can show live %
     const progress = Math.round((newQCount / MAX_Q) * 100)
@@ -244,7 +247,7 @@ export default function S03bChat() {
       let streamingAdded = false
 
       setThinking(false)
-      setStatus('a responder…')
+      setStatus('respondendo…')
 
       while (true) {
         const { done, value } = await reader.read()
@@ -280,7 +283,7 @@ export default function S03bChat() {
 
       setMessages(prev => { const arr = [...prev]; arr[arr.length - 1] = { role: 'mara', content: clean, time: now(), streaming: false }; return arr })
       setHistory(fullHist)
-      setStatus(finished ? 'análise concluída ✓' : 'a escutar')
+      setStatus(finished ? 'análise concluída ✓' : 'escutando')
 
       if (finished) finishChat2(fullHist)
       else inputRef.current?.focus()
@@ -291,7 +294,7 @@ export default function S03bChat() {
         : 'Me conta mais sobre isso. O que sentiste nesse momento?'
       const fullHist = [...newHist, { role: 'assistant', content: fallback }]
       setThinking(false)
-      setStatus(newQCount >= MAX_Q ? 'análise concluída ✓' : 'a escutar')
+      setStatus(newQCount >= MAX_Q ? 'análise concluída ✓' : 'escutando')
       setMessages(prev => { const arr = [...prev]; const last = arr[arr.length - 1]; if (last?.streaming) arr[arr.length - 1] = { role: 'mara', content: fallback, time: now(), streaming: false }; else arr.push({ role: 'mara', content: fallback, time: now() }); return arr })
       setHistory(fullHist)
       if (newQCount >= MAX_Q) finishChat2(fullHist)

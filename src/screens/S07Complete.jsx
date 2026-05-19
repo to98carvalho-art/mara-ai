@@ -49,7 +49,7 @@ export default function S07Complete() {
         <Card raised style={{ marginTop: 14, padding: 18 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, color: X.acc1, textTransform: 'uppercase' }}>resumo</div>
           <div style={{ fontSize: 14, fontFamily: FED, fontStyle: 'italic', lineHeight: 1.5, color: X.text, marginTop: 8 }}>
-            "Cruzámos as duas versões em 28 perguntas. O padrão é claro — uma das partes tem responsabilidade desproporcional."
+            "Cruzamos as duas versões em 28 perguntas. O padrão é claro — uma das partes tem responsabilidade desproporcional."
           </div>
         </Card>
 

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { X, FUI, FED, GRAD, GRAD_TXT } from '../design/tokens'
 import { art, dArt, getGender } from '../utils/gender'
+import { track } from '../utils/analytics'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 
@@ -37,6 +38,7 @@ export default function S04Invite() {
       if (!res.ok) throw new Error(data.error || 'Erro ao enviar.')
       setSent(true)
       update({ inviteSent: true })
+      track('partner_link_sent')
       setTimeout(() => nav('/analyzing'), 2200)
     } catch (err) {
       setError(err.message)
@@ -218,7 +220,7 @@ export default function S04Invite() {
             {art(name2)} {name2} vai receber
           </div>
           <div style={{ fontSize: 12.5, color: X.textSoft, lineHeight: 1.6 }}>
-            Uma mensagem da Mara a explicar o processo, com um link direto para dar a versão dele — sem precisar de instalar nada.
+            Uma mensagem da Mara explicando o processo, com um link direto para dar a versão dele — sem precisar instalar nada.
           </div>
         </div>
 
@@ -253,7 +255,7 @@ export default function S04Invite() {
             {sending ? (
               <>
                 <span style={{ width: 16, height: 16, borderRadius: 8, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', display: 'inline-block', animation: 'spin .7s linear infinite' }}/>
-                A enviar…
+                Enviando…
               </>
             ) : (
               <>

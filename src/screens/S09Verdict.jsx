@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { X, FED, FNUM, FUI, GRAD, GRAD_TXT } from '../design/tokens'
@@ -7,6 +7,85 @@ import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Card from '../components/Card'
 import Lens from '../components/Lens'
+import { track } from '../utils/analytics'
+
+const LOADING_STEPS = [
+  { text: 'A cruzar os dois lados do conflito…',      sub: 'comparando versões e pontos de tensão'     },
+  { text: 'A identificar padrões de vinculação…',     sub: 'modelo Bowlby · estilos ansioso e evitante' },
+  { text: 'A aplicar o modelo Gottman…',              sub: 'os 4 cavaleiros + ratio positivo/negativo'  },
+  { text: 'A calcular responsabilidades…',            sub: 'análise imparcial com base em evidência'    },
+  { text: 'A redigir a análise clínica…',             sub: 'diagnóstico psicológico detalhado'          },
+  { text: 'A escrever as cartas pessoais…',           sub: 'uma mensagem privada para cada pessoa'      },
+  { text: 'A preparar o plano de resolução…',         sub: 'passos concretos e prognóstico real'        },
+  { text: 'A finalizar o relatório…',                 sub: 'quase pronto'                               },
+]
+
+function LoadingScreen({ name1, name2 }) {
+  const [step, setStep] = useState(0)
+  const [fade, setFade] = useState(true)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(false)
+      setTimeout(() => {
+        setStep(s => (s + 1) % LOADING_STEPS.length)
+        setFade(true)
+      }, 300)
+    }, 3200)
+    return () => clearInterval(interval)
+  }, [])
+
+  const current = LOADING_STEPS[step]
+
+  return (
+    <div style={{ flex: 1, background: X.ink, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '0 32px' }}>
+      <XStatus />
+      {/* Glow */}
+      <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translate(-50%, -50%)', width: 300, height: 300, borderRadius: '50%', background: `radial-gradient(circle, ${X.acc1}28 0%, transparent 70%)`, filter: 'blur(40px)', pointerEvents: 'none' }}/>
+
+      <div style={{ position: 'relative', marginBottom: 32 }}>
+        <Lens size={88} intensity={1.4} />
+      </div>
+
+      {/* Names */}
+      {name1 && name2 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
+          {[name1, name2].map((n, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: i === 0 ? 0 : 10 }}>
+              {i === 1 && <div style={{ fontSize: 10, fontWeight: 700, color: X.textMute, letterSpacing: 2 }}>×</div>}
+              <div style={{ padding: '5px 14px', borderRadius: 999, background: i === 0 ? `${X.acc1}18` : `${X.acc2}18`, border: `1px solid ${i === 0 ? X.acc1 : X.acc2}40`, fontSize: 13, fontWeight: 600, color: i === 0 ? X.acc1 : X.acc2 }}>{n}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Step text */}
+      <div style={{ textAlign: 'center', transition: 'opacity 0.3s', opacity: fade ? 1 : 0 }}>
+        <div style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 22, color: X.text, letterSpacing: -0.5, lineHeight: 1.2 }}>
+          {current.text}
+        </div>
+        <div style={{ marginTop: 8, fontSize: 12.5, color: X.textMute, lineHeight: 1.5 }}>
+          {current.sub}
+        </div>
+      </div>
+
+      {/* Progress dots */}
+      <div style={{ marginTop: 32, display: 'flex', gap: 6 }}>
+        {LOADING_STEPS.map((_, i) => (
+          <div key={i} style={{
+            width: i === step ? 18 : 5, height: 5, borderRadius: 3,
+            background: i === step ? GRAD : 'rgba(255,255,255,0.12)',
+            transition: 'all 0.4s ease',
+          }}/>
+        ))}
+      </div>
+
+      <div style={{ marginTop: 20, fontSize: 11.5, color: X.textMute }}>
+        Demora cerca de 20–40 segundos
+      </div>
+    </div>
+  )
+}
 
 const HEALTH_MAP = {
   saudável: { color: '#34D399', label: 'Relação saudável'  },
@@ -136,24 +215,62 @@ export default function S09Verdict() {
   const [copied,   setCopied]   = useState(false)
   const [animated, setAnimated] = useState(false)
 
+  // purchase_completed — when returning from Stripe with ?paid=1
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('paid') === '1') {
+      track('purchase_completed', { both_sides: !!data.chat2 })
+      update({ paid: true })
+    }
+    track('verdict_viewed', { both_sides: !!data.chat2 })
+  }, [])
+
   useEffect(() => {
     if (data.verdict) { setTimeout(() => setAnimated(true), 200); return }
+
     setLoading(true)
-    fetch('/api/verdict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name1: data.name1, name2: data.name2,
-        rel: data.rel, duration: data.duration,
-        chat1: data.chat1, chat2: data.chat2 || null,
-      }),
-    })
-      .then(r => r.json())
-      .then(v => {
+
+    async function loadVerdict() {
+      // 1. Try to get pre-generated verdict from cache (fast path)
+      if (data.code) {
+        try {
+          const cached = await fetch(`/api/verdict?code=${data.code}`)
+          if (cached.ok) {
+            const { verdict: v } = await cached.json()
+            if (v) {
+              setVerdict(v); update({ verdict: v }); setLoading(false)
+              setTimeout(() => setAnimated(true), 300)
+              return
+            }
+          }
+        } catch (_) { /* fall through to generation */ }
+      }
+
+      // 2. Not cached yet — generate on demand (slower path)
+      try {
+        const res = await fetch('/api/verdict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name1: data.name1, name2: data.name2,
+            rel: data.rel, duration: data.duration,
+            chat1: data.chat1, chat2: data.chat2 || null,
+            code: data.code || '',
+          }),
+        })
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const v = await res.json()
+        if (!v || v.error) throw new Error(v?.error || 'Resposta inválida')
         setVerdict(v); update({ verdict: v }); setLoading(false)
         setTimeout(() => setAnimated(true), 300)
-      })
-      .catch(() => { setError('Erro ao gerar análise. Tenta novamente.'); setLoading(false) })
+      } catch (err) {
+        console.error('Verdict fetch failed:', err.message)
+        setError('Erro ao gerar análise. Tenta novamente.')
+        setLoading(false)
+      }
+    }
+
+    loadVerdict()
   }, [])
 
   async function handleShare() {
@@ -181,21 +298,9 @@ export default function S09Verdict() {
   const name2 = data.name2 || ''
 
   /* ── Loading ── */
-  if (loading) return (
-    <div style={{ flex: 1, background: X.ink, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: 24 }}>
-      <XStatus />
-      <div style={{ position: 'relative' }}>
-        <div style={{ position: 'absolute', inset: -40, borderRadius: '50%', background: `radial-gradient(circle, ${X.acc1}30 0%, transparent 70%)`, filter: 'blur(20px)' }}/>
-        <Lens size={90} intensity={1.3} />
-      </div>
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 26, color: X.text, letterSpacing: -0.6 }}>A analisar…</div>
-        <div style={{ marginTop: 8, fontSize: 13.5, color: X.textSoft, lineHeight: 1.5 }}>
-          A Mara está a cruzar os dois lados<br/>com base em evidência clínica
-        </div>
-      </div>
-    </div>
-  )
+  if (loading) return <LoadingScreen name1={name1} name2={name2} />
+
+  // defined below, hoisted here for readability
 
   /* ── Error ── */
   if (error) return (
@@ -306,37 +411,6 @@ export default function S09Verdict() {
             isDominant={pct2 > pct1} animated={animated}
           />
         </div>
-
-        {/* ── Main reason ── */}
-        {v?.main_reason && (
-          <div style={{
-            marginTop: 14, padding: '16px 18px', borderRadius: 18,
-            background: `linear-gradient(135deg, ${X.acc1}0f 0%, ${X.acc2}08 100%)`,
-            border: `1px solid ${X.acc1}25`,
-          }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.6, color: X.acc1, textTransform: 'uppercase', marginBottom: 8 }}>
-              razão principal
-            </div>
-            <div style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 15.5, lineHeight: 1.6, color: X.text }}>
-              "{v.main_reason}"
-            </div>
-          </div>
-        )}
-
-        {/* ── Red flags ── */}
-        {v?.red_flags?.length > 0 && (
-          <div style={{ marginTop: 12, padding: '14px 16px', borderRadius: 16, background: 'rgba(255,75,110,0.07)', border: '1px solid rgba(255,75,110,0.22)' }}>
-            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.6, color: '#FF4B6E', textTransform: 'uppercase', marginBottom: 10 }}>
-              ⚠ sinais de alerta
-            </div>
-            {v.red_flags.map((f, i) => (
-              <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: i < v.red_flags.length - 1 ? 7 : 0 }}>
-                <div style={{ width: 4, height: 4, borderRadius: 2, background: '#FF4B6E', marginTop: 7, flexShrink: 0 }}/>
-                <div style={{ fontSize: 13.5, color: X.text, lineHeight: 1.45 }}>{f}</div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* ── Urgent ── */}
         {v?.urgent_message && (

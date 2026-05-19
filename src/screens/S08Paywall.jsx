@@ -1,9 +1,11 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { X, FED, FNUM, FUI, GRAD, GRAD_TXT } from '../design/tokens'
 import XStatus from '../components/XStatus'
 import XBtn from '../components/XBtn'
 import Card from '../components/Card'
+import { track } from '../utils/analytics'
 
 const LOCK = (
   <svg width="11" height="12" viewBox="0 0 11 12" fill="none">
@@ -87,9 +89,79 @@ const REPORTS = [
 
 export default function S08Paywall() {
   const nav = useNavigate()
-  const { data } = useApp()
+  const { data, update } = useApp()
   const name1 = data.name1 || 'Tu'
   const name2 = data.name2 || 'a outra pessoa'
+
+  // payment_shown + checkout_abandoned
+  useEffect(() => {
+    const bothSides = !!data.chat2
+    track('payment_shown', { both_sides: bothSides })
+    // detect return from Stripe cancel
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('abandoned') === '1') track('checkout_abandoned')
+    return () => {}
+  }, [])
+
+  const [loading,      setLoading]      = useState(false)
+  const [error,        setError]        = useState('')
+  const [promoCode,    setPromoCode]    = useState('')
+  const [promoLoading, setPromoLoading] = useState(false)
+  const [promoResult,  setPromoResult]  = useState(null) // { valid, type, discount }
+  const [promoError,   setPromoError]   = useState('')
+  const [showPromo,    setShowPromo]    = useState(false)
+
+  const discount   = promoResult?.valid ? promoResult.discount : 0
+  const finalPrice = discount === 100 ? 0 : (9.99 * (1 - discount / 100)).toFixed(2)
+
+  async function applyPromo() {
+    if (!promoCode.trim()) return
+    setPromoLoading(true)
+    setPromoError('')
+    setPromoResult(null)
+    try {
+      const res  = await fetch('/api/validate-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: promoCode }),
+      })
+      const json = await res.json()
+      if (json.valid) {
+        setPromoResult(json)
+      } else {
+        setPromoError(json.error || 'Código inválido.')
+      }
+    } catch {
+      setPromoError('Erro ao validar código.')
+    } finally {
+      setPromoLoading(false)
+    }
+  }
+
+  async function handlePay() {
+    // Free code — skip payment
+    if (promoResult?.type === 'free') {
+      update({ paid: true })
+      nav('/verdict')
+      return
+    }
+    track('checkout_opened', { promo_applied: !!promoResult?.valid })
+    setLoading(true)
+    setError('')
+    try {
+      const res = await fetch('/api/create-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: data.code || '', promoCode: promoResult?.valid ? promoCode : '' }),
+      })
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Erro ao iniciar pagamento.')
+      window.location.href = json.url
+    } catch (err) {
+      setError(err.message)
+      setLoading(false)
+    }
+  }
 
   return (
     <div style={{ position: 'relative', flex: 1, background: X.ink, display: 'flex', flexDirection: 'column', height: '100%' }}>
@@ -119,7 +191,7 @@ export default function S08Paywall() {
             <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>está pronto.</em>
           </h1>
           <p style={{ margin: '10px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.5 }}>
-            Desbloqueie para acessar a todos os resultados.
+            Desbloqueie para acessar todos os resultados.
           </p>
         </div>
 
@@ -168,19 +240,111 @@ export default function S08Paywall() {
 
       {/* Sticky bottom CTA */}
       <div style={{ padding: '14px 24px 28px', background: `linear-gradient(to bottom, transparent, ${X.ink} 30%)`, borderTop: `1px solid ${X.line}` }}>
+
+        {/* Promo code zone */}
+        {!promoResult?.valid && (
+          <div style={{ marginBottom: 10 }}>
+            {!showPromo ? (
+              <div
+                onClick={() => setShowPromo(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                  padding: '10px', borderRadius: 12, cursor: 'pointer',
+                  background: 'rgba(255,255,255,0.03)', border: `1px dashed ${X.line}`,
+                }}
+              >
+                <span style={{ fontSize: 14 }}>🏷️</span>
+                <span style={{ fontSize: 13, color: X.acc1, fontWeight: 600 }}>Tens um código de desconto?</span>
+              </div>
+            ) : null}
+          </div>
+        )}
+
+        {showPromo && !promoResult?.valid && (
+          <div style={{ marginBottom: 12 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <input
+                type="text"
+                placeholder="Ex: MARA2024"
+                value={promoCode}
+                onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoError('') }}
+                onKeyDown={e => e.key === 'Enter' && applyPromo()}
+                style={{
+                  flex: 1, background: 'rgba(255,255,255,0.05)',
+                  border: `1px solid ${promoError ? '#FF4B6E' : X.line}`, borderRadius: 12,
+                  padding: '11px 14px', color: X.text, fontFamily: FUI, fontSize: 15,
+                  outline: 'none', letterSpacing: 1.5, textTransform: 'uppercase',
+                }}
+              />
+              <div
+                onClick={applyPromo}
+                style={{
+                  padding: '0 16px', borderRadius: 12, background: GRAD, cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 13, fontWeight: 700, color: '#fff', flexShrink: 0,
+                  opacity: promoLoading ? 0.6 : 1,
+                }}
+              >
+                {promoLoading ? '…' : 'Aplicar'}
+              </div>
+            </div>
+            {promoError && <div style={{ marginTop: 5, fontSize: 12, color: '#FF4B6E' }}>{promoError}</div>}
+          </div>
+        )}
+
+        {/* Applied promo badge */}
+        {promoResult?.valid && (
+          <div style={{ marginBottom: 10, padding: '10px 14px', borderRadius: 12, background: `${X.good}12`, border: `1px solid ${X.good}40`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 14 }}>🎉</span>
+              <div>
+                <div style={{ fontSize: 12.5, fontWeight: 700, color: X.good }}>
+                  {promoResult.type === 'free' ? 'Acesso grátis!' : `${promoResult.discount}% de desconto`}
+                </div>
+                <div style={{ fontSize: 11, color: X.textMute }}>código {promoCode} aplicado</div>
+              </div>
+            </div>
+            <div onClick={() => { setPromoResult(null); setPromoCode(''); setShowPromo(false) }} style={{ fontSize: 12, color: X.textMute, cursor: 'pointer' }}>✕</div>
+          </div>
+        )}
+
+        {/* Price */}
         <div style={{ textAlign: 'center', marginBottom: 10 }}>
-          <span style={{ fontFamily: FNUM, fontSize: 32, fontWeight: 300, letterSpacing: -0.5, color: X.text }}>R$9,99</span>
-          <span style={{ fontSize: 12, color: X.textMute, marginLeft: 8 }}>· pagamento único</span>
+          {discount > 0 && discount < 100 && (
+            <span style={{ fontFamily: FNUM, fontSize: 18, fontWeight: 300, color: X.textMute, textDecoration: 'line-through', marginRight: 8 }}>R$9,99</span>
+          )}
+          <span style={{ fontFamily: FNUM, fontSize: 32, fontWeight: 300, letterSpacing: -0.5, color: promoResult?.valid ? X.good : X.text }}>
+            {promoResult?.type === 'free' ? 'Grátis' : `R$${finalPrice}`}
+          </span>
+          {!promoResult?.valid && <span style={{ fontSize: 12, color: X.textMute, marginLeft: 8 }}>· pagamento único</span>}
         </div>
-        <XBtn primary onClick={() => nav('/verdict')}>
-          <svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 6V4a3.5 3.5 0 117 0v2m-9 0h11v7H1z" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinejoin="round"/></svg>
-          Desbloquear relatório completo
+
+        <XBtn primary onClick={handlePay} disabled={loading}>
+          {loading ? (
+            <>
+              <span style={{ width: 14, height: 14, borderRadius: 7, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', display: 'inline-block', animation: 'spin .7s linear infinite' }}/>
+              A preparar…
+            </>
+          ) : promoResult?.type === 'free' ? (
+            <>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7l4 4 6-6" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              Ver relatório completo
+            </>
+          ) : (
+            <>
+              <svg width="14" height="14" viewBox="0 0 14 14"><path d="M3 6V4a3.5 3.5 0 117 0v2m-9 0h11v7H1z" stroke="#fff" strokeWidth="1.5" fill="none" strokeLinejoin="round"/></svg>
+              Desbloquear relatório completo
+            </>
+          )}
         </XBtn>
+
+        {error && <div style={{ marginTop: 8, fontSize: 12.5, color: '#FF4B6E', textAlign: 'center' }}>{error}</div>}
         <div style={{ marginTop: 10, display: 'flex', justifyContent: 'center', gap: 12, fontSize: 11, color: X.textMute }}>
-          <span>✓ pagamento seguro</span>
+          <span>✓ Pix · cartão · Apple Pay</span>
           <span>·</span>
-          <span>✓ apple pay · google pay</span>
+          <span>✓ pagamento seguro</span>
         </div>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     </div>
   )

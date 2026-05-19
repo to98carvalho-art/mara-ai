@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { AppProvider } from './context/AppContext'
+import SLanding      from './screens/SLanding'
 import S01Welcome    from './screens/S01Welcome'
-import S02Setup      from './screens/S02Setup'
 import S03Chat       from './screens/S03Chat'
 import S03bChat      from './screens/S03bChat'
 import S04Invite     from './screens/S04Invite'
@@ -17,7 +17,10 @@ import S10Resolution from './screens/S10Resolution'
 import SJoin         from './screens/SJoin'
 import SCodeEntry    from './screens/SCodeEntry'
 import SDevSeed      from './screens/SDevSeed'
+import SPrivacy      from './screens/SPrivacy'
+import STerms        from './screens/STerms'
 import DesignCanvas  from './design/DesignCanvas'
+import CookieBanner  from './components/CookieBanner'
 
 // Route order — used to determine slide direction
 const ROUTE_ORDER = {
@@ -63,15 +66,41 @@ function AnimatedPage({ children, dir }) {
   )
 }
 
+function useIsDesktop() {
+  const [desktop, setDesktop] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth >= 1024 : false
+  )
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)')
+    setDesktop(mq.matches)
+    const handler = (e) => setDesktop(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return desktop
+}
+
+
 function Shell({ children }) {
   const loc = useLocation()
+  const desktop = useIsDesktop()
   if (loc.pathname === '/design') return <>{children}</>
-  return <div className="phone">{children}</div>
+  // Landing page on desktop — full width website
+  if (loc.pathname === '/' && desktop) return <>{children}</>
+  // App pages on desktop — web layout (no phone frame)
+  if (desktop) return <div className="desktop-app">{children}</div>
+  // Mobile/tablet — full screen app
+  return (
+    <div className="phone-bg">
+      <div className="phone">{children}</div>
+    </div>
+  )
 }
 
 function AnimatedRoutes() {
   const loc = useLocation()
   const prevPath = useRef(loc.pathname)
+  const desktop = useIsDesktop()
 
   const prevOrder = ROUTE_ORDER[prevPath.current] ?? 0
   const currOrder = ROUTE_ORDER[loc.pathname]    ?? 0
@@ -86,11 +115,11 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={loc} key={loc.pathname}>
         <Route path="/design"     element={<DesignCanvas />} />
-        <Route path="/"           element={<P><S01Welcome /></P>} />
+        <Route path="/"           element={desktop ? <SLanding /> : <P><S01Welcome /></P>} />
         <Route path="/join"       element={<P><SJoin /></P>} />
         <Route path="/code"       element={<P><SCodeEntry /></P>} />
         <Route path="/dev/seed"   element={<P><SDevSeed /></P>} />
-        <Route path="/setup"      element={<P><S02Setup /></P>} />
+        <Route path="/setup"      element={<Navigate to="/chat" replace />} />
         <Route path="/chat"       element={<P><S03Chat /></P>} />
         <Route path="/chat2"      element={<P><S03bChat /></P>} />
         <Route path="/invite"     element={<P><S04Invite /></P>} />
@@ -101,6 +130,8 @@ function AnimatedRoutes() {
         <Route path="/paywall"    element={<P><S08Paywall /></P>} />
         <Route path="/verdict"    element={<P><S09Verdict /></P>} />
         <Route path="/resolution" element={<P><S10Resolution /></P>} />
+        <Route path="/privacy"    element={<SPrivacy />} />
+        <Route path="/terms"      element={<STerms />} />
         <Route path="*"           element={<Navigate to="/" replace />} />
       </Routes>
     </AnimatePresence>
@@ -114,6 +145,7 @@ export default function App() {
         <Shell>
           <AnimatedRoutes />
         </Shell>
+        <CookieBanner />
       </BrowserRouter>
     </AppProvider>
   )

@@ -17,7 +17,7 @@ function ringPct(status, chatProgress = 0) {
 
 function statusLabel(status, name2) {
   if (status === 'completed') return `${name2} respondeu`
-  if (status === 'chatting')  return `${name2} está a responder`
+  if (status === 'chatting')  return `${name2} está respondendo`
   if (status === 'opened')    return `${name2} abriu o convite`
   return 'À espera de resposta'
 }
@@ -143,6 +143,14 @@ export default function S05Analyzing() {
       if (bestStatus === 'completed' && !navigated) {
         setNavigated(true)
         clearInterval(pollRef.current)
+        // Fetch full session so Person A has chat2 in context for verdict generation
+        try {
+          const res = await fetch(`/api/session?c=${code}`)
+          if (res.ok) {
+            const fullSession = await res.json()
+            update({ ...data, ...fullSession, sessionStatus: 'completed' })
+          }
+        } catch (_) {}
         // Brief pause to show 100% before navigating
         setTimeout(() => nav('/solo'), 2000)
       }
@@ -345,7 +353,7 @@ export default function S05Analyzing() {
                     {isChatting && (
                       <div style={{ fontSize: 11.5, color: coreColor, marginTop: 6, display: 'flex', alignItems: 'center', gap: 5 }}>
                         <Pulse color={coreColor} />
-                        <span>a responder</span>
+                        <span>respondendo</span>
                       </div>
                     )}
                   </div>
@@ -367,7 +375,7 @@ export default function S05Analyzing() {
               done={isCompleted}
               active={isChatting}
               muted={isWaiting || isOpened}
-              label={isChatting ? `${name2} está a responder — ${chatProgress}%` : `${name2} está a responder`}
+              label={isChatting ? `${name2} está respondendo — ${chatProgress}%` : `${name2} está respondendo`}
             />
             <Step
               active={isCompleted}
@@ -385,7 +393,7 @@ export default function S05Analyzing() {
                 <path d="M9 2l6 3v4c0 4-3 5.5-6 6-3-.5-6-2-6-6V5z" stroke={X.acc1} strokeWidth="1.5"/>
               </svg>
               <div style={{ fontSize: 13, color: X.textSoft, lineHeight: 1.4 }}>
-                Te avisamos assim que {art(name2)} {name2} responder. Pode fechar o ecrã.
+                Te avisamos assim que {art(name2)} {name2} responder. Pode fechar a tela.
               </div>
             </Card>
           ) : (

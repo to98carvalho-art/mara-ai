@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { useApp } from '../context/AppContext'
 import { X, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
+import { getGender } from '../utils/gender'
 import XStatus from '../components/XStatus'
 import XBack from '../components/XBack'
 import Lens from '../components/Lens'
@@ -39,7 +40,7 @@ export default function S06Replied() {
                 fontFamily: FED, fontSize: 44, fontWeight: 400, fontStyle: 'italic',
                 letterSpacing: -1, lineHeight: 1,
                 background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-              }}>a versão dele.</em>
+              }}>{getGender(name2) === 'f' ? 'a versão dela.' : 'a versão dele.'}</em>
             </h1>
             <p style={{ margin: '14px 0 0', fontSize: 14.5, color: X.textSoft, lineHeight: 1.5, maxWidth: 280 }}>
               A Mara já tem toda a informação. Vamos cruzar os dois lados.

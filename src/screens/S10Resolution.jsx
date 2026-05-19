@@ -59,6 +59,15 @@ function ViewAnalysis({ v, onBack }) {
         O diagnóstico<br/>
         <em style={{ fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>da relação.</em>
       </h2>
+
+      {/* Razão principal */}
+      {v?.main_reason && (
+        <div style={{ marginTop: 20, padding: '16px 18px', borderRadius: 18, background: `linear-gradient(135deg, ${X.acc1}0f 0%, ${X.acc2}08 100%)`, border: `1px solid ${X.acc1}30` }}>
+          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.6, color: X.acc1, textTransform: 'uppercase', marginBottom: 8 }}>causa raiz</div>
+          <div style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 15.5, lineHeight: 1.65, color: X.text }}>"{v.main_reason}"</div>
+        </div>
+      )}
+
       <div style={{ marginTop: 20, fontSize: 14.5, color: X.textSoft, lineHeight: 1.85, whiteSpace: 'pre-line' }}>
         {v?.clinical_analysis || 'Análise não disponível.'}
       </div>
@@ -159,7 +168,6 @@ function ViewPatterns({ v, onBack }) {
     'contempto':      'O mais destrutivo. Transmite superioridade: sarcasmo, olhos revirados, insultos.',
     'defensividade':  'Vitimização para evitar responsabilidade. Responde às queixas com contra-ataques.',
     'stonewalling':   'Fechar-se, ignorar, desligar emocionalmente durante o conflito.',
-    'crítica':        'Atacar o caráter em vez do comportamento específico.',
   }
   return (
     <div style={{ padding: '20px 24px 44px', flex: 1, display: 'flex', flexDirection: 'column' }}>
@@ -253,58 +261,63 @@ function WhoAreYou({ name1, name2, color1, color2, onSelect }) {
   )
 }
 
-function ViewNeeds({ v, name1, name2, onBack }) {
-  const [who, setWho] = useState(null)  // null | 1 | 2
-  const hasData = !!(v?.needs_1 || v?.needs_2)
+function LockedCard({ name, color }) {
+  return (
+    <div style={{ marginTop: 12, borderRadius: 20, overflow: 'hidden', position: 'relative' }}>
+      {/* Blurred fake content */}
+      <div style={{ padding: '20px', background: `${color}08`, border: `1px solid ${color}25`, borderRadius: 20, filter: 'blur(5px)', userSelect: 'none', pointerEvents: 'none' }}>
+        <div style={{ height: 12, borderRadius: 6, background: `${color}30`, marginBottom: 10, width: '80%' }}/>
+        <div style={{ height: 10, borderRadius: 5, background: `${color}20`, marginBottom: 8, width: '95%' }}/>
+        <div style={{ height: 10, borderRadius: 5, background: `${color}20`, marginBottom: 8, width: '70%' }}/>
+        <div style={{ height: 10, borderRadius: 5, background: `${color}20`, width: '85%' }}/>
+      </div>
+      {/* Lock overlay */}
+      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'rgba(10,7,23,0.55)', borderRadius: 20, border: `1px solid ${color}25` }}>
+        <div style={{ fontSize: 22 }}>🔒</div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: X.textSoft, textAlign: 'center', lineHeight: 1.4 }}>
+          Apenas <span style={{ color }}>{name}</span> pode ler isto
+        </div>
+      </div>
+    </div>
+  )
+}
 
-  const person = who === 1
-    ? { name: name1, text: v?.needs_1, color: X.acc1 }
-    : who === 2
-    ? { name: name2, text: v?.needs_2, color: X.acc2 }
-    : null
+function ViewNeeds({ v, name1, name2, side, onBack }) {
+  const hasData = !!(v?.needs_1 || v?.needs_2)
+  const me    = side === 2 ? { name: name2, text: v?.needs_2, color: X.acc2 } : { name: name1, text: v?.needs_1, color: X.acc1 }
+  const other = side === 2 ? { name: name1, color: X.acc1 } : { name: name2, color: X.acc2 }
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '20px 24px 0' }}>
-        <SecHeader
-          label="O que precisas"
-          color={who === 1 ? X.acc1 : who === 2 ? X.acc2 : '#34D399'}
-          onBack={who ? () => setWho(null) : onBack}
-        />
+        <SecHeader label="O que precisas" color={me.color} onBack={onBack} />
       </div>
 
       {!hasData ? (
         <div style={{ padding: '0 24px' }}><OldVerdictNotice onBack={onBack} /></div>
-      ) : !who ? (
-        <WhoAreYou name1={name1} name2={name2} color1={X.acc1} color2={X.acc2} onSelect={setWho} />
       ) : (
         <div style={{ padding: '0 24px 44px', flex: 1 }}>
           {/* Personal header */}
-          <div style={{ marginTop: 20, padding: '14px 18px', borderRadius: 16, background: `${person.color}10`, border: `1px solid ${person.color}35`, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 18, background: `${person.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FED, fontStyle: 'italic', fontSize: 16, color: person.color, flexShrink: 0 }}>
-              {person.name?.[0]?.toUpperCase()}
+          <div style={{ marginTop: 20, padding: '12px 16px', borderRadius: 14, background: `${me.color}10`, border: `1px solid ${me.color}35`, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            <div style={{ width: 34, height: 34, borderRadius: 17, background: `${me.color}22`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FED, fontStyle: 'italic', fontSize: 15, color: me.color, flexShrink: 0 }}>
+              {me.name?.[0]?.toUpperCase()}
             </div>
             <div>
-              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, color: person.color, textTransform: 'uppercase' }}>só para ti</div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: X.text, marginTop: 1 }}>As necessidades de {person.name}</div>
+              <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, color: me.color, textTransform: 'uppercase' }}>só para ti</div>
+              <div style={{ fontSize: 13.5, fontWeight: 600, color: X.text, marginTop: 1 }}>As necessidades de {me.name}</div>
             </div>
           </div>
 
-          <h2 style={{ margin: '0 0 16px', fontFamily: FED, fontSize: 26, fontWeight: 400, letterSpacing: -0.8, lineHeight: 1.1, color: X.text }}>
-            O que realmente<br/>
-            <em style={{ fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>precisas.</em>
-          </h2>
-
-          <div style={{ padding: '20px 20px', borderRadius: 20, background: `${person.color}0c`, border: `1px solid ${person.color}30` }}>
-            <div style={{ fontSize: 15, color: X.text, lineHeight: 1.8 }}>
-              {person.text}
-            </div>
+          <div style={{ padding: '20px', borderRadius: 20, background: `${me.color}0c`, border: `1px solid ${me.color}30` }}>
+            <div style={{ fontSize: 14.5, color: X.text, lineHeight: 1.8 }}>{me.text}</div>
           </div>
 
-          <div style={{ marginTop: 14, padding: '12px 16px', borderRadius: 14, background: 'rgba(255,255,255,0.03)', border: `1px solid ${X.line}` }}>
-            <div style={{ fontSize: 11.5, color: X.textMute, lineHeight: 1.55, textAlign: 'center' }}>
-              🔒 Este conteúdo foi gerado especificamente para {person.name}.<br/>Não precisas de partilhar com mais ninguém.
+          {/* Other person — locked */}
+          <div style={{ marginTop: 24 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, color: X.textMute, textTransform: 'uppercase', marginBottom: 8 }}>
+              necessidades de {other.name}
             </div>
+            <LockedCard name={other.name} color={other.color} />
           </div>
         </div>
       )}
@@ -312,55 +325,50 @@ function ViewNeeds({ v, name1, name2, onBack }) {
   )
 }
 
-function ViewLetter({ v, name1, name2, onBack, onShare, copied }) {
-  const [who, setWho] = useState(null)  // null | 1 | 2
+function ViewLetter({ v, name1, name2, side, onBack, onShare, copied }) {
   const hasData = !!(v?.letter_1 || v?.letter_2)
-
-  const person = who === 1
-    ? { name: name1, text: v?.letter_1, color: X.acc1 }
-    : who === 2
-    ? { name: name2, text: v?.letter_2, color: X.acc2 }
-    : null
+  const me    = side === 2 ? { name: name2, text: v?.letter_2, color: X.acc2 } : { name: name1, text: v?.letter_1, color: X.acc1 }
+  const other = side === 2 ? { name: name1, color: X.acc1 } : { name: name2, color: X.acc2 }
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
       <div style={{ padding: '20px 24px 0' }}>
-        <SecHeader
-          label="Carta da Mara"
-          color={who === 1 ? X.acc1 : X.acc2}
-          onBack={who ? () => setWho(null) : onBack}
-          onShare={who && hasData ? onShare : null}
-          copied={copied}
-        />
+        <SecHeader label="Carta da Mara" color={me.color} onBack={onBack} onShare={hasData ? onShare : null} copied={copied} />
       </div>
 
       {!hasData ? (
         <div style={{ padding: '0 24px' }}><OldVerdictNotice onBack={onBack} /></div>
-      ) : !who ? (
-        <WhoAreYou name1={name1} name2={name2} color1={X.acc1} color2={X.acc2} onSelect={setWho} />
       ) : (
         <div style={{ padding: '0 24px 44px', flex: 1, display: 'flex', flexDirection: 'column' }}>
           {/* Private header */}
-          <div style={{ marginTop: 20, padding: '12px 16px', borderRadius: 14, background: `${person.color}10`, border: `1px solid ${person.color}35`, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
+          <div style={{ marginTop: 20, padding: '12px 16px', borderRadius: 14, background: `${me.color}10`, border: `1px solid ${me.color}35`, display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <span style={{ fontSize: 16 }}>🔒</span>
-            <div style={{ fontSize: 12.5, color: person.color, fontWeight: 600 }}>
-              Esta carta é só para ti, {person.name}. Não precisas de a mostrar a mais ninguém.
+            <div style={{ fontSize: 12.5, color: me.color, fontWeight: 600 }}>
+              Esta carta é só para ti, {me.name}.
             </div>
           </div>
 
           {/* Letter card */}
-          <div style={{ padding: '24px 22px', borderRadius: 22, background: `linear-gradient(135deg, ${person.color}0d 0%, rgba(255,255,255,0.015) 100%)`, border: `1px solid ${person.color}35`, flex: 1 }}>
+          <div style={{ padding: '24px 22px', borderRadius: 22, background: `linear-gradient(135deg, ${me.color}0d 0%, rgba(255,255,255,0.015) 100%)`, border: `1px solid ${me.color}35` }}>
             <div style={{ fontFamily: FED, fontSize: 15.5, color: X.text, lineHeight: 1.9, whiteSpace: 'pre-line' }}>
-              {person.text}
+              {me.text}
             </div>
-            <div style={{ marginTop: 22, paddingTop: 16, borderTop: `1px solid ${person.color}20`, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ marginTop: 22, paddingTop: 16, borderTop: `1px solid ${me.color}20`, display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 28, height: 28, borderRadius: 14, background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FED, fontStyle: 'italic', fontSize: 13, color: '#fff' }}>M</div>
-              <div style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 13.5, color: person.color }}>Mara</div>
+              <div style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 13.5, color: me.color }}>Mara</div>
             </div>
           </div>
 
-          {/* Share nudge */}
-          <div onClick={onShare} style={{ marginTop: 12, height: 46, borderRadius: 999, background: 'rgba(255,255,255,0.04)', border: `1px solid ${X.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer', fontSize: 13.5, fontWeight: 500, color: X.textSoft }}>
+          {/* Other person — locked */}
+          <div style={{ marginTop: 24 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.4, color: X.textMute, textTransform: 'uppercase', marginBottom: 8 }}>
+              carta de {other.name}
+            </div>
+            <LockedCard name={other.name} color={other.color} />
+          </div>
+
+          {/* Share */}
+          <div onClick={onShare} style={{ marginTop: 16, height: 46, borderRadius: 999, background: 'rgba(255,255,255,0.04)', border: `1px solid ${X.line}`, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, cursor: 'pointer', fontSize: 13.5, fontWeight: 500, color: X.textSoft }}>
             {copied
               ? <><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-7" stroke={X.good} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg><span style={{ color: X.good }}>Copiado!</span></>
               : <><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="3" cy="7" r="1.4" stroke={X.textSoft} strokeWidth="1.2"/><circle cx="11" cy="3" r="1.4" stroke={X.textSoft} strokeWidth="1.2"/><circle cx="11" cy="11" r="1.4" stroke={X.textSoft} strokeWidth="1.2"/><path d="M4.4 6.3l5-2.6M4.4 7.7l5 2.6" stroke={X.textSoft} strokeWidth="1.2"/></svg>Partilhar a minha carta</>
@@ -579,7 +587,7 @@ function Dashboard({ verdict, name1, name2, onSelect, onShare, onNewAnalysis, na
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7a5 5 0 015-5 5 5 0 014.5 2.8" stroke={X.textSoft} strokeWidth="1.4" strokeLinecap="round"/><path d="M11.5 2l.5 3-3-.5" stroke={X.textSoft} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
         Nova análise
       </div>
-      <div style={{ marginTop: 10, textAlign: 'center', fontSize: 11.5, color: X.textMute }}>🔒 confidencial · só tu tens acesso</div>
+      <div style={{ marginTop: 10, textAlign: 'center', fontSize: 11.5, color: X.textMute }}>🔒 confidencial · só você tem acesso</div>
     </div>
   )
 }
@@ -596,6 +604,7 @@ export default function S10Resolution() {
   const verdict = data.verdict
   const name1   = data.name1 || ''
   const name2   = data.name2 || ''
+  const side    = data.side === 2 ? 2 : 1
 
   function buildSummary() {
     const v = verdict
@@ -659,8 +668,8 @@ export default function S10Resolution() {
             {section === 'analysis'   && <ViewAnalysis   v={verdict} onBack={() => setSection(null)} />}
             {section === 'attachment' && <ViewAttachment v={verdict} name1={name1} name2={name2} onBack={() => setSection(null)} />}
             {section === 'patterns'   && <ViewPatterns   v={verdict} onBack={() => setSection(null)} />}
-            {section === 'needs'      && <ViewNeeds      v={verdict} name1={name1} name2={name2} onBack={() => setSection(null)} />}
-            {section === 'letter'     && <ViewLetter     v={verdict} name1={name1} name2={name2} onBack={() => setSection(null)} onShare={handleShare} copied={copied} />}
+            {section === 'needs'      && <ViewNeeds      v={verdict} name1={name1} name2={name2} side={side} onBack={() => setSection(null)} />}
+            {section === 'letter'     && <ViewLetter     v={verdict} name1={name1} name2={name2} side={side} onBack={() => setSection(null)} onShare={handleShare} copied={copied} />}
             {section === 'plan'       && <ViewPlan       v={verdict} onBack={() => setSection(null)} />}
           </motion.div>
         </AnimatePresence>

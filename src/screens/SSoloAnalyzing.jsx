@@ -57,7 +57,7 @@ export default function SSoloAnalyzing() {
         </h1>
         <p style={{ margin: '14px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.6 }}>
           {bothSides
-            ? 'A cruzar as duas perspetivas com base em psicologia clínica e frameworks de Gottman.'
+            ? 'A cruzar as duas perspectivas com base em psicologia clínica e frameworks de Gottman.'
             : 'A cruzar o que você compartilhou com padrões clínicos de psicologia relacional.'}
         </p>
       </div>
