@@ -11,56 +11,111 @@ import { track } from '../utils/analytics'
 const MAX_Q = 10
 const now = () => new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' })
 
-const REL_OPTIONS = [
-  { k: 'casal',    emoji: '💑', label: 'Casal' },
-  { k: 'amigos',   emoji: '👫', label: 'Amigos' },
-  { k: 'familia',  emoji: '👨‍👩‍👧', label: 'Família' },
-  { k: 'trabalho', emoji: '💼', label: 'Trabalho' },
-]
+// ── Onboarding question definitions ─────────────────────────────────────────
 
-function systemPrompt({ name1, name2, rel }) {
+const Q_REL = {
+  key: 'ask_rel',
+  options: [
+    { k: 'casal',    emoji: '💑', label: 'Casal',     sub: 'parceiro/a, ex' },
+    { k: 'amigos',   emoji: '👫', label: 'Amizade',   sub: 'amigo/a, grupo' },
+    { k: 'familia',  emoji: '👨‍👩‍👧', label: 'Família',  sub: 'pais, irmãos'  },
+    { k: 'trabalho', emoji: '💼', label: 'Trabalho',  sub: 'colega, chefe'  },
+  ],
+}
+
+const Q_DURATION = {
+  key: 'ask_duration',
+  options: [
+    { k: 'menos_6m',  label: 'Menos de 6 meses'  },
+    { k: '6m_2a',     label: '6 meses a 2 anos'  },
+    { k: '2a_5a',     label: '2 a 5 anos'         },
+    { k: 'mais_5a',   label: 'Mais de 5 anos'     },
+  ],
+}
+
+const Q_TRIGGER = {
+  key: 'ask_trigger',
+  options: [
+    { k: 'discussao',   label: 'Uma discussão recente'     },
+    { k: 'repetido',    label: 'Comportamento repetido'    },
+    { k: 'traicao',     label: 'Traição ou mentira'        },
+    { k: 'afastamento', label: 'Afastamento emocional'     },
+  ],
+}
+
+const Q_FEELING = {
+  key: 'ask_feeling',
+  options: [
+    { k: 'magoado',   label: 'Magoado/a e confuso/a'      },
+    { k: 'zangado',   label: 'Zangado/a e frustrado/a'    },
+    { k: 'ansioso',   label: 'Ansioso/a e inseguro/a'     },
+    { k: 'exausto',   label: 'Exausto/a emocionalmente'   },
+  ],
+}
+
+// ── System prompt ────────────────────────────────────────────────────────────
+
+function systemPrompt({ name1, name2, rel, duration, trigger, feeling }) {
   const relLabel = rel || 'casal'
+  const durationMap = {
+    menos_6m: 'menos de 6 meses', '6m_2a': '6 meses a 2 anos',
+    '2a_5a': '2 a 5 anos', mais_5a: 'mais de 5 anos',
+  }
+  const triggerMap = {
+    discussao: 'uma discussão recente', repetido: 'comportamento repetido',
+    traicao: 'traição ou mentira', afastamento: 'afastamento emocional',
+  }
+  const feelingMap = {
+    magoado: 'magoado/a e confuso/a', zangado: 'zangado/a e frustrado/a',
+    ansioso: 'ansioso/a e inseguro/a', exausto: 'exausto/a emocionalmente',
+  }
+  const durLabel      = durationMap[duration] || ''
+  const triggerLabel  = triggerMap[trigger]   || ''
+  const feelingLabel  = feelingMap[feeling]   || ''
 
   return `Você é a Mara — psicóloga clínica com 20 anos de especialização em terapia de casal, trauma relacional e violência psicológica. Seu trabalho se baseia em frameworks científicos validados:
 
-FRAMEWORKS QUE VOCÊ USA:
-- Modelo Gottman (os "4 cavaleiros" — crítica, contempto, defensividade, stonewalling — e os "antídotos")
-- Teoria do Apego de Bowlby/Ainsworth (estilos: seguro, ansioso-preocupado, evitante-dispensativo, desorganizado)
-- Modelo Duluth / Roda do Poder e Controle (para detectar abuso coercivo, manipulação, isolamento)
-- TCC (Terapia Cognitivo-Comportamental) — crenças nucleares, distorções cognitivas, padrões de evitamento
-- Teoria Triangular do Amor de Sternberg (intimidade, paixão, compromisso)
-- DARVO (Deny, Attack, Reverse Victim and Offender) — padrão de abusadores
-- Ciclo da Violência de Lenore Walker (tensão → incidente → reconciliação → lua de mel)
-- Teoria do Apego Adulto de Hazan & Shaver
+FRAMEWORKS:
+- Modelo Gottman (4 cavaleiros + antídotos; ratio 5:1)
+- Teoria do Apego de Bowlby/Ainsworth (seguro, ansioso, evitante, desorganizado)
+- Modelo Duluth / Roda do Poder e Controle
+- TCC — crenças nucleares, distorções cognitivas
+- DARVO (Deny, Attack, Reverse Victim and Offender)
+- Ciclo da Violência de Lenore Walker
+- Teoria Triangular do Amor de Sternberg
 
-CONTEXTO:
-Você está falando com ${name1} sobre um conflito/problema com ${name2 || 'a outra pessoa'}.
-Tipo de relação: ${relLabel}.
+CONTEXTO JÁ RECOLHIDO:
+- ${name1} está a falar sobre um conflito com ${name2 || 'a outra pessoa'}
+- Tipo de relação: ${relLabel}${durLabel ? ` — há ${durLabel}` : ''}
+${triggerLabel ? `- O que desencadeou: ${triggerLabel}` : ''}
+${feelingLabel ? `- Como ${name1} se sente agora: ${feelingLabel}` : ''}
+
+IMPORTANTE: O utilizador JÁ respondeu às perguntas acima. NÃO repitas essas questões. Começa DIRETAMENTE a pedir que descrevam o que aconteceu concretamente.
 
 MISSÃO CLÍNICA:
-Conduzir uma entrevista clínica estruturada para diagnosticar a dinâmica relacional com precisão científica. Seu objetivo não é "resolver" o conflito superficialmente — é compreender a fundo o padrão sistemático de interação, identificar sinais de alerta, e preparar um relatório honesto que pode mudar a vida dessa pessoa.
+Conduzir uma entrevista clínica estruturada para diagnosticar a dinâmica relacional com precisão científica. Identificar padrões, sinais de alerta, e preparar um relatório honesto.
 
 ARCO DA ENTREVISTA (${MAX_Q} respostas):
-1. APRESENTAÇÃO DO PROBLEMA (1-2 perguntas): O que aconteceu concretamente? Qual é o conflito específico agora?
-2. PADRÃO E FREQUÊNCIA (2 perguntas): Isso é recorrente? Como costuma evoluir? O que desencadeia?
-3. COMUNICAÇÃO E DINÂMICA (2 perguntas): Como ${name2 || 'a outra pessoa'} reage quando há conflito? Você se sente ouvido/a? Consegue expressar o que sente sem represálias?
-4. IMPACTO EMOCIONAL E SEGURANÇA (2 perguntas): Como você se sente pessoalmente? A relação faz você se sentir menor, com medo, ou duvidando da sua própria percepção? [CRÍTICO: detectar abuso emocional, gaslighting, isolamento]
-5. NECESSIDADES E HISTÓRIA (1-2 perguntas): O que você precisa dessa relação e não está recebendo? Como era a relação no início vs agora?
+1. APRESENTAÇÃO DO PROBLEMA (1-2 perguntas): O que aconteceu concretamente?
+2. PADRÃO E FREQUÊNCIA (2 perguntas): Isso é recorrente? O que desencadeia?
+3. COMUNICAÇÃO E DINÂMICA (2 perguntas): Como ${name2 || 'a outra pessoa'} reage? Sente-se ouvido/a?
+4. IMPACTO EMOCIONAL E SEGURANÇA (2 perguntas): Como se sente? [CRÍTICO: gaslighting, abuso]
+5. NECESSIDADES E HISTÓRIA (1-2 perguntas): O que precisa? Como era no início vs agora?
 
 REGRAS ABSOLUTAS:
-- UMA pergunta de cada vez. Nunca duas perguntas no mesmo turno.
-- Valide SEMPRE a emoção antes de fazer a próxima pergunta. Ex: "Faz todo o sentido você sentir isso." / "É muito pesado carregar isso sozinho/a."
-- NÃO seja neutral quando há sinais claros de abuso, manipulação ou coercividade. A neutralidade nesses casos é cumplicidade.
-- Se detectar padrões de: contempto crônico, gaslighting, isolamento, controle financeiro, DARVO, ciúme patológico, ameaças (explícitas ou veladas), ou ciclo de violência — anote mentalmente. Será central no relatório.
-- Fale sempre em Português do Brasil, com calor humano genuíno e linguagem acessível mas rigorosa.
-- Nunca use jargão técnico na conversa — guarde-o para o relatório.
+- UMA pergunta de cada vez. Nunca duas no mesmo turno.
+- Valide SEMPRE a emoção antes da próxima pergunta.
+- NÃO seja neutral perante sinais claros de abuso ou manipulação.
+- Fale sempre em Português do Brasil, com calor humano e linguagem acessível.
+- Nunca use jargão técnico na conversa.
 
 ENCERRAMENTO (após ${MAX_Q} respostas):
-Termine com uma mensagem calorosa, honesta e encorajadora que: (1) reconhece a coragem de falar sobre isso, (2) valida o que a pessoa está sentindo, (3) diz que você vai agora ouvir o outro lado para ter a imagem completa.
-Depois acrescente exatamente (sem texto adicional depois): INTERROGAÇÃO_CONCLUÍDA`
+Termine com uma mensagem calorosa que: (1) reconhece a coragem, (2) valida o que sente, (3) diz que vai ouvir o outro lado.
+Depois acrescente exatamente: INTERROGAÇÃO_CONCLUÍDA`
 }
 
-/* Thinking indicator */
+// ── UI Components ────────────────────────────────────────────────────────────
+
 function Thinking() {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10 }}>
@@ -78,7 +133,7 @@ function Thinking() {
             }} />
           ))}
         </div>
-        <span style={{ fontSize: 12.5, color: X.textMute, letterSpacing: 0.2, animation: 'fadeIn .3s ease' }}>a pensar</span>
+        <span style={{ fontSize: 12.5, color: X.textMute, letterSpacing: 0.2 }}>a pensar</span>
       </div>
     </div>
   )
@@ -102,7 +157,7 @@ function Bubble({ msg }) {
       alignSelf: isMara ? 'flex-start' : 'flex-end',
       flexDirection: isMara ? 'row' : 'row-reverse',
       maxWidth: '86%',
-      animation: 'fadeIn .2s ease',
+      animation: 'fadeIn .25s ease',
     }}>
       {isMara && <Lens size={26} intensity={0.4} />}
       <div style={{ width: 'fit-content', maxWidth: '100%' }}>
@@ -127,46 +182,67 @@ function Bubble({ msg }) {
   )
 }
 
-/* Quick-reply chips for relationship type selection */
-function RelButtons({ onSelect, disabled }) {
+/* Full-width stacked option buttons */
+function OptionButtons({ options, onSelect, disabled }) {
   return (
     <div style={{
-      display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center',
-      padding: '4px 0 8px',
-      animation: 'fadeIn .3s ease',
+      display: 'flex', flexDirection: 'column', gap: 8,
+      animation: 'slideUp .3s ease',
+      paddingBottom: 4,
     }}>
-      {REL_OPTIONS.map(opt => (
+      {options.map(opt => (
         <button
           key={opt.k}
-          onClick={() => !disabled && onSelect(opt.k)}
+          onClick={() => !disabled && onSelect(opt.k, opt.label, opt.emoji)}
           disabled={disabled}
           style={{
-            display: 'flex', alignItems: 'center', gap: 7,
-            padding: '10px 16px', borderRadius: 99,
-            background: 'rgba(255,255,255,0.05)',
-            border: `1.5px solid ${X.line}`,
-            color: X.text, fontFamily: FUI, fontSize: 14.5, fontWeight: 600,
+            width: '100%', padding: '14px 18px',
+            borderRadius: 14,
+            background: 'rgba(255,255,255,0.04)',
+            border: `1px solid ${X.line}`,
+            color: X.text, fontFamily: FUI,
+            fontSize: 15, fontWeight: 500,
             cursor: disabled ? 'default' : 'pointer',
-            transition: 'all .15s',
-            letterSpacing: -0.2,
+            textAlign: 'left',
+            display: 'flex', alignItems: 'center', gap: 10,
+            transition: 'background .15s, border-color .15s',
+            letterSpacing: -0.1,
           }}
-          onMouseEnter={e => { if (!disabled) { e.currentTarget.style.borderColor = X.acc1; e.currentTarget.style.background = `${X.acc1}15` } }}
-          onMouseLeave={e => { e.currentTarget.style.borderColor = X.line; e.currentTarget.style.background = 'rgba(255,255,255,0.05)' }}
+          onMouseEnter={e => {
+            if (!disabled) {
+              e.currentTarget.style.background = `${X.acc1}12`
+              e.currentTarget.style.borderColor = `${X.acc1}60`
+            }
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
+            e.currentTarget.style.borderColor = X.line
+          }}
         >
-          <span style={{ fontSize: 18 }}>{opt.emoji}</span>
-          {opt.label}
+          {opt.emoji && <span style={{ fontSize: 19, flexShrink: 0 }}>{opt.emoji}</span>}
+          <div style={{ flex: 1 }}>
+            <div>{opt.label}</div>
+            {opt.sub && <div style={{ fontSize: 11.5, color: X.textMute, marginTop: 1 }}>{opt.sub}</div>}
+          </div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0, opacity: 0.3 }}>
+            <path d="M5 3l4 4-4 4" stroke={X.text} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
         </button>
       ))}
     </div>
   )
 }
 
+// ── Main component ───────────────────────────────────────────────────────────
+
+// Onboarding phases in order
+const OB_PHASES = ['ask_name', 'ask_rel', 'ask_duration', 'ask_trigger', 'ask_feeling', 'ask_name2', 'chatting']
+
 export default function S03Chat() {
   const nav = useNavigate()
   const { data, update } = useApp()
 
-  // phase: 'ask_name' | 'ask_rel' | 'ask_name2' | 'chatting'
-  const [phase, setPhase]     = useState(() => data.name1 ? 'chatting' : 'ask_name')
+  const [phase,    setPhase]    = useState(() => data.name1 ? 'chatting' : 'ask_name')
   const [messages, setMessages] = useState([])
   const [history,  setHistory]  = useState([])
   const [input,    setInput]    = useState('')
@@ -175,26 +251,28 @@ export default function S03Chat() {
   const [qCount,   setQCount]   = useState(0)
   const [status,   setStatus]   = useState('escutando')
 
-  const bottomRef  = useRef(null)
-  const inputRef   = useRef(null)
-  const sending    = useRef(false)
-  const initiated  = useRef(false)
+  const bottomRef = useRef(null)
+  const inputRef  = useRef(null)
+  const sending   = useRef(false)
+  const initiated = useRef(false)
 
-  // Ref that holds finalized onboarding data so handleSend never has stale closures
+  // Accumulates onboarding data — ref avoids stale closures in AI calls
   const chatData = useRef({
-    name1: data.name1 || '',
-    rel:   data.rel   || 'casal',
-    name2: data.name2 || '',
+    name1:    data.name1    || '',
+    rel:      data.rel      || 'casal',
+    duration: data.duration || '',
+    trigger:  data.trigger  || '',
+    feeling:  data.feeling  || '',
+    name2:    data.name2    || '',
   })
 
-  // Visual viewport offset for keyboard on iOS
+  // iOS keyboard offset
   const [kbOffset, setKbOffset] = useState(0)
   useEffect(() => {
     const vv = window.visualViewport
     if (!vv) return
     const onResize = () => {
-      const offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
-      setKbOffset(offset)
+      setKbOffset(Math.max(0, window.innerHeight - vv.height - vv.offsetTop))
       bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
     }
     vv.addEventListener('resize', onResize)
@@ -204,21 +282,39 @@ export default function S03Chat() {
 
   useEffect(() => { bottomRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages, thinking])
 
-  // Transition to clinical interview after onboarding is done
+  // ── Clinical interview opening ──────────────────────────────────────────
   const startClinicalInterview = useCallback(() => {
-    const { name1 } = chatData.current
-    const greeting  = name1 ? `${name1}, obrigada` : 'Obrigada'
-    const opening   = `${greeting} por estar aqui — sei que não é fácil.\n\nMeu trabalho não é julgar ninguém nem dizer quem tem "mais razão". É entender o que está realmente acontecendo entre vocês dois — com honestidade e com base em anos de estudo de dinâmicas relacionais.\n\nMe conta: o que aconteceu? Descreve a situação que te trouxe aqui hoje.`
+    const { name1, name2, trigger, feeling } = chatData.current
+
+    const triggerMap = {
+      discussao: 'uma discussão recente', repetido: 'um comportamento que se repete',
+      traicao: 'uma traição ou mentira', afastamento: 'um afastamento emocional',
+    }
+    const feelingMap = {
+      magoado: 'magoado/a', zangado: 'zangado/a',
+      ansioso: 'ansioso/a', exausto: 'exausto/a',
+    }
+
+    let opening = `Obrigada por partilhares isso, ${name1} — sei que não é fácil.\n\n`
+
+    if (trigger && feeling) {
+      opening += `Percebo que estás ${feelingMap[feeling] || ''} por causa de ${triggerMap[trigger] || 'algo importante'}. Não vou julgar ninguém nem dizer logo quem tem razão — o meu trabalho é entender o que está realmente a acontecer entre vocês dois.\n\n`
+    } else {
+      opening += `O meu trabalho não é julgar ninguém nem dizer quem tem "mais razão" — é entender o que está realmente a acontecer entre vocês dois, com honestidade.\n\n`
+    }
+
+    opening += `Me conta: o que aconteceu concretamente? Descreve a situação que te trouxe aqui hoje.`
+
     setMessages(prev => [...prev, { role: 'mara', content: opening, time: now() }])
     setHistory([{ role: 'assistant', content: opening }])
     setPhase('chatting')
     inputRef.current?.focus()
   }, [])
 
-  // Called when all onboarding data is collected
+  // ── Finish onboarding, update context, start interview ─────────────────
   const finishOnboarding = useCallback(() => {
-    const { name1, rel, name2 } = chatData.current
-    update({ name1, rel, name2 })
+    const { name1, rel, duration, trigger, feeling, name2 } = chatData.current
+    update({ name1, rel, duration, trigger, feeling, name2 })
     track('step1_completed', { rel_type: rel, has_name2: !!name2, via: 'chat_onboarding' })
     setThinking(true)
     setTimeout(() => {
@@ -227,20 +323,15 @@ export default function S03Chat() {
     }, 900)
   }, [update, startClinicalInterview])
 
-  // Initialization effect — runs once
+  // ── Initialization ──────────────────────────────────────────────────────
   useEffect(() => {
     if (initiated.current) return
     initiated.current = true
 
     if (chatData.current.name1) {
-      // Already have context (e.g. navigating back) — skip onboarding
       setThinking(true)
-      setTimeout(() => {
-        setThinking(false)
-        startClinicalInterview()
-      }, 600)
+      setTimeout(() => { setThinking(false); startClinicalInterview() }, 600)
     } else {
-      // Start onboarding
       setThinking(true)
       setTimeout(() => {
         setThinking(false)
@@ -250,32 +341,55 @@ export default function S03Chat() {
     }
   }, [startClinicalInterview])
 
-  // chat_abandoned — fires when user leaves mid-interview
   useEffect(() => {
     return () => {
       if (!isDone && qCount > 0) track('chat_abandoned', { messages_sent: qCount })
     }
   }, [isDone, qCount])
 
-  // Handle relationship quick-reply button tap
-  const selectRel = useCallback((relKey) => {
-    if (phase !== 'ask_rel') return
-    const opt = REL_OPTIONS.find(r => r.k === relKey)
-    chatData.current.rel = relKey
+  // ── Option button tap (rel, duration, trigger, feeling) ────────────────
+  const selectOption = useCallback((phaseKey, value, label, emoji) => {
+    if (phase !== phaseKey) return
 
-    const userMsg = { role: 'user', content: `${opt.emoji} ${opt.label}`, time: now() }
-    setMessages(prev => [...prev, userMsg])
+    const display = emoji ? `${emoji} ${label}` : label
+    setMessages(prev => [...prev, { role: 'user', content: display, time: now() }])
+
+    let nextPhase, nextQuestion, nextData
+
+    if (phaseKey === 'ask_rel') {
+      chatData.current.rel = value
+      nextData = value
+      const durQ = {
+        casal:    'Há quanto tempo estão juntos?',
+        amigos:   'Há quanto tempo se conhecem?',
+        familia:  'Há quanto tempo este problema existe entre vocês?',
+        trabalho: 'Há quanto tempo trabalham juntos?',
+      }
+      nextQuestion = durQ[value] || 'Há quanto tempo é esta relação?'
+      nextPhase = 'ask_duration'
+    } else if (phaseKey === 'ask_duration') {
+      chatData.current.duration = value
+      nextQuestion = 'O que melhor descreve o que desencadeou este conflito?'
+      nextPhase = 'ask_trigger'
+    } else if (phaseKey === 'ask_trigger') {
+      chatData.current.trigger = value
+      nextQuestion = 'Como te sentes agora em relação a esta situação?'
+      nextPhase = 'ask_feeling'
+    } else if (phaseKey === 'ask_feeling') {
+      chatData.current.feeling = value
+      nextQuestion = 'E a outra pessoa — como se chama?'
+      nextPhase = 'ask_name2'
+    }
+
     setThinking(true)
     setTimeout(() => {
       setThinking(false)
-      const resp = `Anotado. 📝\n\nE como se chama a pessoa com quem tiveste esse conflito?`
-      setMessages(prev => [...prev, { role: 'mara', content: resp, time: now() }])
-      setPhase('ask_name2')
-      inputRef.current?.focus()
-    }, 700)
+      setMessages(prev => [...prev, { role: 'mara', content: nextQuestion, time: now() }])
+      setPhase(nextPhase)
+      if (nextPhase === 'ask_name2') inputRef.current?.focus()
+    }, 650)
   }, [phase])
 
-  // Skip name2
   const skipName2 = useCallback(() => {
     if (phase !== 'ask_name2') return
     chatData.current.name2 = ''
@@ -283,6 +397,7 @@ export default function S03Chat() {
     finishOnboarding()
   }, [phase, finishOnboarding])
 
+  // ── finishChat ──────────────────────────────────────────────────────────
   const finishChat = useCallback(async (hist) => {
     setIsDone(true)
     setStatus('análise concluída ✓')
@@ -291,14 +406,7 @@ export default function S03Chat() {
       'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random() * 32)]
     ).join('')
     const cd = chatData.current
-    const session = {
-      ...data,
-      name1: cd.name1 || data.name1,
-      rel:   cd.rel   || data.rel,
-      name2: cd.name2 || data.name2,
-      chat1,
-      code,
-    }
+    const session = { ...data, name1: cd.name1, rel: cd.rel, duration: cd.duration, trigger: cd.trigger, feeling: cd.feeling, name2: cd.name2, chat1, code }
     update({ chat1, code })
 
     try {
@@ -311,16 +419,13 @@ export default function S03Chat() {
 
     try { localStorage.setItem(`ct_${code}`, JSON.stringify(session)) } catch (_) {}
 
-    // Pre-generate verdict in background so it's ready when user arrives at /verdict
-    // Fire-and-forget — if it fails here, S09Verdict will generate on demand
+    // Pre-generate verdict in background
     fetch('/api/verdict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name1: session.name1, name2: session.name2,
-        rel: session.rel, duration: session.duration || 50,
-        chat1: session.chat1, chat2: session.chat2 || null,
-        code,
+        name1: cd.name1, name2: cd.name2, rel: cd.rel,
+        duration: cd.duration, chat1, chat2: null, code,
       }),
     }).catch(() => {})
 
@@ -329,31 +434,30 @@ export default function S03Chat() {
 
   const streamText = useRef('')
 
+  // ── handleSend ──────────────────────────────────────────────────────────
   const handleSend = useCallback(async () => {
     if (sending.current || isDone || !input.trim()) return
     const text = input.trim()
     sending.current = true
     setInput('')
 
-    const userMsg = { role: 'user', content: text, time: now() }
-    setMessages(prev => [...prev, userMsg])
+    setMessages(prev => [...prev, { role: 'user', content: text, time: now() }])
 
-    // ── Onboarding: collect name ──────────────────────────────
+    // ── Onboarding: name ─────────────────────────────────────────────────
     if (phase === 'ask_name') {
       const name = text.trim()
       chatData.current.name1 = name
       setThinking(true)
       setTimeout(() => {
         setThinking(false)
-        const resp = `Prazer, ${name}! 😊\n\nQue tipo de relação está envolvida neste conflito?`
-        setMessages(prev => [...prev, { role: 'mara', content: resp, time: now() }])
+        setMessages(prev => [...prev, { role: 'mara', content: `Prazer, ${name}! 😊\n\nQue tipo de relação está envolvida neste conflito?`, time: now() }])
         setPhase('ask_rel')
         sending.current = false
-      }, 700)
+      }, 650)
       return
     }
 
-    // ── Onboarding: collect name2 ─────────────────────────────
+    // ── Onboarding: name2 ────────────────────────────────────────────────
     if (phase === 'ask_name2') {
       chatData.current.name2 = text.trim()
       finishOnboarding()
@@ -361,7 +465,7 @@ export default function S03Chat() {
       return
     }
 
-    // ── Clinical interview (chatting phase) ───────────────────
+    // ── Clinical interview ───────────────────────────────────────────────
     const newQCount = qCount + 1
     const newHist   = [...history, { role: 'user', content: text }]
 
@@ -385,11 +489,7 @@ export default function S03Chat() {
         }),
       })
 
-      if (!res.ok || !res.body) {
-        const errText = await res.text().catch(() => 'unknown')
-        console.error('API error', res.status, errText)
-        throw new Error(`API ${res.status}`)
-      }
+      if (!res.ok || !res.body) throw new Error(`API ${res.status}`)
 
       const reader  = res.body.getReader()
       const decoder = new TextDecoder()
@@ -403,11 +503,9 @@ export default function S03Chat() {
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-
         buf += decoder.decode(value, { stream: true })
         const lines = buf.split('\n')
         buf = lines.pop() ?? ''
-
         for (const line of lines) {
           if (!line.startsWith('data: ')) continue
           const raw = line.slice(6).trim()
@@ -421,15 +519,11 @@ export default function S03Chat() {
                 streamingAdded = true
                 setMessages(prev => [...prev, { role: 'mara', content: snap, time: now(), streaming: true }])
               } else {
-                setMessages(prev => {
-                  const arr = [...prev]
-                  arr[arr.length - 1] = { ...arr[arr.length - 1], content: snap }
-                  return arr
-                })
+                setMessages(prev => { const a = [...prev]; a[a.length-1] = { ...a[a.length-1], content: snap }; return a })
               }
               bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
             }
-          } catch { /* ignore parse errors */ }
+          } catch { /* ignore */ }
         }
       }
 
@@ -438,11 +532,7 @@ export default function S03Chat() {
       const clean    = fullText.replace('INTERROGAÇÃO_CONCLUÍDA', '').trim()
       const fullHist = [...newHist, { role: 'assistant', content: clean }]
 
-      setMessages(prev => {
-        const arr = [...prev]
-        arr[arr.length - 1] = { role: 'mara', content: clean, time: now(), streaming: false }
-        return arr
-      })
+      setMessages(prev => { const a = [...prev]; a[a.length-1] = { role: 'mara', content: clean, time: now(), streaming: false }; return a })
       setHistory(fullHist)
       setStatus(finished ? 'análise concluída ✓' : 'escutando')
 
@@ -458,11 +548,11 @@ export default function S03Chat() {
       setThinking(false)
       setStatus(newQCount >= MAX_Q ? 'análise concluída ✓' : 'escutando')
       setMessages(prev => {
-        const arr = [...prev]
-        const last = arr[arr.length - 1]
-        if (last?.streaming) arr[arr.length - 1] = { role: 'mara', content: fallback, time: now(), streaming: false }
-        else arr.push({ role: 'mara', content: fallback, time: now() })
-        return arr
+        const a = [...prev]
+        const last = a[a.length-1]
+        if (last?.streaming) a[a.length-1] = { role: 'mara', content: fallback, time: now(), streaming: false }
+        else a.push({ role: 'mara', content: fallback, time: now() })
+        return a
       })
       setHistory(fullHist)
       if (newQCount >= MAX_Q) finishChat(fullHist)
@@ -472,13 +562,18 @@ export default function S03Chat() {
 
   const onKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend() } }
 
+  // What to show in the dock
+  const showTextInput  = !['ask_rel', 'ask_duration', 'ask_trigger', 'ask_feeling'].includes(phase) && !isDone
+  const currentButtons = {
+    ask_rel:      Q_REL.options,
+    ask_duration: Q_DURATION.options,
+    ask_trigger:  Q_TRIGGER.options,
+    ask_feeling:  Q_FEELING.options,
+  }[phase]
+
   const inputPlaceholder = phase === 'ask_name'  ? 'O teu nome…'
     : phase === 'ask_name2' ? 'Nome dela/dele… (opcional)'
     : 'Escreve a tua resposta…'
-
-  const showTextInput = phase !== 'ask_rel' && !isDone
-  const showRelButtons = phase === 'ask_rel'
-  const showSkipBtn = phase === 'ask_name2'
 
   return (
     <>
@@ -486,13 +581,12 @@ export default function S03Chat() {
         @keyframes dt{0%,80%,100%{opacity:.25;transform:scale(.65)}40%{opacity:1;transform:scale(1)}}
         @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
         @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
       `}</style>
       <div style={{
         position: 'relative', flex: 1, background: X.ink,
-        display: 'flex', flexDirection: 'column',
-        height: '100%', boxSizing: 'border-box',
-        paddingBottom: kbOffset,
-        transition: 'padding-bottom 0.22s ease',
+        display: 'flex', flexDirection: 'column', height: '100%', boxSizing: 'border-box',
+        paddingBottom: kbOffset, transition: 'padding-bottom 0.22s ease',
       }}>
         <XStatus />
 
@@ -529,15 +623,19 @@ export default function S03Chat() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input dock */}
-        <div style={{ padding: kbOffset > 0 ? '0 24px 12px' : '0 24px 28px' }}>
+        {/* Dock */}
+        <div style={{ padding: kbOffset > 0 ? '0 20px 12px' : '0 20px 28px' }}>
 
-          {/* Relationship quick-reply buttons */}
-          {showRelButtons && (
-            <RelButtons onSelect={selectRel} disabled={thinking} />
+          {/* Multiple-choice options */}
+          {currentButtons && !thinking && (
+            <OptionButtons
+              options={currentButtons}
+              onSelect={(k, label, emoji) => selectOption(phase, k, label, emoji)}
+              disabled={thinking}
+            />
           )}
 
-          {/* Done state */}
+          {/* Done banner */}
           {isDone && (
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -548,9 +646,7 @@ export default function S03Chat() {
                 <circle cx="7" cy="7" r="6" stroke={X.acc1} strokeWidth="1.3"/>
                 <path d="M4 7l2 2 4-4" stroke={X.acc1} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              <span style={{ fontSize: 13, fontWeight: 600, color: X.acc1, letterSpacing: 0.1 }}>
-                Chat finalizado
-              </span>
+              <span style={{ fontSize: 13, fontWeight: 600, color: X.acc1 }}>Chat finalizado</span>
             </div>
           )}
 
@@ -591,19 +687,14 @@ export default function S03Chat() {
             </Card>
           )}
 
-          {/* Skip name2 button */}
-          {showSkipBtn && (
+          {/* Skip name2 */}
+          {phase === 'ask_name2' && (
             <div style={{ textAlign: 'center', marginTop: 8 }}>
-              <button
-                onClick={skipName2}
-                disabled={thinking}
-                style={{
-                  background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: 12.5, color: X.textMute, fontFamily: FUI,
-                  padding: '4px 12px', letterSpacing: 0.2,
-                  opacity: thinking ? 0.4 : 1,
-                }}
-              >
+              <button onClick={skipName2} disabled={thinking} style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: 12.5, color: X.textMute, fontFamily: FUI, padding: '4px 12px',
+                opacity: thinking ? 0.4 : 1,
+              }}>
                 Prefiro não dizer →
               </button>
             </div>
