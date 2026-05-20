@@ -30,37 +30,15 @@ export default function S02Mode() {
         {/* Título */}
         <div style={{ marginTop: 28, marginBottom: 24 }}>
           <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: X.acc1, marginBottom: 12 }}>
-            como queres continuar?
+            como queres começar?
           </div>
           <h1 style={{ margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.2, lineHeight: 1.05, color: X.text }}>
-            No final recebes um<br/>
-            <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 36, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>veredito completo.</em>
+            Escolhe a forma de<br/>
+            <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 36, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>chegar ao veredito.</em>
           </h1>
           <p style={{ margin: '12px 0 0', fontSize: 14, color: X.textSoft, lineHeight: 1.55, maxWidth: 300 }}>
-            A Mara vai fazer-te algumas perguntas sobre o que aconteceu. Depois analisa tudo e diz-te quem tem razão — e porquê.
+            Podes ouvir os dois lados para um resultado mais preciso, ou avançar já com a tua versão.
           </p>
-        </div>
-
-        {/* Preview do veredito */}
-        <div style={{
-          borderRadius: 16, padding: '14px 16px', marginBottom: 20,
-          background: 'rgba(255,255,255,0.025)', border: `1px solid ${X.line}`,
-        }}>
-          <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.textMute, marginBottom: 10 }}>
-            o que vais receber
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {[
-              { icon: '⚖️', text: 'Quem tem razão e porquê' },
-              { icon: '🔍', text: 'Análise do padrão relacional' },
-              { icon: '💡', text: 'O que podes fazer a seguir' },
-            ].map(({ icon, text }) => (
-              <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <span style={{ fontSize: 16 }}>{icon}</span>
-                <span style={{ fontSize: 13, color: X.textSoft }}>{text}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Opção A — convidar */}
