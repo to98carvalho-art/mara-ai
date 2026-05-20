@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { AppProvider } from './context/AppContext'
 import SLanding      from './screens/SLanding'
 import S01Welcome    from './screens/S01Welcome'
+import S01bExplain   from './screens/S01bExplain'
 import S02Mode       from './screens/S02Mode'
 import S03Chat       from './screens/S03Chat'
 import S03bChat      from './screens/S03bChat'
@@ -29,17 +30,18 @@ const ROUTE_ORDER = {
   '/join':       0,
   '/code':       0,
   '/setup':      1,
-  '/mode':       1,
-  '/chat':       2,
-  '/chat2':      3,
-  '/invite':     3,
-  '/analyzing':  4,
-  '/solo':       4,
-  '/replied':    5,
-  '/complete':   6,
-  '/paywall':    7,
-  '/verdict':    8,
-  '/resolution': 9,
+  '/explain':    1,
+  '/mode':       2,
+  '/chat':       3,
+  '/chat2':      4,
+  '/invite':     4,
+  '/analyzing':  5,
+  '/solo':       5,
+  '/replied':    6,
+  '/complete':   7,
+  '/paywall':    8,
+  '/verdict':    9,
+  '/resolution': 10,
 }
 
 const ease = [0.32, 0.72, 0, 1] // iOS-like spring feel
@@ -121,7 +123,8 @@ function AnimatedRoutes() {
         <Route path="/join"       element={<P><SJoin /></P>} />
         <Route path="/code"       element={<P><SCodeEntry /></P>} />
         <Route path="/dev/seed"   element={<P><SDevSeed /></P>} />
-        <Route path="/setup"      element={<Navigate to="/mode" replace />} />
+        <Route path="/setup"      element={<Navigate to="/explain" replace />} />
+        <Route path="/explain"    element={<P><S01bExplain /></P>} />
         <Route path="/mode"       element={<P><S02Mode /></P>} />
         <Route path="/chat"       element={<P><S03Chat /></P>} />
         <Route path="/chat2"      element={<P><S03bChat /></P>} />
