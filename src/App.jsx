@@ -44,8 +44,7 @@ const ROUTE_ORDER = {
   '/resolution': 10,
 }
 
-const ease     = [0.32, 0.72, 0, 1]   // iOS-like spring feel
-const easeSlide = [0.25, 0.46, 0.45, 0.94] // smooth slide ease
+const ease = [0.32, 0.72, 0, 1] // iOS-like spring feel
 
 function makeVariants(dir) {
   return {
@@ -55,27 +54,25 @@ function makeVariants(dir) {
   }
 }
 
-// Full slide — used between explain and mode (pages 2 & 3)
-function makeSlideVariants(dir) {
-  return {
-    initial: { x: dir > 0 ? '100%' : '-100%', opacity: 1 },
-    animate: { x: 0, opacity: 1 },
-    exit:    { x: dir > 0 ? '-28%' : '28%', opacity: 0.6 },
-  }
+// Gradual reveal — page fades in gently with slight upward drift
+const fadeVariants = {
+  initial: { opacity: 0, y: 18, scale: 0.98 },
+  animate: { opacity: 1, y: 0,  scale: 1    },
+  exit:    { opacity: 0, y: -8, scale: 0.99 },
 }
 
-function AnimatedPage({ children, dir, slide = false }) {
-  const variants = slide ? makeSlideVariants(dir) : makeVariants(dir)
-  const duration = slide ? 0.38 : 0.32
-  const usedEase = slide ? easeSlide : ease
+function AnimatedPage({ children, dir, fade = false }) {
   return (
     <motion.div
-      variants={variants}
+      variants={fade ? fadeVariants : makeVariants(dir)}
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={{ duration, ease: usedEase }}
-      style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', willChange: 'transform', overflow: 'hidden' }}
+      transition={fade
+        ? { duration: 0.45, ease: [0.22, 1, 0.36, 1] }
+        : { duration: 0.32, ease }
+      }
+      style={{ display: 'flex', flexDirection: 'column', flex: 1, height: '100%', willChange: 'transform' }}
     >
       {children}
     </motion.div>
@@ -125,7 +122,7 @@ function AnimatedRoutes() {
   // update after render
   prevPath.current = loc.pathname
 
-  const P = ({ children, slide }) => <AnimatedPage dir={dir} slide={slide}>{children}</AnimatedPage>
+  const P = ({ children, fade }) => <AnimatedPage dir={dir} fade={fade}>{children}</AnimatedPage>
 
   return (
     <AnimatePresence mode="wait">
@@ -136,8 +133,8 @@ function AnimatedRoutes() {
         <Route path="/code"       element={<P><SCodeEntry /></P>} />
         <Route path="/dev/seed"   element={<P><SDevSeed /></P>} />
         <Route path="/setup"      element={<Navigate to="/explain" replace />} />
-        <Route path="/explain"    element={<P slide><S01bExplain /></P>} />
-        <Route path="/mode"       element={<P slide><S02Mode /></P>} />
+        <Route path="/explain"    element={<P><S01bExplain /></P>} />
+        <Route path="/mode"       element={<P fade><S02Mode /></P>} />
         <Route path="/chat"       element={<P><S03Chat /></P>} />
         <Route path="/chat2"      element={<P><S03bChat /></P>} />
         <Route path="/invite"     element={<P><S04Invite /></P>} />
