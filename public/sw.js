@@ -1,4 +1,4 @@
-const CACHE = 'mara-v5'
+const CACHE = 'mara-v6'
 const SHELL = [
   '/',
   '/index.html',
@@ -17,35 +17,53 @@ self.addEventListener('install', e => {
 
 self.addEventListener('activate', e => {
   e.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    )
+    caches.keys()
+      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+      .then(() =>
+        // Force reload all open tabs so they pick up the new version immediately
+        self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clients => {
+          clients.forEach(client => client.navigate(client.url))
+        })
+      )
   )
-  self.clients.claim()
 })
 
 self.addEventListener('fetch', e => {
-  // Only handle GET requests for same-origin or CDN assets
   if (e.request.method !== 'GET') return
   const url = new URL(e.request.url)
 
-  // Don't cache API calls
+  // Never cache API calls
   if (url.pathname.startsWith('/api/')) return
+
+  // Always fetch index.html from network (ensures latest app shell)
+  if (url.pathname === '/' || url.pathname === '/index.html') {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          if (res.ok) {
+            const clone = res.clone()
+            caches.open(CACHE).then(c => c.put(e.request, clone))
+          }
+          return res
+        })
+        .catch(() => caches.match('/index.html'))
+    )
+    return
+  }
 
   e.respondWith(
     caches.match(e.request).then(cached => {
       const networkFetch = fetch(e.request)
         .then(res => {
-          // Cache successful responses for static assets
           if (res.ok && (url.origin === self.location.origin || url.hostname.includes('fonts.googleapis'))) {
             const clone = res.clone()
             caches.open(CACHE).then(c => c.put(e.request, clone))
           }
           return res
         })
-        .catch(() => cached) // offline fallback
+        .catch(() => cached)
 
-      // Serve cache-first for shell, network-first for everything else
       return cached || networkFetch
     })
   )
