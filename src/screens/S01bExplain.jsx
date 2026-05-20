@@ -1,215 +1,266 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { X, FUI, FED, GRAD, GRAD_TXT } from '../design/tokens'
+import { X, FUI, FED, FNUM, GRAD, GRAD_TXT } from '../design/tokens'
 import Lens from '../components/Lens'
 import XStatus from '../components/XStatus'
+import XBack from '../components/XBack'
 
 const ease = [0.22, 1, 0.36, 1]
 
-const STEPS = [
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M4 6a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2H9l-5 4V6z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-        <path d="M9 10h10M9 13h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-      </svg>
-    ),
-    label: 'Contas',
-    sub: 'o conflito',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="14" r="9" stroke="currentColor" strokeWidth="1.6"/>
-        <path d="M14 10v4l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-        <circle cx="14" cy="14" r="2" fill="currentColor" opacity="0.3"/>
-      </svg>
-    ),
-    label: 'Mara analisa',
-    sub: 'psicologia clínica',
-  },
-  {
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-        <path d="M14 4l1.5 4.5H20l-3.7 2.7 1.4 4.3L14 13l-3.7 2.5 1.4-4.3L8 8.5h4.5L14 4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
-        <path d="M8 22h12M11 19v3M17 19v3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-      </svg>
-    ),
-    label: 'Veredito',
-    sub: 'quem tem razão',
-  },
-]
+/* ── Mock verdict preview card ───────────────────────────────────────────── */
+function VerdictPreview() {
+  return (
+    <div style={{ position: 'relative', width: '100%' }}>
 
+      {/* Card */}
+      <div style={{
+        borderRadius: 22,
+        background: `linear-gradient(160deg, ${X.ink3} 0%, ${X.ink2} 100%)`,
+        border: `1px solid ${X.acc1}40`,
+        overflow: 'hidden',
+        boxShadow: `0 20px 60px ${X.acc1}25, 0 4px 16px rgba(0,0,0,0.5)`,
+      }}>
+
+        {/* Header */}
+        <div style={{
+          padding: '14px 18px 12px',
+          background: `linear-gradient(135deg, ${X.acc1}20 0%, ${X.acc2}10 100%)`,
+          borderBottom: `1px solid ${X.acc1}20`,
+          display: 'flex', alignItems: 'center', gap: 10,
+        }}>
+          <Lens size={24} intensity={0.7} />
+          <div>
+            <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: X.acc1 }}>
+              veredito mara
+            </div>
+            <div style={{ fontSize: 11.5, color: X.textMute, marginTop: 1 }}>análise relacional completa</div>
+          </div>
+          <div style={{
+            marginLeft: 'auto', padding: '3px 10px', borderRadius: 999,
+            background: `${X.good}18`, border: `1px solid ${X.good}40`,
+            fontSize: 9.5, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: X.good,
+          }}>
+            concluído
+          </div>
+        </div>
+
+        {/* Score visual */}
+        <div style={{ padding: '16px 18px 0' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 8 }}>
+            <div>
+              <div style={{ fontSize: 11, color: X.textMute, letterSpacing: 0.3, marginBottom: 2 }}>responsabilidade</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                <span style={{
+                  fontFamily: FNUM, fontSize: 34, fontWeight: 700, letterSpacing: -1,
+                  background: GRAD_TXT, WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                }}>72%</span>
+                <span style={{ fontSize: 12, color: X.textMute }}>Ana</span>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 11, color: X.textMute, letterSpacing: 0.3, marginBottom: 2 }}>&nbsp;</div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+                <span style={{ fontFamily: FNUM, fontSize: 34, fontWeight: 700, letterSpacing: -1, color: X.textMute }}>28%</span>
+                <span style={{ fontSize: 12, color: X.textMute }}>Rui</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Bar */}
+          <div style={{ height: 8, borderRadius: 4, background: 'rgba(255,255,255,0.08)', overflow: 'hidden', marginBottom: 16 }}>
+            <div style={{ height: '100%', width: '72%', borderRadius: 4, background: GRAD }} />
+          </div>
+
+          {/* Verdict line */}
+          <div style={{
+            padding: '11px 14px', borderRadius: 12,
+            background: `${X.acc1}10`, border: `1px solid ${X.acc1}25`,
+            marginBottom: 14,
+          }}>
+            <div style={{ fontSize: 13.5, color: X.text, lineHeight: 1.5, fontStyle: 'italic', fontFamily: FED }}>
+              "Ana tem razão. O comportamento repetido de Rui demonstra um padrão de invalidação emocional—"
+            </div>
+          </div>
+        </div>
+
+        {/* Blurred content below */}
+        <div style={{ position: 'relative', padding: '0 18px', overflow: 'hidden', height: 80 }}>
+          {['Padrão Gottman identificado: crítica sistemática…', 'Recomendação: estabelecer limites claros sobre…', 'Nível de risco relacional: moderado com sinais de…'].map((line, i) => (
+            <div key={i} style={{
+              fontSize: 12.5, color: X.textSoft, lineHeight: 1.6,
+              filter: 'blur(4px)', userSelect: 'none', marginBottom: 4,
+            }}>
+              {line}
+            </div>
+          ))}
+          {/* Gradient fade */}
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: `linear-gradient(to bottom, transparent 0%, ${X.ink2} 75%)`,
+          }}/>
+        </div>
+
+        {/* Lock row */}
+        <div style={{
+          padding: '12px 18px 16px',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+          borderTop: `1px solid ${X.line}`,
+        }}>
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <rect x="2" y="6" width="9" height="6" rx="1.5" stroke={X.textMute} strokeWidth="1.3"/>
+            <path d="M4 6V4.5a2.5 2.5 0 015 0V6" stroke={X.textMute} strokeWidth="1.3"/>
+          </svg>
+          <span style={{ fontSize: 12, color: X.textMute, fontFamily: FUI, letterSpacing: 0.2 }}>
+            O teu veredito fica disponível após a análise
+          </span>
+        </div>
+      </div>
+
+      {/* Side glow */}
+      <div style={{
+        position: 'absolute', top: '20%', left: -30, width: 120, height: 120,
+        borderRadius: '50%', background: `${X.acc1}30`,
+        filter: 'blur(30px)', pointerEvents: 'none', zIndex: -1,
+      }}/>
+      <div style={{
+        position: 'absolute', bottom: '10%', right: -20, width: 100, height: 100,
+        borderRadius: '50%', background: `${X.acc2}25`,
+        filter: 'blur(25px)', pointerEvents: 'none', zIndex: -1,
+      }}/>
+    </div>
+  )
+}
+
+/* ── Main ────────────────────────────────────────────────────────────────── */
 export default function S01bExplain() {
   const nav = useNavigate()
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), 80)
+    const t = setTimeout(() => setVisible(true), 60)
     return () => clearTimeout(t)
   }, [])
+
+  const fade = (delay) => ({
+    initial: { opacity: 0, y: 14 },
+    animate: visible ? { opacity: 1, y: 0 } : {},
+    transition: { duration: 0.55, delay, ease },
+  })
 
   return (
     <div style={{
       position: 'relative', flex: 1, background: X.ink,
-      display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden',
+      display: 'flex', flexDirection: 'column', height: '100%', overflowY: 'auto',
     }}>
       <XStatus />
 
-      {/* glows */}
+      {/* bg glow */}
       <div style={{
-        position: 'absolute', top: '20%', left: '50%', transform: 'translateX(-50%)',
-        width: 400, height: 400, borderRadius: '50%',
-        background: `radial-gradient(circle, ${X.acc1}22 0%, transparent 65%)`,
+        position: 'fixed', top: -80, left: '50%', transform: 'translateX(-50%)',
+        width: 500, height: 500, borderRadius: '50%',
+        background: `radial-gradient(circle, ${X.acc1}18 0%, transparent 65%)`,
         filter: 'blur(60px)', pointerEvents: 'none',
       }}/>
-      <div style={{
-        position: 'absolute', bottom: 0, right: 0,
-        width: 250, height: 250, borderRadius: '50%',
-        background: `radial-gradient(circle, ${X.acc2}18 0%, transparent 65%)`,
-        filter: 'blur(40px)', pointerEvents: 'none',
-      }}/>
 
-      <div style={{
-        position: 'relative', flex: 1,
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
-        padding: '24px 32px 40px',
-        gap: 0,
-      }}>
+      <div style={{ position: 'relative', padding: '16px 24px 40px', display: 'flex', flexDirection: 'column', gap: 0 }}>
 
-        {/* Pequeno label */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={visible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.05, ease }}
-          style={{
-            fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase',
-            color: X.acc1, marginBottom: 28,
-          }}
-        >
-          como funciona
+        <div style={{ marginTop: 10, marginBottom: 20 }}><XBack onClick={() => nav('/')} /></div>
+
+        {/* Headline */}
+        <motion.div {...fade(0.05)} style={{ marginBottom: 6 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: X.acc1, marginBottom: 12 }}>
+            o que vais receber
+          </div>
+          <h1 style={{ margin: 0, fontFamily: FED, fontSize: 36, fontWeight: 400, letterSpacing: -1.3, lineHeight: 1.08, color: X.text }}>
+            Uma resposta honesta.<br/>
+            <em style={{
+              fontFamily: FED, fontStyle: 'italic',
+              background: GRAD_TXT, WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+            }}>Quem tem razão — e porquê.</em>
+          </h1>
         </motion.div>
 
-        {/* Steps */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0, width: '100%', maxWidth: 280 }}>
-          {STEPS.map((step, i) => (
-            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+        <motion.div {...fade(0.12)} style={{ marginBottom: 24 }}>
+          <p style={{ margin: 0, fontSize: 14.5, color: X.textSoft, lineHeight: 1.6, maxWidth: 320 }}>
+            A Mara ouve o que aconteceu, analisa os padrões com base em psicologia clínica e entrega-te um veredito detalhado.
+          </p>
+        </motion.div>
 
-              {/* Card */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.88, y: 16 }}
-                animate={visible ? { opacity: 1, scale: 1, y: 0 } : {}}
-                transition={{ duration: 0.55, delay: 0.15 + i * 0.14, ease }}
-                style={{
-                  width: '100%',
-                  borderRadius: 20,
-                  padding: '18px 22px',
-                  display: 'flex', alignItems: 'center', gap: 16,
-                  background: i === 2
-                    ? `linear-gradient(135deg, ${X.acc1}20 0%, ${X.acc2}14 100%)`
-                    : 'rgba(255,255,255,0.04)',
-                  border: `1px solid ${i === 2 ? X.acc1 + '45' : X.line}`,
-                  boxShadow: i === 2 ? `0 8px 32px ${X.acc1}20` : 'none',
-                }}
-              >
-                {/* Icon circle */}
-                <div style={{
-                  width: 52, height: 52, borderRadius: 16, flexShrink: 0,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: i === 2 ? GRAD : `${X.acc1}14`,
-                  color: i === 2 ? '#fff' : X.acc1,
-                  boxShadow: i === 2 ? `0 6px 18px ${X.acc1}35` : 'none',
-                }}>
-                  {i === 1 ? <Lens size={28} intensity={0.9} /> : step.icon}
-                </div>
+        {/* Verdict preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 24, scale: 0.97 }}
+          animate={visible ? { opacity: 1, y: 0, scale: 1 } : {}}
+          transition={{ duration: 0.65, delay: 0.2, ease }}
+          style={{ marginBottom: 22 }}
+        >
+          <VerdictPreview />
+        </motion.div>
 
-                {/* Text */}
-                <div>
-                  <div style={{
-                    fontFamily: FED, fontSize: 22, fontWeight: 400,
-                    letterSpacing: -0.7, lineHeight: 1.1,
-                    color: X.text,
-                    ...(i === 2 ? {
-                      background: GRAD_TXT,
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    } : {}),
-                  }}>
-                    {i === 2
-                      ? <em style={{ fontFamily: FED, fontStyle: 'italic' }}>{step.label}</em>
-                      : step.label}
-                  </div>
-                  <div style={{ fontSize: 12.5, color: X.textMute, marginTop: 3 }}>
-                    {step.sub}
-                  </div>
-                </div>
-
-                {/* Step number */}
-                <div style={{
-                  marginLeft: 'auto', flexShrink: 0,
-                  width: 24, height: 24, borderRadius: 12,
-                  background: 'rgba(255,255,255,0.06)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 11, fontWeight: 700, color: X.textMute, fontFamily: FUI,
-                }}>
-                  {i + 1}
-                </div>
-              </motion.div>
-
-              {/* Connector arrow */}
-              {i < STEPS.length - 1 && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={visible ? { opacity: 1 } : {}}
-                  transition={{ duration: 0.4, delay: 0.3 + i * 0.14, ease }}
-                  style={{ padding: '6px 0' }}
-                >
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 2v12m0 0l-4-4m4 4l4-4" stroke={X.acc1} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" opacity="0.5"/>
-                  </svg>
-                </motion.div>
-              )}
+        {/* Trust pills */}
+        <motion.div {...fade(0.45)} style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
+          {[
+            { icon: '⚖️', text: 'Imparcial' },
+            { icon: '🔒', text: 'Confidencial' },
+            { icon: '🧠', text: 'Psicologia clínica' },
+            { icon: '⚡', text: 'Em minutos' },
+          ].map(({ icon, text }) => (
+            <div key={text} style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 12px', borderRadius: 999,
+              background: 'rgba(255,255,255,0.04)',
+              border: `1px solid ${X.line}`,
+              fontSize: 12.5, color: X.textSoft, fontFamily: FUI,
+            }}>
+              <span style={{ fontSize: 13 }}>{icon}</span>
+              {text}
             </div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Tagline */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={visible ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5, delay: 0.65, ease }}
-          style={{
-            marginTop: 28,
-            fontSize: 13, color: X.textMute, textAlign: 'center',
-            fontFamily: FUI, letterSpacing: 0.1,
-          }}
-        >
-          🔒 confidencial · resultado em minutos
+        {/* Social proof */}
+        <motion.div {...fade(0.52)} style={{
+          display: 'flex', alignItems: 'center', gap: 10,
+          padding: '12px 16px', borderRadius: 14,
+          background: `${X.acc1}08`, border: `1px solid ${X.acc1}20`,
+          marginBottom: 24,
+        }}>
+          <div style={{ display: 'flex', gap: -4 }}>
+            {['#9B7BFF', '#FF6BB1', '#34D399', '#FFB36B'].map((c, i) => (
+              <div key={i} style={{
+                width: 26, height: 26, borderRadius: 13,
+                background: c, border: `2px solid ${X.ink}`,
+                marginLeft: i > 0 ? -8 : 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 11, fontWeight: 700, color: '#fff',
+              }}>
+                {['A','R','C','M'][i]}
+              </div>
+            ))}
+          </div>
+          <div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: X.text }}>+350 vereditos entregues</span>
+            <span style={{ fontSize: 12, color: X.textMute }}> esta semana</span>
+          </div>
         </motion.div>
 
         {/* CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={visible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.75, ease }}
-          style={{ width: '100%', maxWidth: 280, marginTop: 24 }}
-        >
+        <motion.div {...fade(0.6)}>
           <div
             onClick={() => nav('/mode')}
             style={{
-              height: 54, borderRadius: 999, background: GRAD, cursor: 'pointer',
+              height: 56, borderRadius: 999, background: GRAD, cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              boxShadow: `0 10px 28px ${X.acc1}40`,
-              fontSize: 15, fontWeight: 700, fontFamily: FUI, color: '#fff',
-              letterSpacing: -0.1,
+              boxShadow: `0 12px 32px ${X.acc1}45`,
+              fontSize: 16, fontWeight: 700, fontFamily: FUI, color: '#fff',
+              letterSpacing: -0.2,
             }}
           >
-            Continuar
-            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-              <path d="M3 7.5h9m0 0L8 3.5m4 4l-4 4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            Quero o meu veredito
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M3 8h10m0 0L9 4m4 4l-4 4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
         </motion.div>
