@@ -16,11 +16,11 @@ const STEPS = [
         <path d="M11 13h14M11 18h8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
       </svg>
     ),
-    label: 'Contas o conflito',
+    label: 'Você conta o conflito',
   },
   {
     visual: <Lens size={44} intensity={1.0} />,
-    label: 'Mara analisa',
+    label: 'A Mara analisa',
   },
   {
     visual: (
@@ -31,7 +31,7 @@ const STEPS = [
         <path d="M26 18c3.3.6 6 3.2 6 6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="2 2"/>
       </svg>
     ),
-    label: 'Convidas o parceiro',
+    label: 'Convida o parceiro',
     sub: 'opcional — torna o veredito mais preciso',
   },
   {
@@ -42,7 +42,7 @@ const STEPS = [
       </svg>
     ),
     label: 'Veredito + relatório',
-    sub: 'sobre a tua relação',
+    sub: 'sobre o seu relacionamento',
     accent: true,
   },
 ]
@@ -81,20 +81,23 @@ export default function S01bExplain() {
           transition={{ duration: 0.55, delay: 0.05, ease }}
           style={{ marginTop: 32 }}
         >
-          <h1 style={{ margin: 0, fontFamily: FED, fontSize: 38, fontWeight: 400, letterSpacing: -1.4, lineHeight: 1.05, color: X.text }}>
-            Como funciona<br/>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: X.acc1, marginBottom: 10 }}>
+            como funciona
+          </div>
+          <h1 style={{ margin: 0, fontFamily: FED, fontSize: 40, fontWeight: 400, letterSpacing: -1.5, lineHeight: 1.05, color: X.text }}>
+            A sua resposta<br/>
             <em style={{
-              fontFamily: FED, fontStyle: 'italic',
+              fontFamily: FED, fontStyle: 'italic', fontSize: 40,
               background: GRAD_TXT, WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            }}>a análise.</em>
+            }}>está aqui.</em>
           </h1>
         </motion.div>
 
         {/* Steps flow */}
         <div style={{
           flex: 1, display: 'flex', flexDirection: 'column',
-          justifyContent: 'center', gap: 0, paddingTop: 12,
+          justifyContent: 'center', gap: 0, paddingTop: 8,
         }}>
           {STEPS.map((step, i) => (
             <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -109,9 +112,7 @@ export default function S01bExplain() {
                 <div style={{
                   width: 64, height: 64, borderRadius: 20, flexShrink: 0,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: step.accent
-                    ? GRAD
-                    : `rgba(155,123,255,0.10)`,
+                  background: step.accent ? GRAD : 'rgba(155,123,255,0.10)',
                   color: step.accent ? '#fff' : X.acc1,
                   boxShadow: step.accent ? `0 8px 24px ${X.acc1}35` : 'none',
                   border: step.accent ? 'none' : `1px solid ${X.acc1}25`,
@@ -122,8 +123,11 @@ export default function S01bExplain() {
                 {/* Label */}
                 <div>
                   <div style={{
-                    fontFamily: FED, fontSize: 26, fontWeight: 400,
-                    letterSpacing: -0.8, lineHeight: 1.1,
+                    fontFamily: FED,
+                    fontSize: 28,
+                    fontWeight: 400,
+                    letterSpacing: -1,
+                    lineHeight: 1.1,
                     ...(step.accent ? {
                       background: GRAD_TXT, WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent', backgroundClip: 'text',
@@ -134,7 +138,7 @@ export default function S01bExplain() {
                       : step.label}
                   </div>
                   {step.sub && (
-                    <div style={{ fontSize: 12, color: X.textMute, marginTop: 3, fontFamily: FUI }}>
+                    <div style={{ fontSize: 12.5, color: X.textMute, marginTop: 4, fontFamily: FUI, letterSpacing: 0.1 }}>
                       {step.sub}
                     </div>
                   )}
@@ -147,9 +151,9 @@ export default function S01bExplain() {
                   initial={{ opacity: 0 }}
                   animate={visible ? { opacity: 1 } : {}}
                   transition={{ duration: 0.4, delay: 0.3 + i * 0.13, ease }}
-                  style={{ paddingLeft: 35, margin: '6px 0' }}
+                  style={{ paddingLeft: 35, margin: '8px 0' }}
                 >
-                  <div style={{ width: 1, height: 32, background: `linear-gradient(to bottom, ${X.acc1}50, ${X.acc1}15)` }}/>
+                  <div style={{ width: 1, height: 28, background: `linear-gradient(to bottom, ${X.acc1}50, ${X.acc1}10)` }}/>
                 </motion.div>
               )}
             </div>
@@ -160,24 +164,25 @@ export default function S01bExplain() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={visible ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5, delay: 0.6, ease }}
+          transition={{ duration: 0.5, delay: 0.65, ease }}
         >
           <div
             onClick={() => nav('/mode')}
             style={{
-              height: 56, borderRadius: 999, background: GRAD, cursor: 'pointer',
+              height: 58, borderRadius: 999, background: GRAD, cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-              boxShadow: `0 10px 28px ${X.acc1}40`,
-              fontSize: 16, fontWeight: 700, fontFamily: FUI, color: '#fff',
+              boxShadow: `0 12px 32px ${X.acc1}45`,
+              fontSize: 17, fontWeight: 700, fontFamily: FUI, color: '#fff',
+              letterSpacing: -0.2,
             }}
           >
-            Começar
+            Começar agora
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M3 8h10m0 0L9 4m4 4l-4 4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <div style={{ marginTop: 12, textAlign: 'center', fontSize: 12, color: X.textMute }}>
-            🔒 confidencial · em minutos
+          <div style={{ marginTop: 12, textAlign: 'center', fontSize: 12.5, color: X.textMute, letterSpacing: 0.2 }}>
+            🔒 confidencial · resultado em minutos
           </div>
         </motion.div>
 
