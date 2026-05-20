@@ -44,14 +44,14 @@ export default function SSoloAnalyzing() {
           letterSpacing: -0.8, lineHeight: 1.15, color: X.text,
         }}>
           {bothSides ? (
-            <>A calcular o veredicto{' '}
+            <>A calcular o veredito{' '}
             <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
               com as duas versões.
             </em></>
           ) : (
             <>Aguarde enquanto a Mara{' '}
             <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              conclui o veredicto.
+              conclui o veredito.
             </em></>
           )}
         </h1>

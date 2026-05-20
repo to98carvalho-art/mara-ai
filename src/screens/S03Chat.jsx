@@ -90,7 +90,7 @@ CONTEXTO JÁ RECOLHIDO:
 ${triggerLabel ? `- O que desencadeou: ${triggerLabel}` : ''}
 ${feelingLabel ? `- Como ${name1} se sente agora: ${feelingLabel}` : ''}
 
-IMPORTANTE: O utilizador JÁ respondeu às perguntas acima. NÃO repitas essas questões. Começa DIRETAMENTE a pedir que descrevam o que aconteceu concretamente.
+IMPORTANTE: Você JÁ recebeu as respostas acima. NÃO repita essas questões. Comece DIRETAMENTE pedindo que descrevam o que aconteceu concretamente.
 
 MISSÃO CLÍNICA:
 Conduzir uma entrevista clínica estruturada para diagnosticar a dinâmica relacional com precisão científica. Identificar padrões, sinais de alerta, e preparar um relatório honesto.
@@ -543,7 +543,7 @@ export default function S03Chat() {
     } catch (err) {
       console.error('handleSend error', err)
       const fallback = newQCount >= MAX_Q
-        ? 'Obrigada pela tua partilha. Tenho toda a informação necessária para a análise.'
+        ? 'Obrigada por compartilhar isso. Tenho tudo o que preciso para a análise.'
         : 'Me conta mais sobre isso. O que sentiste nesse momento?'
       const fullHist = [...newHist, { role: 'assistant', content: fallback }]
       setThinking(false)
@@ -572,9 +572,9 @@ export default function S03Chat() {
     ask_feeling:  Q_FEELING.options,
   }[phase]
 
-  const inputPlaceholder = phase === 'ask_name'  ? 'O teu nome…'
+  const inputPlaceholder = phase === 'ask_name'  ? 'Seu nome…'
     : phase === 'ask_name2' ? 'Nome dela/dele… (opcional)'
-    : 'Escreve a tua resposta…'
+    : 'Escreva sua resposta…'
 
   return (
     <>

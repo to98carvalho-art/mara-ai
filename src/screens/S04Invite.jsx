@@ -63,7 +63,7 @@ export default function S04Invite() {
           {/* Título */}
           <div style={{ marginTop: 28, marginBottom: 28 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.8, textTransform: 'uppercase', color: X.acc1, marginBottom: 12 }}>
-              como queres continuar?
+              como você quer continuar?
             </div>
             <h1 style={{ margin: 0, fontFamily: FED, fontSize: 38, fontWeight: 400, letterSpacing: -1.4, lineHeight: 1.0, color: X.text }}>
               Ouvir os dois lados<br/>
@@ -81,7 +81,7 @@ export default function S04Invite() {
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.4, textTransform: 'uppercase', color: X.acc1 }}>
-                veredicto completo
+                veredito completo
               </div>
               <div style={{ padding: '3px 9px', borderRadius: 999, fontSize: 9.5, fontWeight: 700, letterSpacing: 1.2, textTransform: 'uppercase', color: X.acc1, background: `${X.acc1}18`, border: `1px solid ${X.acc1}35` }}>
                 recomendado
@@ -92,7 +92,7 @@ export default function S04Invite() {
               <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>{name2}</em>
             </h2>
             <p style={{ margin: '8px 0 0', fontSize: 13, color: X.textSoft, lineHeight: 1.55 }}>
-              Ouvimos os dois lados. O veredicto fica muito mais preciso e justo.
+              Ouvimos os dois lados. O veredito fica muito mais preciso e justo.
             </p>
             <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-end' }}>
               <div style={{ width: 32, height: 32, borderRadius: 16, background: GRAD, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc1}35` }}>
@@ -120,11 +120,11 @@ export default function S04Invite() {
               só a sua versão
             </div>
             <h2 style={{ margin: 0, fontFamily: FED, fontSize: 24, fontWeight: 400, letterSpacing: -0.6, lineHeight: 1.1, color: X.text }}>
-              Ver o veredicto{' '}
+              Ver o veredito{' '}
               <em style={{ fontFamily: FED, fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>agora</em>
             </h2>
             <p style={{ margin: '8px 0 0', fontSize: 13, color: X.textSoft, lineHeight: 1.55 }}>
-              A Mara analisa o conflito com base no que compartilhou e dá-te o resultado já.
+              A Mara analisa o conflito com base no que compartilhou e te dá o resultado já.
             </p>
             <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-end' }}>
               <div style={{ width: 32, height: 32, borderRadius: 16, background: `linear-gradient(135deg, ${X.acc2}, ${X.accDeep})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc2}35` }}>

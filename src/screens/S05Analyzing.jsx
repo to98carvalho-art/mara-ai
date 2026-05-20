@@ -222,7 +222,7 @@ export default function S05Analyzing() {
             <h1 style={{ margin: 0, fontFamily: FED, fontSize: 32, fontWeight: 400, letterSpacing: -0.8, lineHeight: 1.1, color: X.text }}>
               {isCompleted ? (
                 <>A calcular{' '}
-                <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 32, fontWeight: 400, letterSpacing: -1, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>o veredicto.</em>
+                <em style={{ fontFamily: FED, fontStyle: 'italic', fontSize: 32, fontWeight: 400, letterSpacing: -1, background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>o veredito.</em>
                 </>
               ) : (
                 <>A pesar{' '}
@@ -235,7 +235,7 @@ export default function S05Analyzing() {
                 ? 'Os dois lados estão cruzados. A criar análise…'
                 : isWaiting
                   ? `Aguarde que ${art(name2)} ${name2} entre na conversa.`
-                  : 'Quanto mais contexto, mais justo o veredicto.'}
+                  : 'Quanto mais contexto, mais justo o veredito.'}
             </p>
           </div>
 
@@ -380,7 +380,7 @@ export default function S05Analyzing() {
             <Step
               active={isCompleted}
               muted={!isCompleted}
-              label="A calcular o veredicto"
+              label="A calcular o veredito"
             />
           </div>
 
@@ -405,7 +405,7 @@ export default function S05Analyzing() {
               </div>
               <div>
                 <div style={{ fontSize: 14, fontWeight: 600, color: X.text }}>{name2} já respondeu.</div>
-                <div style={{ fontSize: 12.5, color: X.textSoft, marginTop: 2 }}>A gerar o veredicto completo…</div>
+                <div style={{ fontSize: 12.5, color: X.textSoft, marginTop: 2 }}>A gerar o veredito completo…</div>
               </div>
               <div style={{ marginLeft: 'auto' }}>
                 <svg width="20" height="20" viewBox="0 0 20 20" style={{ animation: 'spin 1s linear infinite', opacity: 0.7 }}>

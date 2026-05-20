@@ -59,7 +59,7 @@ export default function S06Replied() {
 
         <Card raised style={{ padding: 16, display: 'flex', alignItems: 'center', gap: 14 }}>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 13.5, fontWeight: 600, fontFamily: FED, fontStyle: 'italic', color: X.text }}>A recalcular o veredicto…</div>
+            <div style={{ fontSize: 13.5, fontWeight: 600, fontFamily: FED, fontStyle: 'italic', color: X.text }}>Recalculando o veredito…</div>
             <svg width="100%" height="20" viewBox="0 0 240 20" style={{ marginTop: 6 }}>
               {Array.from({ length: 36 }).map((_, i) => {
                 const h = 3 + Math.abs(Math.sin(i * 0.6) * 12)

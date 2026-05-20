@@ -235,7 +235,7 @@ function WhoAreYou({ name1, name2, color1, color2, onSelect }) {
           <em style={{ fontStyle: 'italic', background: GRAD_TXT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>só para ti.</em>
         </div>
         <div style={{ marginTop: 10, fontSize: 13, color: X.textMute, lineHeight: 1.5 }}>
-          Seleciona quem és para ver<br/>o teu conteúdo personalizado.
+          Selecione quem você é para ver<br/>seu conteúdo personalizado.
         </div>
       </div>
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 10 }}>

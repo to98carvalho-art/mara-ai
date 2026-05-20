@@ -339,7 +339,7 @@ export default function S09Verdict() {
             padding: '5px 13px', borderRadius: 999, fontSize: 10.5, fontWeight: 700,
             letterSpacing: 1.8, textTransform: 'uppercase',
             color: X.acc1, background: `${X.acc1}18`, border: `1px solid ${X.acc1}45`,
-          }}>veredicto</div>
+          }}>veredito</div>
           <div onClick={handleShare} style={{
             width: 38, height: 38, borderRadius: 19,
             background: copied ? `${X.good}22` : 'rgba(255,255,255,0.05)',

@@ -34,7 +34,7 @@ export default function S07Complete() {
 
         {/* Stats grid */}
         <div style={{ marginTop: 26, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-          {[{ v: '2', l: 'versões' }, { v: '28', l: 'perguntas' }, { v: '1', l: 'veredicto' }].map((s, i) => (
+          {[{ v: '2', l: 'versões' }, { v: '28', l: 'perguntas' }, { v: '1', l: 'veredito' }].map((s, i) => (
             <Card key={i} style={{ padding: '20px 12px', textAlign: 'center' }}>
               <div style={{
                 fontFamily: FED, fontSize: 44, fontWeight: 400, letterSpacing: -1.5, lineHeight: 1,
@@ -56,7 +56,7 @@ export default function S07Complete() {
         <div style={{ flex: 1 }} />
 
         <XBtn primary onClick={() => nav('/paywall')}>
-          Ver veredicto
+          Ver veredito
           <svg width="14" height="14" viewBox="0 0 14 14"><path d="M2 7h10m0 0L8 3m4 4l-4 4" stroke="#fff" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </XBtn>
         <div style={{

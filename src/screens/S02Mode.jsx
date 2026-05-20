@@ -98,7 +98,7 @@ export default function S02Mode() {
             </em>
           </h2>
           <p style={{ margin: '8px 0 0', fontSize: 13.5, color: X.textSoft, lineHeight: 1.5 }}>
-            Avanças já. Veredito com base no teu relato.
+            Resultado imediato com base no seu relato.
           </p>
           <div style={{ marginTop: 16, display: 'flex', justifyContent: 'flex-end' }}>
             <div style={{ width: 34, height: 34, borderRadius: 17, background: `linear-gradient(135deg, ${X.acc2}, ${X.accDeep})`, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: `0 4px 14px ${X.acc2}35` }}>

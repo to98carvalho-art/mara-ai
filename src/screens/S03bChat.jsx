@@ -51,7 +51,7 @@ Usa o que sabes do lado 1 para construir perguntas que toquem os mesmos temas se
 - Se apareceram sinais de DARVO → observa se ${name2 || 'esta pessoa'} usa o mesmo padrão ou é diferente
 - Se o lado 1 revelou padrões de escalada → explora a perspetiva sobre conflito sem citar exemplos concretos
 
-ARCO DA ENTREVISTA (${MAX_Q} respostas — mais curto porque já tens contexto):
+ARCO DA ENTREVISTA (${MAX_Q} respostas — mais curto porque você já tem contexto):
 1. ABERTURA (1 pergunta): Pede a versão desta pessoa sobre o conflito — deixa-a falar livremente.
 2. PADRÃO RELACIONAL (2 perguntas): Explora como é a dinâmica habitual, como se resolve o conflito, o que desencadeia tensão.
 3. COMUNICAÇÃO E PODER (2 perguntas): Com base no que você sabe do lado 1, aprofunde a comunicação, a capacidade de expressão, o equilíbrio de poder.
@@ -290,7 +290,7 @@ export default function S03bChat() {
 
     } catch (err) {
       const fallback = newQCount >= MAX_Q
-        ? 'Obrigada pela tua partilha. Tenho toda a informação de que preciso.'
+        ? 'Obrigada por compartilhar isso. Tenho tudo o que preciso para a análise.'
         : 'Me conta mais sobre isso. O que sentiste nesse momento?'
       const fullHist = [...newHist, { role: 'assistant', content: fallback }]
       setThinking(false)
