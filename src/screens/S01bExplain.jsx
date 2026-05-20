@@ -25,11 +25,23 @@ const STEPS = [
   {
     visual: (
       <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="13" cy="12" r="5" stroke="currentColor" strokeWidth="1.8"/>
+        <circle cx="26" cy="10" r="4" stroke="currentColor" strokeWidth="1.6"/>
+        <path d="M4 28c0-4.4 4-8 9-8s9 3.6 9 8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+        <path d="M26 18c3.3.6 6 3.2 6 6.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeDasharray="2 2"/>
+      </svg>
+    ),
+    label: 'Convidas o parceiro',
+    sub: 'opcional — torna o veredito mais preciso',
+  },
+  {
+    visual: (
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
         <path d="M18 4l2.5 7H28l-6 4.5 2.3 7L18 18.5l-6.3 4L14 15 8 10.5h7.5L18 4z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" strokeLinecap="round"/>
         <path d="M10 30h16M13 26v4M23 26v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
       </svg>
     ),
-    label: 'Recebes o veredito',
+    label: 'Recebes o relatório',
     accent: true,
   },
 ]
@@ -107,17 +119,24 @@ export default function S01bExplain() {
                 </div>
 
                 {/* Label */}
-                <div style={{
-                  fontFamily: FED, fontSize: 26, fontWeight: 400,
-                  letterSpacing: -0.8, lineHeight: 1.1,
-                  ...(step.accent ? {
-                    background: GRAD_TXT, WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                  } : { color: X.text }),
-                }}>
-                  {step.accent
-                    ? <em style={{ fontFamily: FED, fontStyle: 'italic' }}>{step.label}</em>
-                    : step.label}
+                <div>
+                  <div style={{
+                    fontFamily: FED, fontSize: 26, fontWeight: 400,
+                    letterSpacing: -0.8, lineHeight: 1.1,
+                    ...(step.accent ? {
+                      background: GRAD_TXT, WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+                    } : { color: X.text }),
+                  }}>
+                    {step.accent
+                      ? <em style={{ fontFamily: FED, fontStyle: 'italic' }}>{step.label}</em>
+                      : step.label}
+                  </div>
+                  {step.sub && (
+                    <div style={{ fontSize: 12, color: X.textMute, marginTop: 3, fontFamily: FUI }}>
+                      {step.sub}
+                    </div>
+                  )}
                 </div>
               </motion.div>
 
