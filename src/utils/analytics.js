@@ -3,13 +3,18 @@
  * Fires GA4 + Meta Pixel events safely
  */
 
-// GA4
+// GA4  (Measurement ID: G-CMRMJS0N8E)
 export function track(eventName, params = {}) {
   try {
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       window.gtag('event', eventName, params)
+      console.log('[Mara GA4]', eventName, params)
+    } else {
+      console.warn('[Mara GA4] gtag not ready —', eventName, params)
     }
-  } catch (_) {}
+  } catch (err) {
+    console.error('[Mara GA4] erro ao enviar evento:', eventName, err)
+  }
 }
 
 // Meta Pixel — standard + custom events

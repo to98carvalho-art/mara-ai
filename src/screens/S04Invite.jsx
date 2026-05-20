@@ -16,7 +16,8 @@ export default function S04Invite() {
   const name2 = data.name2 || ''
   const code  = data.code  || '----'
 
-  const [step,    setStep]    = useState('choose')
+  // If user already chose 'invite' on the mode screen, skip straight to WhatsApp form
+  const [step,    setStep]    = useState(() => data.mode === 'invite' && data.code ? 'whatsapp' : 'choose')
   const [phone,   setPhone]   = useState('')
   const [error,   setError]   = useState('')
   const [sending, setSending] = useState(false)

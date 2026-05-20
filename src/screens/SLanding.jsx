@@ -111,7 +111,7 @@ export default function SLanding() {
   return (
     <div style={{ width: '100%', background: X.ink, fontFamily: FUI, color: X.text }}>
 
-      <Nav onCode={() => nav('/code')} onStart={() => nav('/chat')} />
+      <Nav onCode={() => nav('/code')} onStart={() => nav('/mode')} />
 
       {/* ── HERO ── */}
       <section style={{
@@ -145,7 +145,7 @@ export default function SLanding() {
 
           {/* fake input bar — igual ao app */}
           <div
-            onClick={() => nav('/chat')}
+            onClick={() => nav('/mode')}
             style={{
               marginTop: 36, maxWidth: 440,
               background: 'rgba(255,255,255,0.04)', border: `1px solid ${X.line}`,
@@ -263,7 +263,7 @@ export default function SLanding() {
                 }}>9,99</span>
               </div>
               <div style={{ fontSize: 12, color: X.textMute, marginTop: 4 }}>pagamento único · Pix · cartão · Apple Pay</div>
-              <button onClick={() => nav('/chat')} style={{
+              <button onClick={() => nav('/mode')} style={{
                   marginTop: 20, background: GRAD, border: 'none',
                   borderRadius: 99, padding: '12px 24px',
                   color: '#fff', fontFamily: FUI, fontSize: 14, fontWeight: 700,

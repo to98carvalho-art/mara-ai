@@ -186,13 +186,13 @@ export default function S01Welcome() {
                 <div className="w5">
                   <Card style={{ padding: 6, borderRadius: 999, display: 'flex', alignItems: 'center', gap: 6 }} raised>
                     <div
-                      onClick={() => nav('/chat')}
+                      onClick={() => nav('/mode')}
                       style={{ flex: 1, padding: '0 18px', fontSize: 15, color: X.textMute, cursor: 'text' }}
                     >
                       Me conta o que aconteceu…
                     </div>
                     <div
-                      onClick={() => nav('/chat')}
+                      onClick={() => nav('/mode')}
                       style={{
                         width: 44, height: 44, borderRadius: 22, background: GRAD,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',

@@ -429,7 +429,8 @@ export default function S03Chat() {
       }),
     }).catch(() => {})
 
-    setTimeout(() => nav('/invite'), 4000)
+    const mode = data.mode || 'solo'
+    setTimeout(() => nav(mode === 'invite' ? '/invite' : '/solo'), 4000)
   }, [data, nav, update])
 
   const streamText = useRef('')

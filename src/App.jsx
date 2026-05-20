@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react'
 import { AppProvider } from './context/AppContext'
 import SLanding      from './screens/SLanding'
 import S01Welcome    from './screens/S01Welcome'
+import S02Mode       from './screens/S02Mode'
 import S03Chat       from './screens/S03Chat'
 import S03bChat      from './screens/S03bChat'
 import S04Invite     from './screens/S04Invite'
@@ -28,6 +29,7 @@ const ROUTE_ORDER = {
   '/join':       0,
   '/code':       0,
   '/setup':      1,
+  '/mode':       1,
   '/chat':       2,
   '/chat2':      3,
   '/invite':     3,
@@ -119,7 +121,8 @@ function AnimatedRoutes() {
         <Route path="/join"       element={<P><SJoin /></P>} />
         <Route path="/code"       element={<P><SCodeEntry /></P>} />
         <Route path="/dev/seed"   element={<P><SDevSeed /></P>} />
-        <Route path="/setup"      element={<Navigate to="/chat" replace />} />
+        <Route path="/setup"      element={<Navigate to="/mode" replace />} />
+        <Route path="/mode"       element={<P><S02Mode /></P>} />
         <Route path="/chat"       element={<P><S03Chat /></P>} />
         <Route path="/chat2"      element={<P><S03bChat /></P>} />
         <Route path="/invite"     element={<P><S04Invite /></P>} />
