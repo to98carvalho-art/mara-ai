@@ -41,18 +41,7 @@ const STEPS = [
         <path d="M10 30h16M13 26v4M23 26v4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/>
       </svg>
     ),
-    label: 'Recebes um veredito',
-    accent: true,
-  },
-  {
-    visual: (
-      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-        <path d="M8 6a2 2 0 012-2h12l8 8v18a2 2 0 01-2 2H10a2 2 0 01-2-2V6z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
-        <path d="M20 4v8h8" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-        <path d="M12 18h12M12 22h9M12 26h6" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round"/>
-      </svg>
-    ),
-    label: 'e um relatório',
+    label: 'Veredito + relatório',
     sub: 'sobre a tua relação',
     accent: true,
   },
