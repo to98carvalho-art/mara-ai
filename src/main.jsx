@@ -19,12 +19,7 @@ async function initNative() {
 }
 initNative()
 
-// Register service worker for PWA / offline support (web only)
-if ('serviceWorker' in navigator && !window.Capacitor) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {})
-  })
-}
+// SW registration removed — kill switch deployed to clear stale caches
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
