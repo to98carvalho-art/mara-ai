@@ -125,7 +125,7 @@ function AnimatedRoutes() {
   const P = ({ children, fade }) => <AnimatedPage dir={dir} fade={fade}>{children}</AnimatedPage>
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       <Routes location={loc} key={loc.pathname}>
         <Route path="/design"     element={<DesignCanvas />} />
         <Route path="/"           element={desktop ? <SLanding /> : <P><S01Welcome /></P>} />
