@@ -15,6 +15,24 @@ import { overlaps, hasStarted } from './time'
 const KEY = 'evento.demo.v2'
 const listeners = new Set()
 
+/* Guarda no localStorage quando dá, e em memória quando não dá
+   (navegação privada, páginas dentro de iframes, etc.). */
+const store = (() => {
+  try {
+    const probe = '__evento_probe__'
+    localStorage.setItem(probe, '1')
+    localStorage.removeItem(probe)
+    return localStorage
+  } catch {
+    const mem = new Map()
+    return {
+      getItem: k => (mem.has(k) ? mem.get(k) : null),
+      setItem: (k, v) => mem.set(k, v),
+      removeItem: k => mem.delete(k),
+    }
+  }
+})()
+
 /* ── armazenamento ── */
 
 function freshState() {
@@ -31,7 +49,7 @@ function freshState() {
 
 function read() {
   try {
-    const raw = localStorage.getItem(KEY)
+    const raw = store.getItem(KEY)
     if (!raw) throw new Error('empty')
     const state = JSON.parse(raw)
     if (!state.sessions?.length) throw new Error('invalid')
@@ -44,13 +62,13 @@ function read() {
 }
 
 function write(state) {
-  localStorage.setItem(KEY, JSON.stringify(state))
+  store.setItem(KEY, JSON.stringify(state))
   listeners.forEach(fn => { try { fn(state) } catch { /* ignora */ } })
   return state
 }
 
 export function resetDemoData() {
-  localStorage.removeItem(KEY)
+  store.removeItem(KEY)
   return read()
 }
 
