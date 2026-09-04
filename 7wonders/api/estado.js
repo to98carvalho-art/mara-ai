@@ -9,6 +9,21 @@
 import { baseDeDados } from './_lib/aulas.js'
 import { send } from './_lib/http.js'
 
+/* O Supabase tem dois formatos de chave a conviver:
+     sb_secret_…      / sb_publishable_…   (o novo)
+     eyJ….….…         (o antigo, um JWT)
+   Só as secretas servem aqui. Dizer qual delas lá está poupa meia
+   hora a quem estiver a configurar. */
+function qualChave(valor) {
+  const chave = (valor || '').trim()
+  if (!chave) return 'nenhuma'
+  if (chave.startsWith('sb_secret_')) return 'secreta (formato novo) ✓'
+  if (chave.startsWith('sb_publishable_')) return '⚠️ é a PÚBLICA — precisas da secreta'
+  if (chave.startsWith('eyJ') && chave.split('.').length === 3) return 'formato antigo (JWT) — pode servir'
+  if (chave.startsWith('eyJ')) return '⚠️ formato antigo, mas incompleta'
+  return '⚠️ não parece uma chave do Supabase'
+}
+
 export default async function handler(req, res) {
   const existe = nome => Boolean(process.env[nome])
 
@@ -29,9 +44,7 @@ export default async function handler(req, res) {
     SUPABASE_URL:              existe('SUPABASE_URL'),
     SUPABASE_SERVICE_ROLE_KEY: existe('SUPABASE_SERVICE_ROLE_KEY'),
     SESSION_SECRET:            existe('SESSION_SECRET'),
-    // A chave do Supabase tem sempre três partes separadas por pontos.
-    // Se não tiver, foi colada a meio ou é a chave errada.
-    chaveComFormatoDeChave:    (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim().split('.').length === 3,
+    chaveQueLaEsta: qualChave(process.env.SUPABASE_SERVICE_ROLE_KEY),
     THREECKET_SECRET_KEY:      existe('THREECKET_SECRET_KEY'),
   }
 
