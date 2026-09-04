@@ -7,6 +7,7 @@ import MainStage from './vistas/MainStage'
 import Privados from './vistas/Privados'
 import Bilhetes from './vistas/Bilhetes'
 import After from './vistas/After'
+import { NAV } from './content/evento'
 import { utilizadorAtual } from './lib/sessao'
 import { carregar, listar, inscrever, anular } from './lib/inscricoes'
 
@@ -41,7 +42,10 @@ export default function App() {
   const minhas = aulas.filter(a => a.inscrito).length
 
   useEffect(() => {
-    document.title = pagina === 'geral' ? '7WONDERS' : `7WONDERS · ${pagina}`
+    const nome = NAV.find(n => n.id === pagina)?.etiqueta
+    document.title = pagina === 'geral'
+      ? '7WONDERS · 12 setembro · Club de Golf de Braga'
+      : `${nome} · 7WONDERS`
   }, [pagina])
 
   return (
