@@ -234,7 +234,10 @@ img { max-width: 100%; }
 .legenda-preco__texto { font-size: 13px; font-weight: 700; letter-spacing: .1em; color: var(--creme); }
 .legenda-preco__texto--suave { color: var(--taupe); }
 
-.telefone-grande { font-size: 24px; font-weight: 800; color: var(--creme); display: block; }
+.telefone-grande {
+  font-size: 24px; font-weight: 800; color: var(--creme);
+  display: block; white-space: nowrap;   /* o número nunca parte ao meio */
+}
 
 /* ── formulários ─────────────────────────────────────────────── */
 
@@ -365,7 +368,7 @@ img { max-width: 100%; }
 
   .esgotado { font-size: 96px; }
   .nome-grande { font-size: 34px; }
-  .telefone-grande { font-size: 30px; }
+  .telefone-grande { font-size: clamp(22px, 2.1vw, 30px); }
 
   .veu { align-items: center; padding: 24px; }
   .janela { border-radius: var(--canto-cartao); max-width: 460px; }

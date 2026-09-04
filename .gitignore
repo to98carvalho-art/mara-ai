@@ -25,3 +25,8 @@ dist-ssr
 
 .vercel
 .env*.local
+
+# originais das fotografias — ver 7wonders/scripts/preparar-imagens.mjs
+/privados-mapa.png
+/ready-for-a-swing.png
+/zone-*.jpg
