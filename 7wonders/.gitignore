@@ -3,3 +3,7 @@ dist
 .env
 .env.local
 .vercel
+
+# originais das fotografias — pesados; no repositório ficam só as
+# versões preparadas em public/imagens (ver scripts/preparar-imagens.mjs)
+originais/

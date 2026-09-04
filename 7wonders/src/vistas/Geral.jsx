@@ -7,7 +7,14 @@ export default function Geral({ aoMudar }) {
   return (
     <main className="vista vista--geral">
       <div className="hero">
-        <Foto nome="hero.jpg" legenda="foto — main stage à noite" className="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        {/* Duas versões da mesma foto: a vertical no telemóvel, a
+            horizontal no desktop. Poupa metade dos dados a quem chega
+            ao recinto com a rede cheia de gente. */}
+        <picture>
+          <source media="(min-width: 860px)" srcSet="/imagens/hero.jpg" />
+          <img src="/imagens/hero-mobile.jpg" alt="7WONDERS — main stage à noite"
+               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+        </picture>
         <div className="hero__veu" />
         <div className="hero__fundo" />
       </div>

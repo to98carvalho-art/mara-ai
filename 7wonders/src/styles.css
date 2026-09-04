@@ -306,7 +306,7 @@ img { max-width: 100%; }
 
   .app { max-width: none; }
   .vista { max-width: var(--largura-site); margin: 0 auto; padding: 56px 40px 96px; width: 100%; }
-  .vista--geral { padding: 0 0 96px; }
+  .vista--geral { max-width: none; padding: 0 0 96px; }   /* o hero vai de ponta a ponta */
   .vista__interior { max-width: var(--largura-site); margin: 0 auto; padding: 20px 40px 0; }
 
   .topo__marca { padding: 20px 40px 16px; }

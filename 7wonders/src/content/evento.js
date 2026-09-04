@@ -121,8 +121,8 @@ export const AULAS_LOCAL = 'RELVADO · ÁREA DE AULAS'
 /* ── main stage ── */
 
 export const LINEUP = {
-  cabeca: { nome: 'REELOW', editora: 'SOLID GROOVES | REECORDS', foto: 'reelow.png' },
-  flyer: 'flyer.png',
+  cabeca: { nome: 'REELOW', editora: 'SOLID GROOVES | REECORDS', foto: 'reelow.jpg' },
+  flyer: 'flyer.jpg',
   restantes: ['Tony Shades B2B Goan', 'Isis Sage', 'Øxentä'],
   nota: 'O palco entra às 18H, quando as zonas de dia fecham. Dura até às 02H.',
 }
@@ -130,7 +130,7 @@ export const LINEUP = {
 /* ── camarotes ── */
 
 export const CAMAROTES = {
-  mapa: 'privados-mapa.png',
+  mapa: 'privados-mapa.jpg',
   nota: 'Dois níveis de seis camarotes, três de cada lado do corredor central. Os 03 e 04 ficam ao lado da cabine DJ, ao fundo do corredor.',
   legenda: [
     { estilo: 'cheio',     etiqueta: '03 · 04 — 1000 €' },
