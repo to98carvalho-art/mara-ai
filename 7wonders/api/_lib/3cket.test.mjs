@@ -140,17 +140,37 @@ const happy = {
 
 console.log('\nCliente de simulação')
 {
-  const mock = createMockTicketing()
+  const ambiente = { SESSION_SECRET: 'segredo-de-teste' }
+  const mock = createMockTicketing(ambiente)
   const r = await mock.requestPin('912345678')
-  assert.equal(r.mockPin, '1234'); ok('devolve o PIN de teste')
-  await throwsCode(() => mock.requestPin('912345678'), TICKET_ERRORS.PIN_ALREADY_SENT, 'não reenvia enquanto válido')
-  await throwsCode(() => mock.verifyPin('912345678', '0000'), TICKET_ERRORS.PIN_WRONG, 'rejeita PIN errado')
-  const s = await mock.verifyPin('912345678', '1234')
-  assert.ok(s.accountId); ok('entra com o PIN certo')
-  const mock2 = createMockTicketing()
-  await mock2.requestPin('912345670')
-  await throwsCode(() => mock2.verifyPin('912345670', '1234'), TICKET_ERRORS.NO_TICKET,
-    'número acabado em 0 = sem bilhete')
+  assert.match(r.mockPin, /^\d{4}$/);        ok('devolve um código de 4 dígitos')
+
+  const outra = await mock.requestPin('912345678')
+  assert.equal(outra.mockPin, r.mockPin);     ok('pedir outra vez dá o mesmo código')
+
+  await throwsCode(() => mock.verifyPin('912345678', '0000' === r.mockPin ? '1111' : '0000'),
+    TICKET_ERRORS.PIN_WRONG, 'rejeita código errado')
+
+  const sessao = await mock.verifyPin('912345678', r.mockPin)
+  assert.ok(sessao.accountId);                ok('entra com o código certo')
+
+  /* O erro que isto trava: na Vercel cada pedido pode cair num
+     servidor diferente. Se o código vivesse na memória de um deles,
+     ninguém conseguiria entrar. Um cliente novo tem de aceitar o
+     código emitido pelo anterior. */
+  const outroServidor = createMockTicketing(ambiente)
+  const noutro = await outroServidor.verifyPin('912345678', r.mockPin)
+  assert.equal(noutro.accountId, sessao.accountId)
+  ok('outro servidor aceita o mesmo código')
+
+  const semBilhete = createMockTicketing(ambiente)
+  const r0 = await semBilhete.requestPin('912345670')
+  await throwsCode(() => semBilhete.verifyPin('912345670', r0.mockPin),
+    TICKET_ERRORS.NO_TICKET, 'número acabado em 0 = sem bilhete')
+
+  const outroSegredo = createMockTicketing({ SESSION_SECRET: 'outro' })
+  await throwsCode(() => outroSegredo.verifyPin('912345678', r.mockPin),
+    TICKET_ERRORS.PIN_WRONG, 'com outro segredo, o código não serve')
 }
 
 console.log('\nSessão assinada')

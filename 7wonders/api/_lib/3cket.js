@@ -15,6 +15,8 @@
    vai sempre até ao fim antes de devolver uma sessão.
    ════════════════════════════════════════════════════════════════ */
 
+import { createHmac } from 'node:crypto'
+
 export const TICKET_ERRORS = {
   PHONE_INVALID:          'PHONE_INVALID',
   PIN_ALREADY_SENT:       'PIN_ALREADY_SENT',
@@ -161,39 +163,49 @@ function normaliseTickets(payload) {
 
 /* ── cliente de mentira, para desenvolver sem a chave real ────── */
 
-export function createMockTicketing() {
-  const pending = new Map()
+export function createMockTicketing(env = process.env) {
+  /* Sem memória, de propósito.
+
+     Na Vercel cada pedido pode cair num servidor diferente, e um PIN
+     guardado em memória desaparece entre o "enviar código" e o
+     "validar código" — ninguém conseguia entrar.
+
+     Aqui o código é calculado a partir do número, sempre igual, com
+     uma assinatura que ninguém de fora consegue reproduzir. Serve só
+     para desenvolver; a 3cket a sério guarda o estado do lado dela. */
+  const segredo = env.SESSION_SECRET || 'segredo-de-desenvolvimento'
+
+  const codigoDe = telefone => {
+    const digest = createHmac('sha256', segredo).update(`pin::${telefone}`).digest('hex')
+    return String(parseInt(digest.slice(0, 8), 16) % 10000).padStart(4, '0')
+  }
 
   // Números de teste: qualquer número acabado em 0 fica "sem bilhete".
-  const hasTicket = phone => !phone.endsWith('0')
+  const temBilhete = telefone => !telefone.endsWith('0')
 
   return {
     async requestPin(phone) {
       const mobile_phone = normalisePhone(phone)
       if (!isPlausiblePhone(mobile_phone)) throw new TicketError(TICKET_ERRORS.PHONE_INVALID)
-      const existing = pending.get(mobile_phone)
-      if (existing && existing.expiresAt > Date.now()) {
-        throw new TicketError(TICKET_ERRORS.PIN_ALREADY_SENT, {
-          expiresAt: new Date(existing.expiresAt).toISOString(),
-        })
+      return {
+        phone: mobile_phone,
+        expiresAt: new Date(Date.now() + 5 * 60_000).toISOString(),
+        mockPin: codigoDe(mobile_phone),
       }
-      const expiresAt = Date.now() + 5 * 60_000
-      pending.set(mobile_phone, { pin: '1234', expiresAt })
-      return { phone: mobile_phone, expiresAt: new Date(expiresAt).toISOString(), mockPin: '1234' }
     },
 
     async verifyPin(phone, pin) {
       const mobile_phone = normalisePhone(phone)
-      const entry = pending.get(mobile_phone)
-      if (!entry || entry.expiresAt <= Date.now()) throw new TicketError(TICKET_ERRORS.PIN_NOT_REQUESTED)
-      if (String(pin).replace(/\D/g, '') !== entry.pin) throw new TicketError(TICKET_ERRORS.PIN_WRONG)
-      if (!hasTicket(mobile_phone)) throw new TicketError(TICKET_ERRORS.NO_TICKET)
-      pending.delete(mobile_phone)
+      if (!isPlausiblePhone(mobile_phone)) throw new TicketError(TICKET_ERRORS.PHONE_INVALID)
+      if (String(pin).replace(/\D/g, '') !== codigoDe(mobile_phone)) {
+        throw new TicketError(TICKET_ERRORS.PIN_WRONG)
+      }
+      if (!temBilhete(mobile_phone)) throw new TicketError(TICKET_ERRORS.NO_TICKET)
       return {
         phone: mobile_phone,
-        accountId: 'mock-' + mobile_phone.slice(-9),
-        walletId: 'mock-wallet',
-        tickets: [{ ticket_id: 'mock-ticket', ticket_name: 'General Admission — 1st Release', paid_value: 15 }],
+        accountId: 'teste-' + mobile_phone.slice(-9),
+        walletId: 'carteira-de-teste',
+        tickets: [{ ticket_id: 'bilhete-de-teste', ticket_name: 'General Admission — 1st Release', paid_value: 15 }],
       }
     },
   }
