@@ -12,6 +12,18 @@ import { send } from './_lib/http.js'
 export default async function handler(req, res) {
   const existe = nome => Boolean(process.env[nome])
 
+  /* O endereço do projeto Supabase não é segredo — vai dentro de
+     qualquer app que use Supabase. Mostrá-lo aqui poupa horas quando
+     é ele que está mal escrito. As chaves, essas, nunca aparecem. */
+  const url = process.env.SUPABASE_URL || ''
+  const enderecoBaseDeDados = {
+    valor: url,
+    comEspacosOuQuebras: url !== url.trim(),
+    comecaPorHttps: url.startsWith('https://'),
+    acabaEmSupabaseCo: url.trim().endsWith('.supabase.co'),
+    comBarraNoFim: url.trim().endsWith('/'),
+  }
+
   const configuracao = {
     SUPABASE_URL:              existe('SUPABASE_URL'),
     SUPABASE_SERVICE_ROLE_KEY: existe('SUPABASE_SERVICE_ROLE_KEY'),
@@ -48,6 +60,7 @@ export default async function handler(req, res) {
   return send(res, 200, {
     pronto,
     configuracao,
+    enderecoBaseDeDados,
     baseDeDadosResponde,
     aulasNaBaseDeDados,
     avaria,
