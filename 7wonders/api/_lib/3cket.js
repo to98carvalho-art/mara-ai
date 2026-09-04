@@ -199,10 +199,22 @@ export function createMockTicketing() {
   }
 }
 
-/* Escolhe o cliente conforme existir ou não a chave. */
+/* Escolhe o cliente conforme existir ou não a chave.
+
+   O cliente é reaproveitado entre pedidos: o simulador guarda os PINs
+   pendentes em memória, e um cliente novo a cada chamada esqueceria o
+   PIN acabado de enviar. */
+let guardado = null
+
 export function ticketingFromEnv(env = process.env) {
   const secretKey = env.THREECKET_SECRET_KEY
   const apiUrl = env.THREECKET_API_URL || 'https://api.3cket.com'
-  if (!secretKey) return { client: createMockTicketing(), isMock: true }
-  return { client: createTicketing({ apiUrl, secretKey }), isMock: false }
+  const assinatura = `${apiUrl}::${secretKey ? 'real' : 'mock'}`
+
+  if (guardado?.assinatura !== assinatura) {
+    guardado = secretKey
+      ? { assinatura, client: createTicketing({ apiUrl, secretKey }), isMock: false }
+      : { assinatura, client: createMockTicketing(), isMock: true }
+  }
+  return guardado
 }
