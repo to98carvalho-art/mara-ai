@@ -1,0 +1,304 @@
+{
+	"info": {
+		"_postman_id": "94aa795d-81f2-47c7-ae9c-d27e0acd10bf",
+		"name": "Shake It",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12113931"
+	},
+	"item": [
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Phone Validation",
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECRET_KEY}}",
+								"description": "your secret api token, do not expose this value to the public"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"mobile_phone\":\"+351900000000\"}"
+						},
+						"url": {
+							"raw": "{{API_URL}}/external/account/phone_validation",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"external",
+								"account",
+								"phone_validation"
+							]
+						},
+						"description": "This request checks if a phone number is valid and if valid, sends an SMS to the phone number with a 4 Digit Code.\n\nBody:\n- Phone (with + symbol and area code)\n\nResponses:\n\n201:\nCreated - `{\"expires_at\":\"2023-02-24T14:30:13.035692Z\"}`\nThis response returns the expiration time for the PIN sent to the SMS\n\n400:\nBad Request - \n```\n{\n  \"error\": {\n    \"code\": \"invalid_input\",\n    \"message\": \"Validation error\",\n    \"invalid-params\": [\n      {\n        \"field\": \"mobile_phone\",\n        \"message\": \"mobile_phone must be valid\"\n      }\n    ],\n    \"type\": \"invalid_request_error\"\n  }\n}\n```\nThis results from an invalid input/phone number\n\n```\n{\n  \"error\": {\n    \"code\": \"operation_started\",\n    \"message\": \"An Account verification operation already started\",\n    \"type\": \"invalid_request_error\"\n  }\n}\n```\nThis results from attempting to request a new pin before it is expired\n\n\n401:\nUnauthorized - `{\"message\":\"Unauthorized.\"}`\nThis results from wrong api key or expired event"
+					},
+					"response": []
+				},
+				{
+					"name": "Pin Validation",
+					"protocolProfileBehavior": {
+						"followRedirects": false,
+						"followOriginalHttpMethod": false,
+						"followAuthorizationHeader": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECRET_KEY}}",
+								"description": "your secret api token, do not expose this value to the public"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"mobile_phone\":\"+351900000000\",\"pin\":1234}"
+						},
+						"url": {
+							"raw": "{{API_URL}}/external/account/pin_validation",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"external",
+								"account",
+								"pin_validation"
+							]
+						},
+						"description": "This request checks if the PIN + mobile phone combination is valid or not.\n\nBody:\n\n- Phone (with + symbol and area code)\n  - Pin Code (4 digits)\n\n\n201:\nCreated - `{\"id\": \"685b013e3ebc4997aa10dfe27385d80e\"}`\nThis results from a valid phone number and pin combination where the account exists and is registered.\n\n404:\nNot Found - `{\"message\": \"Operation not found\"}`\nThis results from a phone number that hasn't started a pin validation operation\n`{\"message\": \"Account not registered\"}`\nThis results when an account is not registered\n\n400:\nBad Request - \n```\n{\n  \"error\": {\n    \"code\": \"invalid_input\",\n    \"message\": \"Validation error\",\n    \"invalid-params\": [\n      {\n        \"field\": \"mobile_phone\",\n        \"message\": \"mobile_phone must be valid\"\n      }\n    ],\n    \"type\": \"invalid_request_error\"\n  }\n}\n```\nThis results from an invalid input/phone number\n```\n{\n  \"error\": {\n    \"code\": \"operation_pin_mismatch\",\n    \"message\": \"Pin code mismatch\",\n    \"type\": \"invalid_request_error\"\n  }\n}\n```\nThis results from an invalid pin code\n\n\n401:\nUnauthorized - `{\"message\":\"Unauthorized.\"}`\nThis results from wrong api key or expired event\n  "
+					},
+					"response": []
+				},
+				{
+					"name": "Attendee Info",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECRET_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"account\": \"ACCOUNT_ID\"\n}"
+						},
+						"url": {
+							"raw": "https://services.3cket.com/api/external/Account/account-info.php",
+							"protocol": "https",
+							"host": [
+								"services",
+								"3cket",
+								"com"
+							],
+							"path": [
+								"api",
+								"external",
+								"Account",
+								"account-info.php"
+							]
+						},
+						"description": "This request return data from a specific account\n\nBody:\n\nPlain Text\n\n```\n{\n  \"account\": \"b186eea1701f4643bc4c3e598e5e9dfe\"\n}\n\n```\n\n200:  \nOK - \n\n```\n{ \n   \"email\": \"3cket-account@3cket.com\",\n   \"custom_fields: {\n      234: \"exemplo\"\n   }\n}\n\n```\n\n  \nWhere the custom_fields is an array with all data uploaded by the attendee\n\n404:  \nNot Found - `{\"message\": \"`Account not found`\"}`  \nThis results when the account not exists\n\n401:  \nUnauthorized - `{\"message\":\"Unauthorized.\"}`  \nThis results from wrong api key or expired event"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cashless",
+			"item": [
+				{
+					"name": "Get Wallet",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECRET_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"account\": \"ACCOUNT_ID\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/external/cashless/wallet",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"external",
+								"cashless",
+								"wallet"
+							]
+						},
+						"description": "This request return the wallet_id (token) for the account. This token is also te content for the qr code.\n\nBody:\n\n- Account\n\n\n200:\nOK - `{\"wallet\": \"f894175e274f4bbd82fff4d4ae9b7210\"}`\nThis results from a valid account that exists.\n\n404:\nNot Found - `{\"message\": \"Account not found\"}`\nThis results when an account that dnot exists\n\n400:\nBad Request - \n```\n{\n  \"error\": {\n    \"code\": \"invalid_input\",\n    \"message\": \"Validation error\",\n    \"invalid-params\": [\n      {\n        \"field\": \"account\",\n        \"message\": \"Key account must be present\"\n      }\n    ],\n    \"type\": \"invalid_request_error\"\n  }\n}\n```\nThis results from a missing parameter\n\n401:\nUnauthorized - `{\"message\":\"Unauthorized.\"}`\nThis results from wrong api key or expired event\n  "
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tickets",
+			"item": [
+				{
+					"name": "Get Tickets List",
+					"protocolProfileBehavior": {
+						"followRedirects": false
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=utf-8",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECRET_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"wallet_id\": \"WALLET_ID\"\n}"
+						},
+						"url": {
+							"raw": "{{API_URL}}/external/tickets",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"external",
+								"tickets"
+							]
+						},
+						"description": "This request returns all tickets for the event for a specific wallet.\n\nBody:\n\n- wallet_id\n    \n\n201:  \nCreated -  \n`{ \"ticket_id\": \"6fb3d218331a417587076834730b5303\", \"product_id\": \"`ec44b9ddf8cd46fa950e96b154fe01\"`, \"ticket_name\": \"Bilhete Lote 1\", \"ticket_description\": \"Uma pequena descrição do bilhete\", \"paid_value\": 0, \"seat\": null }`\n\nThis returns all tickets for the event in this wallet\n\n400:  \nBad Request -\n\nPlain Text\n\n```\n{\n  \"error\": {\n    \"code\": \"invalid_input\",\n    \"message\": \"Validation error\",\n    \"invalid-params\": [\n      {\n        \"field\": \"wallet_id\",\n        \"message\": \"Key wallet_id must be present\"\n      }\n    ],\n    \"type\": \"invalid_request_error\"\n  }\n}\n\n```\n\nThis results from a missing parameter\n\n401:  \nUnauthorized - `{\"message\":\"Unauthorized.\"}`  \nThis results from wrong api key or expired event"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Tickets",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECRET_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"participant\": {\r\n        \"id\": \"PARTICIPANT_ID\"\r\n    },\r\n    \"lang\": \"pt_PT\",\r\n    \"send_sms\": false,\r\n    \"send_email\": false,\r\n    \"tickets\": [\r\n        {\r\n            \"id\": \"TICKET_ID\",\r\n            \"quantity\": 1\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{API_URL}}/external/tickets/register",
+							"host": [
+								"{{API_URL}}"
+							],
+							"path": [
+								"external",
+								"tickets",
+								"register"
+							]
+						},
+						"description": "StartFragment\n\n    // \"tickets\": \\[\"34490b91e59a40db94fcd451bbef65f4\",\"34490b91e59a40db94fcd451bbef65f4\",\"34490b91e59a40db94fcd451bbef65f4\",\"34490b91e59a40db94fcd451bbef65f5\",\"34490b91e59a40db94fcd451bbef65f5\",\"34490b91e59a40db94fcd451bbef65f5\",\"34490b91e59a40db94fcd451bbef65f5\",\"34490b91e59a40db94fcd451bbef65f5\",\"34490b91e59a40db94fcd451bbef65f5\"\\],\n\nEndFragment"
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Tickets",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{SECRET_KEY}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=utf-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"account\": \"ACCOUNT_ID\",\n  \"ticket_id\": \"TICKET_ID\"\n}"
+						},
+						"url": {
+							"raw": "https://services.3cket.com/api/external/Tickets/cancel-tickets.php",
+							"protocol": "https",
+							"host": [
+								"services",
+								"3cket",
+								"com"
+							],
+							"path": [
+								"api",
+								"external",
+								"Tickets",
+								"cancel-tickets.php"
+							]
+						},
+						"description": "This request cancel free tickets from a specific account\n\nBody:\n\n```\n{\n  \"account\": \"b186eea1701f4643bc4c3e598e5e9dfe\",\n  \"ticket_id\": \"21a34ed62c474a8faa51c35fd6f175e7\"\n}\n```\n\n200:  \nOK - `{ \"status\": \"success\" }`  \nThis is the result when a ticket has been cancelled\n\n404:  \nNot Found - `{\"message\": \"`Ticket or Account not found`\"}`  \nThis results when the ticket or account not exists\n\n401:  \nUnauthorized - `{\"message\":\"Unauthorized.\"}`  \nThis results from wrong api key or expired event"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "API_URL",
+			"value": "https://api.3cket.com"
+		},
+		{
+			"key": "SECRET_KEY",
+			"value": "",
+			"description": "Chave secreta da API — fornecida em separado pela 3cket. Não partilhar publicamente."
+		}
+	]
+}

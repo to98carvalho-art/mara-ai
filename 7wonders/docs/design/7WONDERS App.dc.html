@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="./image-slot.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: #315C27;
+    font-family: 'Archivo', system-ui, sans-serif;
+    background-color: #FBF7EB;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.24'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(90deg, rgba(49,92,39,.05) 0 1px, transparent 1px 4px),
+      repeating-linear-gradient(0deg, rgba(49,92,39,.04) 0 1px, transparent 1px 4px);
+  }
+  a { color: #315C27; text-decoration: none; }
+</style>
+</helmet>
+
+<div style="max-width:480px; margin:0 auto; min-height:100vh; position:relative; display:flex; flex-direction:column">
+
+  <!-- TOPO -->
+  <div style="background-color:#111111; background-image:url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27180%27%20height=%27180%27%3E%3Cfilter%20id=%27n%27%3E%3CfeTurbulence%20type=%27fractalNoise%27%20baseFrequency=%270.85%27%20numOctaves=%273%27%20stitchTiles=%27stitch%27/%3E%3CfeColorMatrix%20type=%27saturate%27%20values=%270%27/%3E%3C/filter%3E%3Crect%20width=%27180%27%20height=%27180%27%20filter=%27url%28%23n%29%27%20opacity=%270.3%27/%3E%3C/svg%3E); position:sticky; top:0; z-index:20">
+    <div style="padding:16px 20px; display:flex; align-items:center; justify-content:center">
+      <img src="uploads/7wonders-logo.png" alt="7WONDERS" style="display:block; height:32px; width:auto">
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(6, 1fr); border-top:1px solid rgba(170,157,141,.25)">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
+        <div style="{{ n.style }}" onClick="{{ n.onClick }}">
+          <div style="font-size:17px; line-height:1">{{ n.icon }}</div>
+          <div style="font-size:8.5px; font-weight:700; letter-spacing:.06em">{{ n.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <!-- CONTEÚDO -->
+  <div style="flex:1">
+
+    <!-- GERAL -->
+    <div style="display:{{ dGeral }}">
+      <div style="position:relative; width:100%; height:340px; overflow:hidden">
+        <img src="uploads/hero-mobile.jpg" alt="7WONDERS — main stage à noite" style="display:block; width:100%; height:100%; object-fit:cover">
+      </div>
+      <div style="padding:20px 20px 8px">
+      <div style="font-size:12px; font-weight:700; letter-spacing:.1em">12 SETEMBRO · CLUB DE GOLF DE BRAGA</div>
+
+      <div style="margin-top:22px; font-size:26px; font-weight:800; line-height:1.15">Doze horas.<br><span style="color:#AA9D8D">Um campo de golfe.</span></div>
+      <div style="margin-top:10px; font-size:14.5px; line-height:1.55; color:#111111">O recinto abre às 14H com seis zonas em simultâneo. O palco principal entra às 18H e dura até às 02H.</div>
+
+      <div style="margin-top:20px; display:flex; flex-direction:column; gap:10px">
+        <div style="display:flex; align-items:center; gap:10px">
+          <span style="display:inline-flex; align-items:center; padding:7px 14px 8px; border-radius:999px; background:#315C27; color:#FBF7EB; font-size:11.5px; font-weight:700; letter-spacing:.08em; font-variant-numeric:tabular-nums; white-space:nowrap">14H — 22H</span>
+          <span style="font-size:10.5px; font-weight:700; letter-spacing:.1em">RECINTO</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px">
+          <span style="display:inline-flex; align-items:center; padding:7px 14px 8px; border-radius:999px; background:#111111; color:#FBF7EB; font-size:11.5px; font-weight:700; letter-spacing:.08em; font-variant-numeric:tabular-nums; white-space:nowrap">18H — 02H</span>
+          <span style="font-size:10.5px; font-weight:700; letter-spacing:.1em; color:#AA9D8D">MAIN STAGE</span>
+        </div>
+      </div>
+
+      <!-- linha do dia -->
+      <div style="margin-top:34px; display:flex; align-items:center; gap:12px; margin-bottom:16px">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D">O DIA</div>
+        <div style="flex:1; height:1px; background:rgba(49,92,39,.22)"></div>
+      </div>
+      <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
+        <div style="display:grid; grid-template-columns:56px 1fr; gap:14px; padding:11px 0; border-bottom:1px solid rgba(49,92,39,.15)">
+          <div style="font-size:17px; font-weight:800; font-variant-numeric:tabular-nums; color:{{ t.color }}">{{ t.hour }}</div>
+          <div style="display:flex; flex-direction:column; gap:3px; font-size:11px; font-weight:700; letter-spacing:.08em">
+            <sc-for list="{{ t.lines }}" as="l" hint-placeholder-count="2">
+              <div style="color:{{ l.color }}">{{ l.text }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+
+      <!-- zonas -->
+      <div style="margin-top:36px; display:flex; align-items:center; gap:12px; margin-bottom:16px">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D">SEIS ZONAS</div>
+        <div style="flex:1; height:1px; background:rgba(49,92,39,.22)"></div>
+      </div>
+      <sc-for list="{{ zones }}" as="z" hint-placeholder-count="6">
+        <div style="padding:20px 0; border-bottom:1px solid rgba(49,92,39,.15); display:flex; flex-direction:column; gap:12px">
+          <image-slot id="{{ z.slot }}" shape="rect" fit="cover" src="{{ z.src }}" radius="10" style="width:100%; height:160px" placeholder="{{ z.slotHint }}"></image-slot>
+          <div style="font-size:20px; font-weight:800; color:#315C27">{{ z.name }}</div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12.5px; font-weight:700; letter-spacing:.08em">
+            <sc-for list="{{ z.lines }}" as="l" hint-placeholder-count="3">
+              <span style="color:{{ l.color }}">{{ l.text }}</span>
+            </sc-for>
+          </div>
+          <sc-if value="{{ z.hour }}" hint-placeholder-val="{{ false }}">
+            <span style="display:inline-flex; align-self:flex-start; align-items:center; padding:6px 12px 7px; border-radius:999px; background:#315C27; color:#FBF7EB; font-size:11px; font-weight:700; letter-spacing:.08em; font-variant-numeric:tabular-nums">{{ z.hour }}</span>
+          </sc-if>
+        </div>
+      </sc-for>
+      </div>
+    </div>
+
+    <!-- ATIVIDADES -->
+    <div style="display:{{ dAtiv }}; padding:24px 20px 8px">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D; margin-bottom:8px">ATIVIDADES · 12 SETEMBRO</div>
+      <div style="font-size:26px; font-weight:800; line-height:1.1">WELLNESS ZONE <span style="color:#AA9D8D">&amp;</span> SPIRIT &amp; SOUL</div>
+      <div style="margin-top:10px; font-size:13.5px; line-height:1.5; color:#111111">Carrega numa aula para te inscreveres. Gratuito com bilhete.</div>
+      <div style="margin-top:16px; display:flex; align-items:center; gap:16px; font-size:11px; font-weight:800; letter-spacing:.1em">
+        <div style="display:flex; align-items:center; gap:7px"><span style="width:9px; height:9px; border-radius:50%; background:#315C27; display:inline-block"></span>WELLNESS</div>
+        <div style="display:flex; align-items:center; gap:7px"><span style="width:9px; height:9px; border-radius:50%; background:#111111; display:inline-block"></span>SPIRIT &amp; SOUL</div>
+      </div>
+
+      <div style="margin-top:18px; display:grid; grid-template-columns:34px repeat(4, 1fr); gap:6px">
+        <div></div>
+        <div style="grid-column:2 / span 2; font-size:9.5px; font-weight:700; letter-spacing:.1em; color:#315C27; padding-bottom:6px; border-bottom:1.5px solid #315C27">WELLNESS</div>
+        <div style="grid-column:4 / span 2; font-size:9.5px; font-weight:700; letter-spacing:.1em; color:#111111; padding-bottom:6px; border-bottom:1.5px solid #111111">SPIRIT &amp; SOUL</div>
+      </div>
+      <div style="position:relative; margin-top:8px; display:grid; grid-template-columns:34px repeat(4, 1fr); grid-template-rows:repeat(8, 58px); gap:6px">
+        <sc-for list="{{ hours }}" as="t" hint-placeholder-count="9">
+          <div style="{{ t.style }}">{{ t.label }}</div>
+        </sc-for>
+        <sc-for list="{{ rules }}" as="r" hint-placeholder-count="8">
+          <div style="{{ r.style }}"></div>
+        </sc-for>
+        <sc-for list="{{ actsMobile }}" as="a" hint-placeholder-count="9">
+          <div style="{{ a.style }}" onClick="{{ a.onClick }}">
+            <div style="font-size:9px; font-weight:700; letter-spacing:.02em; opacity:.75; font-variant-numeric:tabular-nums">{{ a.time }}</div>
+            <div style="font-size:11.5px; font-weight:800; line-height:1.15; margin-top:2px">{{ a.name }}</div>
+            <sc-if value="{{ a.by }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:7.5px; font-weight:700; opacity:.7; margin-top:1px; line-height:1.2; word-break:break-word">by {{ a.by }}</div>
+            </sc-if>
+            <sc-if value="{{ a.enrolled }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:3px; font-size:8.5px; font-weight:800; letter-spacing:.08em">✓ INSCRITO</div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <div style="margin-top:20px; padding-top:14px; border-top:1px solid rgba(49,92,39,.2); font-size:12px; font-weight:700; letter-spacing:.08em; color:#111111">{{ enrolledCount }}</div>
+    </div>
+
+    <!-- MAIN STAGE -->
+    <div style="display:{{ dStage }}; background:#111111; background-image:url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27180%27%20height=%27180%27%3E%3Cfilter%20id=%27n%27%3E%3CfeTurbulence%20type=%27fractalNoise%27%20baseFrequency=%270.85%27%20numOctaves=%273%27%20stitchTiles=%27stitch%27/%3E%3CfeColorMatrix%20type=%27saturate%27%20values=%270%27/%3E%3C/filter%3E%3Crect%20width=%27180%27%20height=%27180%27%20filter=%27url%28%23n%29%27%20opacity=%270.3%27/%3E%3C/svg%3E); padding:24px 20px 8px">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D; margin-bottom:16px">MAIN STAGE · 18H — 02H</div>
+      <img src="uploads/IMG_8232.PNG" alt="Flyer 7WONDERS" style="display:block; width:100%; height:auto; border-radius:10px">
+      <img src="uploads/IMG_8264.PNG" alt="REELOW" style="display:block; width:100%; height:auto; border-radius:10px; margin-top:20px">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.16em; color:#AA9D8D; margin-top:6px">SOLID GROOVES | REECORDS</div>
+      <div style="height:1px; background:rgba(170,157,141,.3); margin:14px 0"></div>
+      <div style="font-size:24px; font-weight:800; letter-spacing:.04em; color:#FBF7EB">TONY SHADES B2B GOAN</div>
+      <div style="height:1px; background:rgba(170,157,141,.3); margin:12px 0"></div>
+      <div style="font-size:24px; font-weight:800; letter-spacing:.04em; color:#AA9D8D">ISIS SAGE</div>
+      <div style="height:1px; background:rgba(170,157,141,.3); margin:12px 0"></div>
+      <div style="font-size:24px; font-weight:800; letter-spacing:.04em; color:#FBF7EB">ØXENTÄ</div>
+      <div style="height:1px; background:rgba(170,157,141,.3); margin:12px 0 20px"></div>
+      <div style="min-height:52px; border-radius:999px; background:#FBF7EB; color:#111111; display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:800; letter-spacing:.14em" onClick="{{ goBilh }}">BILHETES</div>
+    </div>
+
+    <!-- PRIVADOS -->
+    <div style="display:{{ dPriv }}; background:#111111; background-image:url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27180%27%20height=%27180%27%3E%3Cfilter%20id=%27n%27%3E%3CfeTurbulence%20type=%27fractalNoise%27%20baseFrequency=%270.85%27%20numOctaves=%273%27%20stitchTiles=%27stitch%27/%3E%3CfeColorMatrix%20type=%27saturate%27%20values=%270%27/%3E%3C/filter%3E%3Crect%20width=%27180%27%20height=%27180%27%20filter=%27url%28%23n%29%27%20opacity=%270.3%27/%3E%3C/svg%3E); padding:24px 20px 8px">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D; margin-bottom:16px">PRIVADOS · 12 CAMAROTES DE 10</div>
+
+      <img src="assets/privados-mapa.png" alt="Mapa dos camarotes VIP" style="display:block; width:100%; height:auto; border-radius:10px">
+
+      <div style="height:1px; background:rgba(170,157,141,.3); margin:22px 0"></div>
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D">RESERVA POR TELEFONE</div>
+      <a href="tel:+351938096150" style="display:block; margin-top:6px; font-size:24px; font-weight:800; color:#FBF7EB; font-variant-numeric:tabular-nums">+351 938 096 150</a>
+      <a href="https://wa.me/351938096150" style="display:flex; align-items:center; justify-content:center; min-height:50px; margin-top:16px; border:1.5px solid #FBF7EB; border-radius:999px; color:#FBF7EB; font-size:11.5px; font-weight:800; letter-spacing:.12em">RESERVAR POR WHATSAPP</a>
+    </div>
+
+    <!-- BILHETES -->
+    <div style="display:{{ dBilh }}; background:#111111; background-image:url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27180%27%20height=%27180%27%3E%3Cfilter%20id=%27n%27%3E%3CfeTurbulence%20type=%27fractalNoise%27%20baseFrequency=%270.85%27%20numOctaves=%273%27%20stitchTiles=%27stitch%27/%3E%3CfeColorMatrix%20type=%27saturate%27%20values=%270%27/%3E%3C/filter%3E%3Crect%20width=%27180%27%20height=%27180%27%20filter=%27url%28%23n%29%27%20opacity=%270.3%27/%3E%3C/svg%3E); padding:24px 20px 8px">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D; margin-bottom:20px">BILHETES</div>
+      <div style="font-size:11px; font-weight:700; letter-spacing:.14em; color:#AA9D8D">BLIND TICKET</div>
+      <div style="font-size:58px; font-weight:800; line-height:.92; color:#FBF7EB; margin-top:8px">SOLD<br>OUT</div>
+      <div style="height:8px; border-radius:999px; background:rgba(170,157,141,.28); margin-top:16px; overflow:hidden"><div style="width:100%; height:100%; background:#FBF7EB"></div></div>
+
+      <div style="height:1px; background:rgba(170,157,141,.3); margin:24px 0 18px"></div>
+      <div style="font-size:11px; font-weight:700; letter-spacing:.14em; color:#AA9D8D; margin-bottom:12px">TAMBÉM DISPONÍVEIS</div>
+      <div style="display:flex; flex-direction:column; gap:12px">
+        <a href="https://3cket.com/pt/event/7-wonders-the-6th-wonder?cket=search-bar&amp;tt_test_id=D9U9JVRC77UDTFS1R1M0_1786639407" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding:16px; border:1px solid rgba(170,157,141,.35); border-radius:12px">
+          <div>
+            <div style="font-size:14px; font-weight:700; color:#FBF7EB">General Admission — Early Entry</div>
+            <div style="font-size:11px; color:#AA9D8D; margin-top:3px">Sáb 12 set · 16H · até às 19H</div>
+          </div>
+          <div style="font-size:18px; font-weight:800; color:#FBF7EB; white-space:nowrap">10 €</div>
+        </a>
+        <a href="https://3cket.com/pt/event/7-wonders-the-6th-wonder?cket=search-bar&amp;tt_test_id=D9U9JVRC77UDTFS1R1M0_1786639407" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding:16px; border:1px solid rgba(170,157,141,.35); border-radius:12px">
+          <div>
+            <div style="font-size:14px; font-weight:700; color:#FBF7EB">General Admission — 1st Release</div>
+            <div style="font-size:11px; color:#AA9D8D; margin-top:3px">Sáb 12 set · 16H</div>
+          </div>
+          <div style="font-size:18px; font-weight:800; color:#FBF7EB; white-space:nowrap">15 €</div>
+        </a>
+      </div>
+
+      <a href="https://3cket.com/pt/event/7-wonders-the-6th-wonder?cket=search-bar&amp;tt_test_id=D9U9JVRC77UDTFS1R1M0_1786639407" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:80px; margin-top:26px; padding:0 22px; background:#FBF7EB; color:#111111; border-radius:14px">
+        <div>
+          <div style="font-size:10.5px; font-weight:700; letter-spacing:.14em; color:#315C27">COMPRAR EM</div>
+          <div style="font-size:24px; font-weight:800">3CKET</div>
+        </div>
+        <div style="font-size:24px; font-weight:800">↗</div>
+      </a>
+      <div style="margin-top:22px; display:flex; flex-direction:column; gap:6px; font-size:11px; font-weight:700; letter-spacing:.08em; color:#AA9D8D; font-variant-numeric:tabular-nums">
+        <div>12 SETEMBRO 2026 · CLUB DE GOLF DE BRAGA</div>
+        <div>RECINTO 14H—22H · MAIN STAGE 18H—02H</div>
+        <div>+18</div>
+      </div>
+      <div style="height:1px; background:rgba(170,157,141,.3); margin:22px 0"></div>
+      <div style="font-size:13.5px; line-height:1.5; color:#FBF7EB">Os camarotes não são vendidos no 3cket. <span style="color:#AA9D8D; font-weight:700" onClick="{{ goPriv }}">Ver privados ↗</span></div>
+    </div>
+
+    <!-- AFTER PARTY -->
+    <div style="display:{{ dAfter }}; background:#111111; background-image:url(data:image/svg+xml,%3Csvg%20xmlns=%27http://www.w3.org/2000/svg%27%20width=%27180%27%20height=%27180%27%3E%3Cfilter%20id=%27n%27%3E%3CfeTurbulence%20type=%27fractalNoise%27%20baseFrequency=%270.85%27%20numOctaves=%273%27%20stitchTiles=%27stitch%27/%3E%3CfeColorMatrix%20type=%27saturate%27%20values=%270%27/%3E%3C/filter%3E%3Crect%20width=%27180%27%20height=%27180%27%20filter=%27url%28%23n%29%27%20opacity=%270.3%27/%3E%3C/svg%3E); padding:24px 20px 40px">
+      <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D; margin-bottom:20px">☾ AFTER PARTY · SECRETO</div>
+
+      <div style="display:flex; align-items:center; gap:10px">
+        <span style="display:inline-flex; align-items:center; padding:7px 14px 8px; border-radius:999px; background:#FBF7EB; color:#111111; font-size:12px; font-weight:700; letter-spacing:.1em; font-variant-numeric:tabular-nums">02H — 06H</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px 8px; border-radius:999px; border:1.5px dashed rgba(170,157,141,.5); color:#AA9D8D; font-size:12px; font-weight:700; letter-spacing:.1em">SECRET LOCATION</span>
+        <span style="display:inline-flex; align-items:center; padding:7px 14px 8px; border-radius:999px; background:transparent; border:1.5px solid #FBF7EB; color:#FBF7EB; font-size:12px; font-weight:700; letter-spacing:.1em">INVITE ONLY</span>
+      </div>
+
+      <sc-if value="{{ afterSubmitted }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-top:32px; padding:22px; border:1.5px dashed rgba(170,157,141,.5); border-radius:14px; text-align:center">
+          <div style="font-size:20px; font-weight:800; color:#FBF7EB">Candidatura enviada.</div>
+          <div style="margin-top:8px; font-size:13px; line-height:1.5; color:#AA9D8D">Se fores dos escolhidos, contactamos-te pelo telefone que deixaste. Não digas a ninguém.</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ afterNotSubmitted }}" hint-placeholder-val="{{ true }}">
+        <div style="margin-top:28px; display:flex; flex-direction:column; gap:12px">
+          <sc-for list="{{ afterFields }}" as="f" hint-placeholder-count="3">
+            <div>
+              <div style="font-size:10.5px; font-weight:700; letter-spacing:.1em; color:#AA9D8D; margin-bottom:6px">{{ f.label }}</div>
+              <input type="text" value="{{ f.value }}" onChange="{{ f.onChange }}" placeholder="{{ f.placeholder }}" style="{{ f.style }}">
+            </div>
+          </sc-for>
+          <div style="height:1px; background:rgba(170,157,141,.25); margin:6px 0"></div>
+          <div style="font-size:10.5px; font-weight:700; letter-spacing:.1em; color:#AA9D8D">DIZ-NOS 3 RAZÕES PARA TE CONVIDARMOS PARA O AFTER PARTY</div>
+          <textarea onChange="{{ afterReason.onChange }}" placeholder="{{ afterReason.placeholder }}" style="{{ afterReason.style }}">{{ afterReason.value }}</textarea>
+          <div style="{{ afterBtn }}" onClick="{{ submitAfter }}">VAMOS ANALISAR</div>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div style="{{ modalWrap }}" onClick="{{ closeModal }}">
+    <div style="width:100%; max-width:420px; background:#FBF7EB; border-radius:16px 16px 0 0; padding:26px 22px 30px" onClick="{{ stop }}">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px">
+        <div style="font-size:10.5px; font-weight:700; letter-spacing:.12em; color:#AA9D8D">{{ modalKind }}</div>
+        <div style="font-size:20px; color:#AA9D8D" onClick="{{ closeModal }}">×</div>
+      </div>
+      <div style="font-size:26px; font-weight:800; line-height:1.15; margin-bottom:12px">{{ modalTitle }}</div>
+
+      <sc-if value="{{ showValidate }}" hint-placeholder-val="{{ false }}">
+        <sc-if value="{{ capacityNote }}" hint-placeholder-val="{{ false }}">
+          <div style="display:inline-flex; align-items:center; padding:6px 12px; border-radius:999px; background:rgba(170,157,141,.25); color:#315C27; font-size:11.5px; font-weight:800; letter-spacing:.04em; margin-bottom:12px">{{ capacityNote }}</div>
+        </sc-if>
+        <div style="font-size:13px; line-height:1.5; color:#111111; margin-bottom:14px">Antes de escrever, confirma que tens bilhete. Vais receber um código por SMS.</div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <sc-for list="{{ ticketFields }}" as="tf" hint-placeholder-count="3">
+            <div>
+              <div style="font-size:10.5px; font-weight:700; letter-spacing:.1em; color:#AA9D8D; margin-bottom:5px">{{ tf.label }}</div>
+              <input type="text" value="{{ tf.value }}" onChange="{{ tf.onChange }}" placeholder="{{ tf.placeholder }}" style="{{ tf.style }}">
+            </div>
+          </sc-for>
+        </div>
+        <div style="{{ validateBtn }}" onClick="{{ validateTicket }}">ENVIAR CÓDIGO POR SMS</div>
+      </sc-if>
+
+      <sc-if value="{{ showCode }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px; line-height:1.5; color:#111111; margin-bottom:14px">Enviamos um código por SMS para {{ codePhone }}. Introduz o código para confirmar.</div>
+        <div>
+          <div style="font-size:10.5px; font-weight:700; letter-spacing:.1em; color:#AA9D8D; margin-bottom:5px">CÓDIGO</div>
+          <input type="text" value="{{ codeValue }}" onChange="{{ onCodeChange }}" placeholder="1234" style="{{ codeInputStyle }}">
+        </div>
+        <div style="{{ codeBtn }}" onClick="{{ confirmCode }}">VALIDAR CÓDIGO</div>
+        <div style="margin-top:10px; font-size:12px; color:#AA9D8D; text-align:center; cursor:pointer" onClick="{{ backToValidate }}">&larr; corrigir dados</div>
+      </sc-if>
+
+      <sc-if value="{{ showConfirm }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; gap:8px; padding:14px 0; border-top:1px solid rgba(49,92,39,.2); border-bottom:1px solid rgba(49,92,39,.2)">
+          <sc-for list="{{ modalFacts }}" as="f" hint-placeholder-count="3">
+            <div style="display:flex; justify-content:space-between; gap:12px; font-size:13px">
+              <span style="font-weight:700; letter-spacing:.1em; color:#AA9D8D; font-size:10.5px">{{ f.k }}</span>
+              <span style="font-weight:700; font-variant-numeric:tabular-nums">{{ f.v }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:13.5px; line-height:1.55; color:#111111; margin-top:16px">{{ modalNote }}</div>
+        <div style="{{ modalBtn }}" onClick="{{ toggleEnroll }}">{{ modalBtnLabel }}</div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+const ACTS = [
+  { id: 'warmup',   col: 2, start: 1, span: 1, time: '15H — 15H30',   name: 'Warm Up',                   zone: 'WELLNESS', tone: 'green' },
+  { id: 'barre',    col: 2, start: 2, span: 2, time: '15H30 — 16H30', name: 'Barre Class',   zone: 'WELLNESS', tone: 'green', capacity: { convite: 0, bilhete: 10 }, by: '@soloStudio' },
+  { id: 'rob',      col: 2, start: 4, span: 2, time: '16H30 — 17H30', name: 'Fitness Class', zone: 'WELLNESS', tone: 'green', capacity: { convite: 15, bilhete: 15 }, by: '@robfitness' },
+  { id: 'crossfit', col: 2, start: 6, span: 2, time: '17H30 — 18H30', name: 'CrossFit Class', zone: 'WELLNESS', tone: 'green', capacity: { convite: 24, bilhete: 11 }, by: '@bracaracf' },
+  { id: 'run',      col: 3, start: 2, span: 2, time: '15H30 — 16H30', name: 'Run Club', zone: 'WELLNESS', tone: 'outline', capacity: { convite: 0, bilhete: 49 }, by: '@pacenlovehealthclub @bamobora' },
+  { id: 'ice',      col: 3, start: 4, span: 3, time: '16H30 — 18H',   name: 'Ice Bath & Sauna', zone: 'WELLNESS', tone: 'outline', infoOnly: true, by: '@alaskarecover', priceLabel: 'GRATUITO', payNote: 'Não precisas de te inscrever — está disponível das {TIME}, sem marcação, grátis para quem tem bilhete.' },
+  { id: 'reiki',    col: 4, start: 1, span: 8, time: '15H — 19H', name: 'Reiki · Tarot · Massagens', zone: 'SPIRIT & SOUL', tone: 'ink', infoOnly: true, combo: true, payNote: 'Sem marcação — disponível das {TIME}. Pago no dia, por ordem de chegada.' },
+  { id: 'yoga',     col: 5, start: 1, span: 2, time: '15H — 16H',     name: 'Yoga', zone: 'SPIRIT & SOUL', tone: 'ink', capacity: { convite: 0, bilhete: 15 }, by: '@mantayoga' },
+  { id: 'meditation', col: 5, start: 4, span: 3, time: '16H30 — 18H',   name: 'Cacau\'s Ritual', zone: 'SPIRIT & SOUL', tone: 'ink', capacity: { convite: 0, bilhete: 15 }, by: '@mae__natureza' }
+];
+
+const HOURS = ['15H', '15H30', '16H', '16H30', '17H', '17H30', '18H', '18H30', '19H'];
+
+const PRICE = { 1: 800, 2: 800, 3: 1000, 4: 1000, 5: 800, 6: 800, 7: 700, 8: 700, 9: 700, 10: 700, 11: 700, 12: 700 };
+
+const ZONES = [
+  { name: 'WELLNESS ZONE', hour: '15H30 — 18H30', lines: ['RUN CLUB', 'BANHO DE GELO', 'AULAS DE FITNESS'] },
+  { name: 'VINYL SESSIONS', hour: '', lines: ['VENDA DE DISCOS', 'SHOW AO VIVO', 'RUBEN G.'] },
+  { name: 'ART & CULTURE', hour: '', lines: ['EXPOSIÇÃO', 'OBRA COLETIVA', 'PARTICIPAÇÃO LIVRE'] },
+  { name: 'SPIRIT & SOUL', hour: '16H — 18H', lines: ['YOGA', 'RITUAIS DE CURA', 'REIKI', 'TAROT'] },
+  { name: 'FOOD TRUCK VILLAGE', hour: '', lines: ['3 FOOD TRUCKS', 'CAFÉ ORGÂNICO', 'COMIDA VEGAN'] },
+  { name: '7W MARKET', hour: '14H — 22H', lines: ['+50 MARCAS PORTUGUESAS'] }
+];
+
+const SLOTS = [
+  ['zf-wellness', 'foto — run club / aulas', 'assets/zone-wellness.jpg'],
+  ['zf-vinyl', 'foto — banca de discos', 'uploads/zone-vinyl.jpg'],
+  ['zf-art', 'foto — exposição', 'uploads/hf_20260820_181505_2ad0a656-ffd8-448e-a1b3-f9c8bfa3ca2b.png'],
+  ['zf-spirit', 'foto — yoga', 'assets/zone-spirit.jpg'],
+  ['zf-food', 'foto — food trucks', 'assets/zone-food.jpg'],
+  ['zf-market', 'foto — market', 'uploads/hf_20260818_163523_ad534cd1-20e4-48cb-b551-97da4b60fab6.png']
+];
+
+const TIMELINE = [
+  { hour: '14H', color: '#315C27', lines: [['ABERTURA DO RECINTO', '#111111'], ['ABERTURA MARKET · +50 BRANDS', '#AA9D8D']] },
+  { hour: '15H30', color: '#AA9D8D', lines: [['RUN CLUB', '#111111'], ['ABERTURA DAS AULAS', '#AA9D8D']] },
+  { hour: '18H', color: '#315C27', lines: [['ABERTURA MAIN STAGE', '#111111']] },
+  { hour: '22H', color: '#111111', lines: [['ENCERRAMENTO DO MARKET', '#111111'], ['ENCERRAMENTO DAS ATIVIDADES', '#AA9D8D']] }
+];
+
+const NAV = [
+  { id: 'geral', icon: '◐', label: 'GERAL' },
+  { id: 'ativ', icon: '✦', label: 'ATIVIDADES' },
+  { id: 'stage', icon: '♫', label: 'MAIN STAGE' },
+  { id: 'priv', icon: '▢', label: 'PRIVADOS' },
+  { id: 'bilh', icon: '◈', label: 'BILHETES' },
+  { id: 'after', icon: '☾', label: 'AFTER PARTY' }
+];
+
+class Component extends DCLogic {
+  state = { page: 'geral', enrolled: {}, modal: null, step: 'validar', ticket: { firstName: '', lastName: '', phone: '', email: '', code: '', kind: null }, validated: false, usage: { rob: { convite: 15, bilhete: 0 }, crossfit: { convite: 24, bilhete: 0 } }, enrolledKind: {}, after: { firstName: '', lastName: '', phone: '', email: '', reasons: '' }, afterSubmitted: false };
+  go(p) { return () => { this.setState({ page: p, modal: null }); window.scrollTo(0, 0); }; }
+
+  renderVals() {
+    const s = this.state;
+
+    const navItems = NAV.map(n => ({
+      label: n.label, icon: n.icon, onClick: this.go(n.id),
+      style: {
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
+        padding: '10px 4px 12px', cursor: 'pointer',
+        color: s.page === n.id ? '#FBF7EB' : '#AA9D8D'
+      }
+    }));
+
+    const timeline = TIMELINE.map(t => ({
+      hour: t.hour, color: t.color,
+      lines: t.lines.map(([text, color]) => ({ text, color }))
+    }));
+
+    const zones = ZONES.map((z, zi) => ({
+      name: z.name, hour: z.hour || false, slot: SLOTS[zi][0], slotHint: SLOTS[zi][1], src: SLOTS[zi][2],
+      lines: z.lines.map((t, i) => ({ text: t, color: i % 2 ? '#AA9D8D' : '#315C27' }))
+    }));
+
+    const tone = {
+      green: { background: '#315C27', color: '#FBF7EB', border: '1.5px solid #315C27' },
+      outline: { background: 'rgba(49,92,39,.10)', color: '#315C27', border: '1.5px solid #315C27' },
+      ink: { background: '#111111', color: '#FBF7EB', border: '1.5px solid #111111' }
+    };
+    const hours = HOURS.map((h, i) => ({
+      label: h,
+      style: {
+        gridColumn: '1', gridRow: String(i + 1), display: 'flex', alignItems: 'flex-start',
+        fontSize: '9px', fontWeight: 700, letterSpacing: '.02em', color: '#AA9D8D',
+        fontVariantNumeric: 'tabular-nums', marginTop: '-6px'
+      }
+    }));
+    const rules = HOURS.slice(0, 8).map((h, i) => ({
+      style: {
+        gridColumn: '2 / span 4', gridRow: String(i + 1), height: '1px',
+        background: 'rgba(49,92,39,.16)', alignSelf: 'start', marginTop: '-3px'
+      }
+    }));
+
+    const actsMobile = ACTS.map(a => ({
+      time: a.time, name: a.name, by: a.by || false, enrolled: !!s.enrolled[a.id], vertical: false, horizontal: true,
+      onClick: a.bookable === false ? undefined : () => this.setState({ modal: { type: 'act', id: a.id }, step: a.infoOnly ? 'confirmar' : (s.enrolled[a.id] ? 'confirmar' : 'validar') }),
+      style: Object.assign({
+        gridColumn: String(a.col), gridRow: a.start + ' / span ' + a.span,
+        borderRadius: '8px', padding: '8px 8px', cursor: a.bookable === false ? 'default' : 'pointer',
+        display: 'flex', flexDirection: 'column', gap: '2px', overflow: 'visible',
+        outline: s.enrolled[a.id] ? '3px solid #AA9D8D' : 'none', outlineOffset: '2px'
+      }, tone[a.tone])
+    }));
+    const enrolledIds = Object.keys(s.enrolled).filter(k => s.enrolled[k]);
+    const enrolledCount = enrolledIds.length === 0 ? 'SEM INSCRIÇÕES'
+      : enrolledIds.length === 1 ? '1 INSCRIÇÃO' : enrolledIds.length + ' INSCRIÇÕES';
+
+    const boxStyle = (n) => {
+      const p = PRICE[n];
+      const base = { minHeight: '66px', borderRadius: '3px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: 800, letterSpacing: '.04em', fontVariantNumeric: 'tabular-nums', cursor: 'pointer' };
+      if (p === 1000) return Object.assign(base, { background: '#FBF7EB', color: '#111111' });
+      if (p === 800) return Object.assign(base, { border: '1.5px solid #FBF7EB', color: '#FBF7EB' });
+      return Object.assign(base, { border: '1.5px dashed #AA9D8D', color: '#AA9D8D' });
+    };
+    const boxes = (arr) => arr.map(n => ({ n: n < 10 ? '0' + n : String(n), style: boxStyle(n), onClick: () => this.setState({ modal: { type: 'box', id: n } }) }));
+
+    const m = s.modal;
+    const act = m && m.type === 'act' ? ACTS.find(a => a.id === m.id) : null;
+    const isOn = act ? !!s.enrolled[act.id] : false;
+    const step = s.step || 'validar';
+    const usage = (act && s.usage[act.id]) || { convite: 0, bilhete: 0 };
+    const remaining = (kind) => act && act.capacity ? act.capacity[kind] - (usage[kind] || 0) : null;
+    const totalRemaining = act && act.capacity ? remaining('convite') + remaining('bilhete') : null;
+    const capacityNote = act && act.capacity && !isOn && totalRemaining > 0 ? ('APENAS ' + totalRemaining + (totalRemaining === 1 ? ' VAGA LIVRE' : ' VAGAS LIVRES')) : false;
+    const showValidate = !!(act && !isOn && step === 'validar');
+    const showCode = !!(act && !isOn && step === 'codigo');
+    const showConfirm = !showValidate && !showCode;
+    const ticket = s.ticket || { firstName: '', lastName: '', phone: '', email: '', code: '', kind: null };
+    const inputStyle = { minHeight: '46px', width: '100%', border: '1px solid rgba(49,92,39,.3)', borderRadius: '8px', padding: '0 13px', fontSize: '14px', color: '#111111', background: '#fff' };
+    const setField = (key) => (e) => this.setState(st => ({ ticket: Object.assign({}, st.ticket, { [key]: e.target.value }) }));
+    const ticketFields = [
+      { label: 'PRIMEIRO NOME', placeholder: 'Marta', value: ticket.firstName, onChange: setField('firstName'), style: inputStyle },
+      { label: 'ÚLTIMO NOME', placeholder: 'Ribeiro', value: ticket.lastName, onChange: setField('lastName'), style: inputStyle },
+      { label: 'NÚMERO DE TELEFONE', placeholder: '912 345 678', value: ticket.phone, onChange: setField('phone'), style: inputStyle },
+      { label: 'EMAIL', placeholder: 'marta@exemplo.pt', value: ticket.email, onChange: setField('email'), style: inputStyle }
+    ];
+    const ticketValid = !!(ticket.firstName && ticket.lastName && ticket.phone && ticket.email);
+    const validateBtn = {
+      minHeight: '50px', marginTop: '16px', borderRadius: '999px', display: 'flex', alignItems: 'center',
+      justifyContent: 'center', cursor: ticketValid ? 'pointer' : 'not-allowed', fontSize: '12.5px', fontWeight: 800,
+      letterSpacing: '.12em', background: ticketValid ? '#315C27' : 'rgba(49,92,39,.25)', color: '#FBF7EB'
+    };
+    const validateTicket = () => { if (ticketValid) this.setState({ step: 'codigo' }); };
+    const codeValid = !!(ticket.code && ticket.code.length >= 4);
+    const codeInputStyle = Object.assign({}, inputStyle, { textAlign: 'center', fontSize: '20px', fontWeight: 800, letterSpacing: '.2em' });
+    const codeBtn = {
+      minHeight: '50px', marginTop: '16px', borderRadius: '999px', display: 'flex', alignItems: 'center',
+      justifyContent: 'center', cursor: codeValid ? 'pointer' : 'not-allowed', fontSize: '12.5px', fontWeight: 800,
+      letterSpacing: '.12em', background: codeValid ? '#315C27' : 'rgba(49,92,39,.25)', color: '#FBF7EB'
+    };
+    const confirmCode = () => { if (codeValid) this.setState({ validated: true, step: 'confirmar' }); };
+    const btnBase = { minHeight: '54px', marginTop: '20px', borderRadius: '999px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: '12.5px', fontWeight: 800, letterSpacing: '.12em' };
+    let modalKind = '', modalTitle = '', modalFacts = [], modalNote = '', modalBtnLabel = '', modalBtn = Object.assign({}, btnBase);
+    if (act) {
+      modalKind = act.zone; modalTitle = act.name;
+      if (act.infoOnly) {
+        modalFacts = act.combo
+          ? [{ k: 'DIA', v: '12 SETEMBRO' }, { k: 'HORÁRIO', v: act.time }, { k: 'REIKI', v: '10 €' }, { k: 'TAROT', v: '10 €' }, { k: 'MASSAGENS', v: '15 €' }]
+          : [{ k: 'DIA', v: '12 SETEMBRO' }, { k: 'HORÁRIO', v: act.time }, { k: 'PREÇO', v: act.price || act.priceLabel || 'GRATUITO' }];
+        modalNote = (act.payNote || 'Não precisas de te inscrever — está disponível das {TIME}, sem marcação.').replace('{TIME}', act.time.replace(' — ', ' às '));
+        modalBtnLabel = 'ENTENDIDO';
+        Object.assign(modalBtn, { background: '#111111', color: '#FBF7EB' });
+      } else {
+      const isFull = !!(act.capacity && !isOn && remaining('convite') + remaining('bilhete') <= 0);
+      modalFacts = [{ k: 'DIA', v: '12 SETEMBRO' }, { k: 'HORA', v: act.time }, { k: 'LOCAL', v: 'RELVADO' }];
+      modalNote = isOn ? 'Estás inscrito. Chega 10 minutos antes.' : (isFull ? 'Esta aula já não tem vagas.' : 'Inscrição gratuita com bilhete.');
+      modalBtnLabel = isOn ? 'ANULAR INSCRIÇÃO' : (isFull ? 'SEM VAGAS' : 'INSCREVER-ME');
+      Object.assign(modalBtn, isOn ? { background: 'transparent', color: '#315C27', border: '1.5px solid rgba(49,92,39,.5)' } : (isFull ? { background: 'rgba(49,92,39,.15)', color: 'rgba(49,92,39,.5)', cursor: 'not-allowed' } : { background: '#315C27', color: '#FBF7EB' }));
+      }
+    } else if (m && m.type === 'box') {
+      const n = m.id;
+      modalKind = 'PRIVADO · NÍVEL ' + (n <= 6 ? '1' : '2');
+      modalTitle = 'Camarote ' + (n < 10 ? '0' + n : n);
+      modalFacts = [{ k: 'CAPACIDADE', v: '10 PESSOAS' }, { k: 'PREÇO', v: PRICE[n] + ' €' }, { k: 'POSIÇÃO', v: (n === 3 || n === 4) ? 'JUNTO À CABINE DJ' : (n <= 6 ? 'PISTA' : 'ELEVADO') }];
+      modalNote = 'Reserva por telefone ou WhatsApp, indicando o número do camarote.';
+      modalBtnLabel = 'RESERVAR PELO +351 938 096 150';
+      Object.assign(modalBtn, { background: '#111111', color: '#FBF7EB' });
+    }
+
+    const after = s.after || { firstName: '', lastName: '', phone: '', email: '', reasons: '' };
+    const afterInputStyle = { minHeight: '46px', width: '100%', border: '1px solid rgba(170,157,141,.3)', borderRadius: '8px', padding: '0 13px', fontSize: '14px', color: '#FBF7EB', background: 'rgba(255,255,255,.05)' };
+    const setAfterField = (key) => (e) => this.setState(st => ({ after: Object.assign({}, st.after, { [key]: e.target.value }) }));
+    const afterFields = [
+      { label: 'PRIMEIRO NOME', placeholder: 'Marta', value: after.firstName, onChange: setAfterField('firstName'), style: afterInputStyle },
+      { label: 'ÚLTIMO NOME', placeholder: 'Ribeiro', value: after.lastName, onChange: setAfterField('lastName'), style: afterInputStyle },
+      { label: 'TELEFONE', placeholder: '912 345 678', value: after.phone, onChange: setAfterField('phone'), style: afterInputStyle },
+      { label: 'EMAIL', placeholder: 'marta@exemplo.pt', value: after.email, onChange: setAfterField('email'), style: afterInputStyle }
+    ];
+    const afterTextareaStyle = Object.assign({}, afterInputStyle, { minHeight: '100px', padding: '12px 13px', resize: 'none', lineHeight: '1.5' });
+    const afterReason = { placeholder: '1. …\n2. …\n3. …', value: after.reasons, onChange: setAfterField('reasons'), style: afterTextareaStyle };
+    const afterValid = !!(after.firstName && after.lastName && after.phone && after.email && after.reasons);
+    const afterBtn = {
+      minHeight: '54px', marginTop: '10px', borderRadius: '999px', display: 'flex', alignItems: 'center',
+      justifyContent: 'center', cursor: afterValid ? 'pointer' : 'not-allowed', fontSize: '12.5px', fontWeight: 800,
+      letterSpacing: '.12em', background: afterValid ? '#FBF7EB' : 'rgba(255,255,255,.12)', color: afterValid ? '#111111' : 'rgba(255,255,255,.4)'
+    };
+    const submitAfter = () => { if (afterValid) this.setState({ afterSubmitted: true }); };
+
+    return {
+      navItems, timeline, zones, actsMobile, hours, rules, enrolledCount,
+      afterFields, afterReason, afterBtn, submitAfter, afterSubmitted: !!s.afterSubmitted, afterNotSubmitted: !s.afterSubmitted,
+      dGeral: s.page === 'geral' ? 'block' : 'none',
+      dAtiv: s.page === 'ativ' ? 'block' : 'none',
+      dStage: s.page === 'stage' ? 'block' : 'none',
+      dPriv: s.page === 'priv' ? 'block' : 'none',
+      dBilh: s.page === 'bilh' ? 'block' : 'none',
+      dAfter: s.page === 'after' ? 'block' : 'none',
+      goBilh: this.go('bilh'), goPriv: this.go('priv'),
+      boxesN2a: boxes([7, 8, 9]), boxesN2b: boxes([12, 11, 10]),
+      boxesN1a: boxes([1, 2, 3]), boxesN1b: boxes([6, 5, 4]),
+      modalWrap: { display: m ? 'flex' : 'none', position: 'fixed', inset: 0, zIndex: 50, alignItems: 'flex-end', justifyContent: 'center', background: 'rgba(17,17,17,.72)' },
+      modalKind, modalTitle, modalFacts, modalNote, modalBtn, modalBtnLabel,
+      showValidate, showCode, showConfirm, capacityNote, ticketFields, validateBtn, validateTicket,
+      codeValue: ticket.code, onCodeChange: setField('code'), codeInputStyle, codeBtn, confirmCode,
+      codePhone: ticket.phone, backToValidate: () => this.setState({ step: 'validar' }),
+      closeModal: () => this.setState({ modal: null }),
+      stop: (e) => e.stopPropagation(),
+      toggleEnroll: () => {
+        if (!act) return;
+        if (act.infoOnly) { this.setState({ modal: null }); return; }
+        const willEnroll = !s.enrolled[act.id];
+        if (willEnroll && act.capacity && remaining('convite') + remaining('bilhete') <= 0) return;
+        if (act.capacity && willEnroll) {
+          const kind = remaining('convite') > 0 ? 'convite' : 'bilhete';
+          this.setState(st => {
+            const u = st.usage[act.id] || { convite: 0, bilhete: 0 };
+            return {
+              enrolled: Object.assign({}, st.enrolled, { [act.id]: true }),
+              usage: Object.assign({}, st.usage, { [act.id]: Object.assign({}, u, { [kind]: (u[kind] || 0) + 1 }) }),
+              enrolledKind: Object.assign({}, st.enrolledKind, { [act.id]: kind })
+            };
+          });
+          return;
+        }
+        if (act.capacity && !willEnroll) {
+          this.setState(st => {
+            const kind = (st.enrolledKind && st.enrolledKind[act.id]) || 'bilhete';
+            const u = st.usage[act.id] || { convite: 0, bilhete: 0 };
+            return {
+              enrolled: Object.assign({}, st.enrolled, { [act.id]: false }),
+              usage: Object.assign({}, st.usage, { [act.id]: Object.assign({}, u, { [kind]: Math.max(0, (u[kind] || 0) - 1) }) })
+            };
+          });
+          return;
+        }
+        this.setState(st => ({ enrolled: Object.assign({}, st.enrolled, { [act.id]: !st.enrolled[act.id] }) }));
+      }
+    };
+  }
+}
+
+</script>
+</body>
+</html>
