@@ -1,0 +1,57 @@
+/* GET /api/estado
+   Diz o que está configurado neste servidor — sem nunca revelar
+   valores. Serve para perceber, de fora, porque é que algo não
+   funciona, em vez de adivinhar.
+
+   Só diz "existe" ou "não existe". Nem sequer o tamanho, para não
+   dar pistas sobre as chaves.                                      */
+
+import { baseDeDados } from './_lib/aulas.js'
+import { send } from './_lib/http.js'
+
+export default async function handler(req, res) {
+  const existe = nome => Boolean(process.env[nome])
+
+  const configuracao = {
+    SUPABASE_URL:              existe('SUPABASE_URL'),
+    SUPABASE_SERVICE_ROLE_KEY: existe('SUPABASE_SERVICE_ROLE_KEY'),
+    SESSION_SECRET:            existe('SESSION_SECRET'),
+    THREECKET_SECRET_KEY:      existe('THREECKET_SECRET_KEY'),
+  }
+
+  // Ter as chaves não chega: é preciso que a base de dados responda
+  // e que as tabelas lá estejam.
+  let baseDeDadosResponde = null
+  let aulasNaBaseDeDados = null
+  let avaria = null
+
+  const db = baseDeDados()
+  if (db) {
+    try {
+      const { data, error } = await db.from('aulas').select('id')
+      if (error) throw error
+      baseDeDadosResponde = true
+      aulasNaBaseDeDados = data?.length ?? 0
+    } catch (erro) {
+      baseDeDadosResponde = false
+      avaria = String(erro?.message || erro).slice(0, 200)
+    }
+  }
+
+  const pronto =
+    configuracao.SUPABASE_URL &&
+    configuracao.SUPABASE_SERVICE_ROLE_KEY &&
+    configuracao.SESSION_SECRET &&
+    baseDeDadosResponde === true &&
+    aulasNaBaseDeDados > 0
+
+  return send(res, 200, {
+    pronto,
+    configuracao,
+    baseDeDadosResponde,
+    aulasNaBaseDeDados,
+    avaria,
+    bilheteiraReal: configuracao.THREECKET_SECRET_KEY,
+    versao: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'local',
+  })
+}
