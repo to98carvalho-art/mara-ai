@@ -37,7 +37,14 @@ export default async function handler(req, res) {
   } catch (error) {
     if (error instanceof TicketError) {
       const status = error.code === TICKET_ERRORS.TICKETING_UNAVAILABLE ? 503 : 400
-      return send(res, status, { error: error.code, expiresAt: error.details?.expiresAt ?? null })
+      return send(res, status, {
+        error: error.code,
+        expiresAt: error.details?.expiresAt ?? null,
+        // O que a bilheteira respondeu, palavra por palavra. Sem isto,
+        // «número inválido» não diz a ninguém o que corrigir.
+        detalhe: error.details?.upstream ?? null,
+        enviado: error.details?.enviado ?? null,
+      })
     }
     return send(res, 503, { error: TICKET_ERRORS.TICKETING_UNAVAILABLE })
   }

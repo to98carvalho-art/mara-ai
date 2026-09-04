@@ -97,9 +97,11 @@ export function createTicketing({ apiUrl, secretKey, fetchImpl = fetch, timeoutM
     if (code === 'operation_started') {
       throw new TicketError(TICKET_ERRORS.PIN_ALREADY_SENT, { expiresAt: payload?.expires_at || null })
     }
-    if (code === 'invalid_input') throw new TicketError(TICKET_ERRORS.PHONE_INVALID)
+    if (code === 'invalid_input') {
+      throw new TicketError(TICKET_ERRORS.PHONE_INVALID, { upstream: payload?.error, enviado: mobile_phone })
+    }
     // 401 = chave errada ou evento expirado. Nunca expor isto ao utilizador.
-    throw new TicketError(TICKET_ERRORS.TICKETING_UNAVAILABLE, { status, payload })
+    throw new TicketError(TICKET_ERRORS.TICKETING_UNAVAILABLE, { status, upstream: payload })
   }
 
   /* Passos 2, 3 e 4 — validar PIN, obter carteira, confirmar bilhete.
