@@ -93,5 +93,19 @@ done
 wait
 eq "a mesma conta só entra uma vez"      "$(Q "select count(*) from inscricoes where aula_id='mista' and conta='pessoaD'")" "1"
 
+
+# ── candidaturas ao after party ─────────────────────────────────
+echo
+echo "After Party"
+Q "delete from candidaturas_after;" >/dev/null
+Q "select candidatar_after('Marta','Ribeiro','+351912345678','marta@exemplo.pt','1. … 2. … 3. …');" >/dev/null
+eq "guarda a candidatura"                "$(Q "select count(*) from candidaturas_after")" "1"
+eq "entra com estado 'nova'"             "$(Q "select estado from candidaturas_after where telefone='+351912345678'")" "nova"
+Q "select candidatar_after('Marta','Ribeiro Nova','+351912345678','marta2@exemplo.pt','razões corrigidas');" >/dev/null
+eq "voltar a submeter corrige, não duplica" "$(Q "select count(*) from candidaturas_after")" "1"
+eq "e fica com os dados novos"           "$(Q "select apelido from candidaturas_after where telefone='+351912345678'")" "Ribeiro Nova"
+r=$(Q "update candidaturas_after set estado='talvez' where telefone='+351912345678';")
+case "$r" in *violates*|*ERROR*) ok "estado inventado é recusado";; *) mal "estado inventado (veio: $r)";; esac
+
 echo
 if [ $falhas -eq 0 ]; then echo "✅ todas as verificações passaram"; else echo "⚠️  $falhas falharam"; exit 1; fi

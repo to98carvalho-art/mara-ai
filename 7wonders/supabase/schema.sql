@@ -148,3 +148,45 @@ begin
     execute 'revoke all on public.disponibilidade from anon, authenticated';
   end if;
 end $$;
+
+-- ═══════════════════════════════════════════════════════════════
+--  AFTER PARTY — candidaturas
+--
+--  O after é por convite e nunca mostra morada nem line-up. Estas
+--  são as pessoas que se propõem; a organização escolhe e liga.
+-- ═══════════════════════════════════════════════════════════════
+
+create table if not exists public.candidaturas_after (
+  id          uuid primary key default gen_random_uuid(),
+  nome        text not null,
+  apelido     text not null,
+  telefone    text not null unique,     -- um pedido por pessoa
+  email       text not null,
+  razoes      text not null,
+  estado      text not null default 'nova'
+              check (estado in ('nova', 'aceite', 'recusada')),
+  criado_em   timestamptz not null default now(),
+  atualizado_em timestamptz not null default now()
+);
+
+create index if not exists candidaturas_estado_idx
+  on public.candidaturas_after (estado, criado_em desc);
+
+alter table public.candidaturas_after enable row level security;
+
+-- Quem se engana no número volta a submeter e corrige o que escreveu,
+-- em vez de ficar preso a um pedido errado.
+create or replace function public.candidatar_after(
+  p_nome text, p_apelido text, p_telefone text, p_email text, p_razoes text
+) returns void
+language plpgsql security definer set search_path = public as $$
+begin
+  insert into public.candidaturas_after (nome, apelido, telefone, email, razoes)
+  values (p_nome, p_apelido, p_telefone, p_email, p_razoes)
+  on conflict (telefone) do update
+    set nome = excluded.nome,
+        apelido = excluded.apelido,
+        email = excluded.email,
+        razoes = excluded.razoes,
+        atualizado_em = now();
+end $$;

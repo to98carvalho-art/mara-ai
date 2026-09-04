@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { AFTER } from '../content/evento'
+import { candidatar } from '../lib/after'
 
 const CAMPOS = [
   { chave: 'nome',      etiqueta: 'PRIMEIRO NOME', exemplo: 'Marta',            tipo: 'text',  auto: 'given-name' },
@@ -12,6 +13,7 @@ export default function After() {
   const [dados, setDados] = useState({ nome: '', apelido: '', telefone: '', email: '', razoes: '' })
   const [enviado, setEnviado] = useState(false)
   const [ocupado, setOcupado] = useState(false)
+  const [erro, setErro] = useState('')
 
   const completo = CAMPOS.every(c => dados[c.chave].trim()) && dados.razoes.trim()
   const mudar = chave => e => setDados(d => ({ ...d, [chave]: e.target.value }))
@@ -19,12 +21,12 @@ export default function After() {
   async function enviar(evento) {
     evento.preventDefault()
     if (!completo) return
-    setOcupado(true)
+    setOcupado(true); setErro('')
     try {
-      // TODO: guardar no servidor. Por agora só confirma no ecrã —
-      // as candidaturas ainda não chegam a lado nenhum.
-      await new Promise(r => setTimeout(r, 400))
-      setEnviado(true)
+      await candidatar(dados)
+      setEnviado(true)          // só depois de o servidor a ter guardado
+    } catch (e) {
+      setErro(e.mensagem || 'Não foi possível enviar. Tenta outra vez.')
     } finally {
       setOcupado(false)
     }
@@ -72,6 +74,8 @@ export default function After() {
                 value={dados.razoes} onChange={mudar('razoes')} required
               />
             </div>
+
+            {erro && <p className="aviso aviso--erro">{erro}</p>}
 
             <button className="botao botao--creme botao--largo" disabled={!completo || ocupado}>
               {ocupado ? 'A ENVIAR…' : AFTER.botao}

@@ -127,11 +127,25 @@ uma só vaga — quantas ficam com ela? A resposta tem de ser uma.
 
 ---
 
+## After Party
+
+As candidaturas ficam em `candidaturas_after`, na mesma base de dados.
+Lêem-se no Supabase, em **Table Editor → candidaturas_after**, e cada
+uma tem um `estado`: `nova`, `aceite` ou `recusada`.
+
+Quem se engana no número volta a submeter e corrige — não fica preso a
+um pedido errado, nem se duplicam candidaturas.
+
+**O formulário nunca diz «enviada» sem ter guardado.** Se a base de
+dados não responder, mostra o erro e a pessoa pode tentar de novo. Uma
+confirmação falsa perderia candidaturas de gente a sério.
+
+---
+
 ## O que falta para o dia do evento
 
-1. **Guardar as candidaturas ao After Party** — o formulário ainda só
-   confirma no ecrã.
-2. **Testar com a chave real da 3cket** e um número que tenha bilhete.
+1. **Testar com a chave real da 3cket** e um número que tenha bilhete.
+2. **Pôr online** na Vercel, com as variáveis do `.env`.
 
 ---
 
