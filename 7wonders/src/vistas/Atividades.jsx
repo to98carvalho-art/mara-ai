@@ -24,7 +24,13 @@ export default function Atividades({ aulas, quantasMinhas, aoAbrir }) {
         </span>
       </div>
 
-      <div className="caixa" style={{ marginTop: 20 }}>
+      <p className="pista-deslizar">Desliza a grelha para o lado para veres tudo →</p>
+
+      <div className="caixa" style={{ marginTop: 12 }}>
+        {/* Num telemóvel estreito, quatro colunas deixam 36px úteis por
+            bloco — nem «CrossFit» lá cabe. Em vez de encolher o texto
+            até ficar ilegível, a grelha desliza para o lado. */}
+        <div className="grelha-desliza">
         <div className="grelha-cabeca">
           <div />
           <div className="grelha-cabeca__grupo grelha-cabeca__grupo--wellness">WELLNESS</div>
@@ -46,12 +52,13 @@ export default function Atividades({ aulas, quantasMinhas, aoAbrir }) {
               style={{ gridColumn: aula.coluna, gridRow: `${aula.inicio} / span ${aula.duracao}` }}
               onClick={() => aoAbrir(aula.id)}
             >
-              <span className="aula__hora">{aula.hora}</span>
+              <span className="aula__hora">{aula.hora.replace(/ — /g, '—')}</span>
               <span className="aula__nome">{aula.nome}</span>
               {aula.por && <span className="aula__por">by {aula.por}</span>}
               {aula.inscrito && <span className="aula__marca">✓ INSCRITO</span>}
             </button>
           ))}
+        </div>
         </div>
 
         <div className="rodape-grelha">

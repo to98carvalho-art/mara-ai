@@ -19,9 +19,11 @@
     <meta property="og:locale" content="pt_PT" />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Archivo servido por nós: carrega mais depressa, não depende do
+         Google estar acessível, e não manda o IP de quem visita para fora. -->
+    <link rel="preload" href="/letras/archivo-800-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/letras/archivo-700-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/letras/archivo.css" />
   </head>
   <body>
     <div id="root"></div>
