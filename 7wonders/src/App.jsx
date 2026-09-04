@@ -52,12 +52,16 @@ export default function App() {
     <div className="app">
       <Topo pagina={pagina} aoMudar={irPara} />
 
-      {pagina === 'geral' && <Geral aoMudar={irPara} />}
-      {pagina === 'ativ'  && <Atividades aulas={aulas} quantasMinhas={minhas} aoAbrir={setAulaAberta} />}
-      {pagina === 'stage' && <MainStage aoMudar={irPara} />}
-      {pagina === 'priv'  && <Privados />}
-      {pagina === 'bilh'  && <Bilhetes aoMudar={irPara} />}
-      {pagina === 'after' && <After />}
+      {/* A chave muda a cada secção: o React remonta, e a animação de
+          entrada recomeça em vez de ficar presa da primeira vez. */}
+      <div key={pagina} style={{ display: 'contents' }}>
+        {pagina === 'geral' && <Geral aoMudar={irPara} />}
+        {pagina === 'ativ'  && <Atividades aulas={aulas} quantasMinhas={minhas} aoAbrir={setAulaAberta} />}
+        {pagina === 'stage' && <MainStage aoMudar={irPara} />}
+        {pagina === 'priv'  && <Privados />}
+        {pagina === 'bilh'  && <Bilhetes aoMudar={irPara} />}
+        {pagina === 'after' && <After />}
+      </div>
 
       {aula && (
         <JanelaAula

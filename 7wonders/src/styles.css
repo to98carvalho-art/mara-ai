@@ -11,6 +11,14 @@ html { -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
+  /* ── acabamento de app ──────────────────────────────────────
+     Sem realce azul ao tocar, sem o "elástico" da página a saltar
+     no fim do scroll, e sem a pausa de 300ms à espera de um duplo
+     toque. São estes três detalhes que fazem um site parecer um
+     site em vez de uma aplicação. */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+  touch-action: manipulation;
   color: var(--verde);
   background-color: var(--creme);
   background-image: var(--grao), var(--trama);
@@ -21,8 +29,15 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-a { color: inherit; text-decoration: none; }
+a { color: inherit; text-decoration: none; -webkit-user-drag: none; }
 button { font: inherit; color: inherit; background: none; border: none; padding: 0; }
+
+/* Os controlos não se seleccionam ao tocar — só o texto que é mesmo
+   para ler. Arrastar o dedo sobre uma aba deixa de a pintar de azul. */
+.aba, .botao, .aula, .pilula, .topo, .grelha__hora,
+.legenda, .rodape-grelha, .janela__fechar {
+  -webkit-user-select: none; user-select: none;
+}
 img { max-width: 100%; }
 
 :focus-visible { outline: 2px solid var(--verde); outline-offset: 3px; }
@@ -59,13 +74,16 @@ img { max-width: 100%; }
 /* ── estrutura ───────────────────────────────────────────────── */
 
 .app { max-width: var(--largura-app); margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; }
-.vista { flex: 1; padding: 24px 20px 40px; }
+.vista {
+  flex: 1;
+  padding: 24px max(20px, env(safe-area-inset-left)) calc(40px + env(safe-area-inset-bottom));
+}
 .vista--geral { padding: 0 0 40px; }
 .vista__interior { padding: 20px 20px 8px; }
 
 /* ── barra do topo ───────────────────────────────────────────── */
 
-.topo { position: sticky; top: 0; z-index: 20; }
+.topo { position: sticky; top: 0; z-index: 20; padding-top: env(safe-area-inset-top); }
 .topo__marca { padding: 16px 20px; display: flex; align-items: center; justify-content: center; }
 .topo__marca img { display: block; height: 32px; width: auto; }
 
@@ -96,6 +114,11 @@ img { max-width: 100%; }
 .botao--morto  { background: var(--verde-15); color: rgba(49,92,39,.5); cursor: not-allowed; }
 .botao--largo  { width: 100%; }
 .botao:disabled { cursor: not-allowed; opacity: .55; }
+/* Num telemóvel não há hover — a confirmação de que se tocou tem de
+   vir do próprio toque. */
+.botao:active:not(:disabled) { transform: scale(.975); }
+.aula:active { transform: scale(.985); }
+.aba:active { opacity: .6; }
 .botao--verde:hover:not(:disabled),
 .botao--creme:hover:not(:disabled) { filter: brightness(1.06); }
 
@@ -194,7 +217,8 @@ img { max-width: 100%; }
   overflow: hidden;                 /* nomes longos param na borda, não derramam */
   transition: opacity .15s;
 }
-.aula:hover { opacity: .86; }
+.aula { transition: opacity .15s, transform .12s; }
+@media (hover: hover) { .aula:hover { opacity: .86; } }
 .aula--verde    { background: var(--verde); color: var(--creme); border: 1.5px solid var(--verde); }
 .aula--contorno { background: var(--verde-10); color: var(--verde); border: 1.5px solid var(--verde); }
 .aula--tinta    { background: var(--tinta); color: var(--creme); border: 1.5px solid var(--tinta); }
@@ -280,7 +304,10 @@ img { max-width: 100%; }
 .campo input, .campo textarea {
   min-height: 46px; width: 100%; padding: 12px 13px;
   border: 1px solid var(--verde-30); border-radius: 8px;
-  font-family: inherit; font-size: 14px; color: var(--tinta); background: var(--branco);
+  font-family: inherit; color: var(--tinta); background: var(--branco);
+  /* 16px não é escolha de gosto: abaixo disso o iPhone dá zoom
+     sozinho ao tocar no campo, e a página fica desenquadrada. */
+  font-size: 16px;
 }
 .escuro .campo input, .escuro .campo textarea {
   border-color: var(--taupe-30); color: var(--creme); background: var(--claro-05);
@@ -306,11 +333,17 @@ img { max-width: 100%; }
 .janela {
   width: 100%; max-width: 420px;
   background: var(--creme); color: var(--verde);
-  border-radius: 16px 16px 0 0; padding: 26px 22px 30px;
+  border-radius: 16px 16px 0 0;
+  padding: 26px 22px calc(30px + env(safe-area-inset-bottom));
   max-height: 92vh; overflow-y: auto;
   animation: subir .28s cubic-bezier(.22,1,.36,1);
 }
 @keyframes subir { from { transform: translateY(24px); opacity: 0 } to { transform: none; opacity: 1 } }
+
+/* Cada secção entra com um leve deslizar. Numa app, mudar de separador
+   nunca é um corte seco — é o que separa "site" de "aplicação". */
+.vista, .escuro > .vista { animation: entrar .26s cubic-bezier(.22, 1, .36, 1) both; }
+@keyframes entrar { from { opacity: 0; transform: translateY(6px) } to { opacity: 1; transform: none } }
 
 .janela__topo { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
 .janela__fechar { font-size: 20px; color: var(--taupe); cursor: pointer; line-height: 1; }
