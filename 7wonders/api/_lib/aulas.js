@@ -27,8 +27,10 @@ let cliente = null
 /* Devolve o cliente, ou null se a base de dados ainda não estiver
    configurada — nesse caso a app corre em modo local. */
 export function baseDeDados(env = process.env) {
-  const url = env.SUPABASE_URL
-  const chave = env.SUPABASE_SERVICE_ROLE_KEY
+  // Copiar e colar traz quase sempre um espaço ou uma quebra de linha
+  // atrás. Não é razão para o site inteiro ficar sem base de dados.
+  const url = (env.SUPABASE_URL || '').trim()
+  const chave = (env.SUPABASE_SERVICE_ROLE_KEY || '').trim()
   if (!url || !chave) return null
   cliente ||= createClient(url, chave, { auth: { persistSession: false } })
   return cliente

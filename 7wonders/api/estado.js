@@ -15,10 +15,11 @@ export default async function handler(req, res) {
   /* O endereço do projeto Supabase não é segredo — vai dentro de
      qualquer app que use Supabase. Mostrá-lo aqui poupa horas quando
      é ele que está mal escrito. As chaves, essas, nunca aparecem. */
-  const url = process.env.SUPABASE_URL || ''
+  const url = (process.env.SUPABASE_URL || '').trim()
+  const urlCru = process.env.SUPABASE_URL || ''
   const enderecoBaseDeDados = {
     valor: url,
-    comEspacosOuQuebras: url !== url.trim(),
+    comEspacosOuQuebras: urlCru !== url,
     comecaPorHttps: url.startsWith('https://'),
     acabaEmSupabaseCo: url.trim().endsWith('.supabase.co'),
     comBarraNoFim: url.trim().endsWith('/'),
@@ -28,6 +29,9 @@ export default async function handler(req, res) {
     SUPABASE_URL:              existe('SUPABASE_URL'),
     SUPABASE_SERVICE_ROLE_KEY: existe('SUPABASE_SERVICE_ROLE_KEY'),
     SESSION_SECRET:            existe('SESSION_SECRET'),
+    // A chave do Supabase tem sempre três partes separadas por pontos.
+    // Se não tiver, foi colada a meio ou é a chave errada.
+    chaveComFormatoDeChave:    (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim().split('.').length === 3,
     THREECKET_SECRET_KEY:      existe('THREECKET_SECRET_KEY'),
   }
 
