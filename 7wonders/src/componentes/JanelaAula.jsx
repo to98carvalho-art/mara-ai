@@ -58,6 +58,19 @@ export default function JanelaAula({ aula, utilizador, aoEntrar, aoInscrever, ao
     }
   }
 
+  /* Inscrever e anular podem falhar — a última vaga pode ter ido
+     para outra pessoa entre abrir a janela e carregar no botão. */
+  async function agir(acao) {
+    setOcupado(true); setErro('')
+    try {
+      await acao(aula.id)
+    } catch (e) {
+      setErro(e.mensagem || 'Não foi possível guardar. Tenta outra vez.')
+    } finally {
+      setOcupado(false)
+    }
+  }
+
   const horaPorExtenso = aula.hora.replace(' — ', ' às ')
 
   return (
@@ -157,14 +170,16 @@ export default function JanelaAula({ aula, utilizador, aoEntrar, aoInscrever, ao
                   : 'Inscrição gratuita com bilhete.'}
           </p>
 
+          {erro && <p className="aviso aviso--erro" style={{ marginTop: 14 }}>{erro}</p>}
+
           {aula.soInformacao ? (
             <button className="botao botao--creme botao--largo" style={{ marginTop: 20, background: '#111', color: '#FBF7EB' }} onClick={aoFechar}>
               ENTENDIDO
             </button>
           ) : aula.inscrito ? (
             <button className="botao botao--recuo botao--largo" style={{ marginTop: 20 }}
-                    disabled={ocupado} onClick={async () => { setOcupado(true); await aoAnular(aula.id); setOcupado(false) }}>
-              ANULAR INSCRIÇÃO
+                    disabled={ocupado} onClick={() => agir(aoAnular)}>
+              {ocupado ? 'A ANULAR…' : 'ANULAR INSCRIÇÃO'}
             </button>
           ) : aula.esgotado ? (
             <button className="botao botao--morto botao--largo" style={{ marginTop: 20 }} disabled>
@@ -172,7 +187,7 @@ export default function JanelaAula({ aula, utilizador, aoEntrar, aoInscrever, ao
             </button>
           ) : (
             <button className="botao botao--verde botao--largo" style={{ marginTop: 20 }}
-                    disabled={ocupado} onClick={async () => { setOcupado(true); await aoInscrever(aula.id); setOcupado(false) }}>
+                    disabled={ocupado} onClick={() => agir(aoInscrever)}>
               {ocupado ? 'A INSCREVER…' : 'INSCREVER-ME'}
             </button>
           )}

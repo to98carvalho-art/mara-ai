@@ -96,16 +96,42 @@ Ice Bath & Sauna e Reiki · Tarot · Massagens não têm inscrição.
 
 ---
 
+## Vagas partilhadas
+
+As inscrições vivem na base de dados, não no telemóvel de cada pessoa.
+Isto é o que impede duas pessoas de ficarem ambas com a última vaga.
+
+A conta é feita **dentro do Postgres**, com a linha da aula trancada
+enquanto se contam os lugares (`inscrever()` em `supabase/schema.sql`).
+Dois pedidos ao mesmo instante fazem fila, e o segundo já vê o lugar
+que o primeiro ocupou.
+
+Para pôr de pé:
+
+1. Criar um projeto grátis em <https://supabase.com>
+2. **SQL Editor** → colar e correr `supabase/schema.sql`
+3. **Settings → API** → copiar `Project URL` e a chave **`service_role`**
+4. Pô-las no `.env` como `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY`
+   (sem prefixo `VITE_` — são segredos de servidor)
+5. `node scripts/semear-aulas.mjs` põe as aulas na base de dados
+
+Sem estas variáveis a app continua a funcionar, mas as inscrições ficam
+só no dispositivo de quem as faz. Serve para desenvolver; não serve para
+o dia 12.
+
+### Testar a trava
+
+`supabase/testar-vagas.sh` corre contra um Postgres local e faz a
+pergunta que interessa: 25 pessoas a carregar no botão ao mesmo tempo,
+uma só vaga — quantas ficam com ela? A resposta tem de ser uma.
+
+---
+
 ## O que falta para o dia do evento
 
-1. **Vagas partilhadas.** Hoje as inscrições vivem no dispositivo de cada
-   pessoa. Têm de passar para base de dados, senão dois telemóveis podem
-   ficar ambos com a última vaga.
-2. **Guardar as candidaturas ao After Party** — o formulário ainda só
+1. **Guardar as candidaturas ao After Party** — o formulário ainda só
    confirma no ecrã.
-3. **Imagens** — as fotografias e o logótipo entram em `public/imagens/`.
-   Enquanto não existem, aparece um retângulo com o nome da foto que ali vai.
-4. **Testar com a chave real** e um número que tenha bilhete a sério.
+2. **Testar com a chave real da 3cket** e um número que tenha bilhete.
 
 ---
 

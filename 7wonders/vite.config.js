@@ -26,14 +26,20 @@ function apiDeDesenvolvimento() {
           if (entrada.isDirectory()) {
             if (entrada.name !== '_lib') percorrer(caminho)
           } else if (entrada.name.endsWith('.js')) {
-            rotas.push('/api/' + relative(raiz, caminho).replace(/\\/g, '/').replace(/\.js$/, ''))
+            const relativo = relative(raiz, caminho).replace(/\\/g, '/').replace(/\.js$/, '')
+            // Como na Vercel: api/aulas/index.js responde em /api/aulas
+            rotas.push({
+              url: '/api/' + relativo.replace(/(^|\/)index$/, ''),
+              ficheiro: caminho,
+            })
           }
         }
       }
       percorrer(raiz)
 
       server.middlewares.use(async (req, res, next) => {
-        const rota = rotas.find(r => req.url.split('?')[0] === r)
+        const pedido = req.url.split('?')[0].replace(/\/$/, '')
+        const rota = rotas.find(r => r.url.replace(/\/$/, '') === pedido)
         if (!rota) return next()
 
         const corpo = await new Promise(resolve => {
@@ -43,16 +49,16 @@ function apiDeDesenvolvimento() {
         })
 
         try {
-          const modulo = await server.ssrLoadModule(join(raiz, rota.replace('/api/', '') + '.js'))
+          const modulo = await server.ssrLoadModule(rota.ficheiro)
           await modulo.default({ ...req, body: corpo, headers: req.headers, socket: req.socket }, res)
         } catch (erro) {
-          server.config.logger.error(`[api] ${rota}: ${erro.stack || erro}`)
+          server.config.logger.error(`[api] ${rota.url}: ${erro.stack || erro}`)
           res.statusCode = 500
           res.end(JSON.stringify({ error: 'DEV_HANDLER_FAILED' }))
         }
       })
 
-      server.config.logger.info(`  ➜  API local:  ${rotas.join(', ')}`)
+      server.config.logger.info(`  ➜  API local:  ${rotas.map(r => r.url).join(', ')}`)
     },
   }
 }
