@@ -98,8 +98,16 @@ export function listar() {
   const locais = lerLocal()
 
   return AULAS.map(aula => {
-    if (aula.soInformacao || !aula.capacidade) {
+    if (aula.soInformacao || (!aula.capacidade && !aula.semLimite)) {
       return { ...aula, inscrito: false, temInscricao: false, livres: null, esgotado: false }
+    }
+
+    // Aulas sem limite: há inscrição, mas nunca esgotam.
+    if (aula.semLimite) {
+      const inscrito = modo === 'servidor'
+        ? minhasDoServidor.includes(aula.id)
+        : Boolean(locais[aula.id])
+      return { ...aula, inscrito, temInscricao: true, livres: null, esgotado: false }
     }
 
     if (modo === 'servidor' && vagasDoServidor?.[aula.id]) {
@@ -150,10 +158,16 @@ export async function inscrever(aulaId) {
   }
 
   const aula = AULAS.find(a => a.id === aulaId)
-  if (!aula?.capacidade) throw new ErroDeInscricao('INDISPONIVEL')
+  if (!aula || (!aula.capacidade && !aula.semLimite)) throw new ErroDeInscricao('INDISPONIVEL')
 
   const locais = lerLocal()
   if (locais[aulaId]) throw new ErroDeInscricao('JA_INSCRITO')
+
+  if (aula.semLimite) {
+    locais[aulaId] = { bolso: 'bilhete', quando: new Date().toISOString() }
+    escreverLocal(locais)
+    return listar()
+  }
 
   const base = aula.jaOcupado || { convite: 0, bilhete: 0 }
   const bolso =

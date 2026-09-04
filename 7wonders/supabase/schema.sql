@@ -19,6 +19,7 @@ create table if not exists public.aulas (
   capacidade_convite  int  not null default 0,
   capacidade_bilhete  int  not null default 0,
   ocupado_convite     int  not null default 0,   -- lista de convidados já entregue
+  sem_limite          boolean not null default false,  -- inscreve-se, mas nunca esgota
   atualizado_em       timestamptz not null default now(),
   constraint capacidades_nao_negativas
     check (capacidade_convite >= 0 and capacidade_bilhete >= 0 and ocupado_convite >= 0),
@@ -40,6 +41,10 @@ create table if not exists public.inscricoes (
   unique (aula_id, conta)                        -- ninguém se inscreve duas vezes
 );
 
+-- Para bases de dados criadas antes desta coluna existir: correr o
+-- ficheiro outra vez actualiza-as, em vez de obrigar a começar do zero.
+alter table public.aulas add column if not exists sem_limite boolean not null default false;
+
 create index if not exists inscricoes_aula_idx  on public.inscricoes (aula_id);
 create index if not exists inscricoes_conta_idx on public.inscricoes (conta);
 
@@ -48,17 +53,20 @@ create index if not exists inscricoes_conta_idx on public.inscricoes (conta);
 create or replace view public.disponibilidade as
   select
     a.id as aula_id,
-    a.capacidade_convite + a.capacidade_bilhete as lugares,
+    case when a.sem_limite then null
+         else a.capacidade_convite + a.capacidade_bilhete end as lugares,
     a.ocupado_convite
       + count(i.id) filter (where i.bolso = 'convite')
       + count(i.id) filter (where i.bolso = 'bilhete') as ocupados,
-    greatest(0, a.capacidade_convite - a.ocupado_convite
-                - count(i.id) filter (where i.bolso = 'convite'))
-    + greatest(0, a.capacidade_bilhete
-                - count(i.id) filter (where i.bolso = 'bilhete')) as livres
+    case when a.sem_limite then null else
+      greatest(0, a.capacidade_convite - a.ocupado_convite
+                  - count(i.id) filter (where i.bolso = 'convite'))
+      + greatest(0, a.capacidade_bilhete
+                  - count(i.id) filter (where i.bolso = 'bilhete'))
+    end as livres
   from public.aulas a
   left join public.inscricoes i on i.aula_id = a.id
-  group by a.id, a.capacidade_convite, a.capacidade_bilhete, a.ocupado_convite;
+  group by a.id, a.capacidade_convite, a.capacidade_bilhete, a.ocupado_convite, a.sem_limite;
 
 -- ── 4. INSCREVER (com trava de concorrência) ────────────────────
 -- O `for update` tranca a linha da aula enquanto conta as vagas.
@@ -81,13 +89,22 @@ begin
     raise exception 'AULA_DESCONHECIDA' using errcode = 'P0001';
   end if;
 
-  if v_aula.capacidade_convite + v_aula.capacidade_bilhete = 0 then
+  if not v_aula.sem_limite
+     and v_aula.capacidade_convite + v_aula.capacidade_bilhete = 0 then
     raise exception 'SEM_INSCRICAO' using errcode = 'P0001';
   end if;
 
   if exists (select 1 from public.inscricoes
              where aula_id = p_aula and conta = p_conta) then
     raise exception 'JA_INSCRITO' using errcode = 'P0001';
+  end if;
+
+  -- Aula sem limite: entra sempre, sem contar lugares.
+  if v_aula.sem_limite then
+    insert into public.inscricoes (aula_id, conta, telefone, bolso)
+    values (p_aula, p_conta, p_telefone, 'bilhete')
+    returning * into v_linha;
+    return v_linha;
   end if;
 
   select

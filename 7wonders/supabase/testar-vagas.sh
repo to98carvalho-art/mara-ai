@@ -94,6 +94,22 @@ wait
 eq "a mesma conta só entra uma vez"      "$(Q "select count(*) from inscricoes where aula_id='mista' and conta='pessoaD'")" "1"
 
 
+# ── aulas sem limite de lugares ─────────────────────────────────
+echo
+echo "Aula sem limite (Warm Up)"
+Q "insert into public.aulas (id,nome,sem_limite) values ('warmup','Warm Up',true)
+   on conflict (id) do update set sem_limite = true;" >/dev/null
+eq "não anuncia número de lugares"        "$(Q "select coalesce(lugares::text,'nulo') from disponibilidade where aula_id='warmup'")" "nulo"
+for n in $(seq 1 30); do
+  ( psql -h 127.0.0.1 -p $PORT -U postgres -d sete -tAq \
+      -c "select inscrever('warmup','livre$n','+35192000$n');" >/dev/null 2>&1 ) &
+done
+wait
+eq "30 pessoas ao mesmo tempo entram todas" "$(Q "select count(*) from inscricoes where aula_id='warmup'")" "30"
+eq "e continua sem esgotar"                 "$(Q "select coalesce(livres::text,'nulo') from disponibilidade where aula_id='warmup'")" "nulo"
+r=$(Q "select inscrever('warmup','livre1','+351920001');")
+case "$r" in *JA_INSCRITO*) ok "mas ninguém entra duas vezes";; *) mal "repetida em aula sem limite (veio: $r)";; esac
+
 # ── candidaturas ao after party ─────────────────────────────────
 echo
 echo "After Party"

@@ -79,7 +79,7 @@ export default function JanelaAula({ aula, utilizador, aoEntrar, aoInscrever, ao
       {/* ── passo 1 · telefone ── */}
       {passo === 'telefone' && (
         <form className="pilha" onSubmit={enviarCodigo}>
-          {aula.temInscricao && !aula.esgotado && aula.livres <= 10 && (
+          {aula.temInscricao && !aula.esgotado && aula.livres != null && aula.livres <= 10 && (
             <span className="pilula pilula--taupe">
               APENAS {aula.livres} {aula.livres === 1 ? 'VAGA LIVRE' : 'VAGAS LIVRES'}
             </span>

@@ -79,8 +79,9 @@ export const ZONAS = [
 export const HORAS = ['15H', '15H30', '16H', '16H30', '17H', '17H30', '18H', '18H30', '19H']
 
 export const AULAS = [
+  // Sem limite de lugares: inscreve-se, mas nunca esgota.
   { id: 'warmup', coluna: 2, inicio: 1, duracao: 1, hora: '15H — 15H30', nome: 'Warm Up',
-    zona: 'WELLNESS', tom: 'verde' },
+    zona: 'WELLNESS', tom: 'verde', semLimite: true },
 
   { id: 'barre', coluna: 2, inicio: 2, duracao: 2, hora: '15H30 — 16H30', nome: 'Barre Class',
     zona: 'WELLNESS', tom: 'verde', por: '@soloStudio',
