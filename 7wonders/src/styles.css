@@ -500,3 +500,37 @@ img { max-width: 100%; }
 .rodape-nota {
   margin: 4px 0 0; font-size: 12px; line-height: 1.45; color: var(--taupe);
 }
+
+/* ── área da equipa ──────────────────────────────────────────── */
+
+.revisao {
+  display: grid; grid-template-columns: 96px 1fr; gap: 16px;
+  padding: 16px; border-radius: var(--canto-caixa);
+  background: var(--claro-05); border: 1px solid rgba(255,255,255,.1);
+}
+.revisao__foto img {
+  width: 96px; height: 120px; object-fit: cover;
+  border-radius: 8px; border: 1px solid var(--taupe-30); display: block;
+}
+.revisao__pdf, .revisao__sem-foto {
+  display: grid; place-items: center; text-align: center;
+  width: 96px; height: 120px; border-radius: 8px;
+  border: 1.5px dashed var(--taupe-50); color: var(--taupe);
+  font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 6px;
+}
+.revisao__nome  { font-size: 18px; font-weight: 800; color: var(--creme); margin: 0 0 4px; }
+.revisao__linha { margin: 0 0 2px; font-size: 13px; color: var(--creme); }
+.revisao__linha.suave { color: var(--taupe); }
+.revisao__aviso {
+  margin: 8px 0 0; padding: 6px 10px; border-radius: 6px;
+  background: rgba(224,165,56,.14); color: #E0A538;
+  font-size: 12px; font-weight: 700; line-height: 1.35;
+}
+.revisao__accoes { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.revisao__accoes .botao { min-height: 40px; padding: 0 18px; font-size: 11px; }
+
+@media (max-width: 520px) {
+  .revisao { grid-template-columns: 76px 1fr; gap: 12px; padding: 12px; }
+  .revisao__foto img, .revisao__pdf, .revisao__sem-foto { width: 76px; height: 96px; }
+  .revisao__accoes .botao { flex: 1; padding: 0 10px; }
+}

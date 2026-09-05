@@ -7,11 +7,26 @@ import MainStage from './vistas/MainStage'
 import Privados from './vistas/Privados'
 import Bilhetes from './vistas/Bilhetes'
 import After from './vistas/After'
+import Equipa from './vistas/Equipa'
 import { NAV } from './content/evento'
 import { utilizadorAtual } from './lib/sessao'
 import { carregar, listar, inscrever, anular } from './lib/inscricoes'
 
+/* A área da equipa vive fora das seis vistas do evento: chega-se por
+   /#equipa. Assim nenhum participante lá cai por engano, e a equipa
+   guarda o endereço nos favoritos. */
+function usarEndereco() {
+  const [hash, setHash] = useState(() => window.location.hash)
+  useEffect(() => {
+    const ouvir = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', ouvir)
+    return () => window.removeEventListener('hashchange', ouvir)
+  }, [])
+  return hash
+}
+
 export default function App() {
+  const hash = usarEndereco()
   const [pagina, setPagina] = useState('geral')
   const [utilizador, setUtilizador] = useState(() => utilizadorAtual())
   const [aulas, setAulas] = useState(() => listar())
@@ -40,6 +55,10 @@ export default function App() {
       ? '7WONDERS · 12 setembro · Club de Golf de Braga'
       : `${nome} · 7WONDERS`
   }, [pagina])
+
+  if (hash === '#equipa') {
+    return <div className="app"><Equipa /></div>
+  }
 
   return (
     <div className="app">
