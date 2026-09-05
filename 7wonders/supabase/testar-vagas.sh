@@ -124,4 +124,54 @@ r=$(Q "update candidaturas_after set estado='talvez' where telefone='+3519123456
 case "$r" in *violates*|*ERROR*) ok "estado inventado é recusado";; *) mal "estado inventado (veio: $r)";; esac
 
 echo
+echo "Validação do bilhete"
+Q "truncate public.inscricoes;" >/dev/null
+
+# Quem se inscreve fica por validar até o bilhete ser lido.
+Q "select inscrever('crossfit','+351911000001','+351911000001','Ana','fotos/a.jpg','impressao-a','ana@exemplo.pt');" >/dev/null
+eq "entra por validar"                   "$(Q "select estado from inscricoes where conta='+351911000001'")" "por_validar"
+eq "guarda o email"                      "$(Q "select email from inscricoes where conta='+351911000001'")" "ana@exemplo.pt"
+eq "e ocupa lugar enquanto espera"       "$(Q "select livres from disponibilidade where aula_id='crossfit'")" "10"
+
+# A leitura automática confirma: a conta inteira passa a válida.
+Q "select validar_conta('+351911000001','valido','bilhete do 7WONDERS','REF-123',true);" >/dev/null
+eq "fica válida"                         "$(Q "select estado from inscricoes where conta='+351911000001'")" "valido"
+eq "guarda a referência do bilhete"      "$(Q "select referencia from inscricoes where conta='+351911000001'")" "REF-123"
+eq "marcada como automática"             "$(Q "select automatico from inscricoes where conta='+351911000001'")" "t"
+eq "e continua a ocupar lugar"           "$(Q "select livres from disponibilidade where aula_id='crossfit'")" "10"
+
+# Uma pessoa, várias aulas: a decisão é uma só.
+Q "select inscrever('uma','+351911000001','+351911000001','Ana',null,null,'ana@exemplo.pt','valido');" >/dev/null
+eq "segunda aula herda o estado"         "$(Q "select estado from inscricoes where conta='+351911000001' and aula_id='uma'")" "valido"
+Q "select validar_conta('+351911000001','recusado','afinal não','REF-123',false);" >/dev/null
+eq "recusar arrasta as duas inscrições"  "$(Q "select count(*) from inscricoes where conta='+351911000001' and estado='recusado'")" "2"
+eq "e as vagas voltam todas"             "$(Q "select livres from disponibilidade where aula_id='crossfit'")" "11"
+
+# Recusado não fecha a porta: anexa-se outro bilhete e tenta-se de novo.
+r=$(Q "select estado from inscrever('crossfit','+351911000001','+351911000001','Ana','fotos/b.jpg','impressao-b','ana@exemplo.pt');")
+eq "pode tentar outra vez"               "$r" "por_validar"
+eq "e não ficam duas linhas da mesma aula" "$(Q "select count(*) from inscricoes where conta='+351911000001' and aula_id='crossfit'")" "1"
+
+# Quem está válido não se inscreve duas vezes na mesma aula.
+Q "select validar_conta('+351911000001','valido',null,null,true);" >/dev/null
+r=$(Q "select inscrever('crossfit','+351911000001','+351911000001','Ana',null,null,null,'valido');")
+case "$r" in *JA_INSCRITO*) ok "válido não entra duas vezes";; *) mal "válido entrou duas vezes (veio: $r)";; esac
+
+# Uma decisão numa linha vale para a pessoa toda.
+Q "truncate public.inscricoes;" >/dev/null
+Q "select inscrever('crossfit','+351911000002','+351911000002','Rui','fotos/c.jpg','impressao-c','rui@exemplo.pt');" >/dev/null
+Q "select inscrever('uma','+351911000002','+351911000002','Rui',null,null,null);" >/dev/null
+Q "select decidir_inscricao((select id from inscricoes where conta='+351911000002' limit 1),'valido','conferido à mão');" >/dev/null
+eq "decidir numa linha decide as duas"   "$(Q "select count(*) from inscricoes where conta='+351911000002' and estado='valido'")" "2"
+eq "e não é marcada como automática"     "$(Q "select distinct automatico from inscricoes where conta='+351911000002'")" "f"
+
+r=$(Q "select validar_conta('+351911000002','talvez');")
+case "$r" in *ESTADO_INVALIDO*) ok "estado inventado é recusado";; *) mal "estado inventado passou (veio: $r)";; esac
+r=$(Q "select inscrever('uma','+351911000003','+351911000003','Zé','fotos/d.jpg','impressao-d','ze@exemplo.pt','talvez');")
+case "$r" in *ESTADO_INVALIDO*) ok "inscrever com estado inventado é recusado";; *) mal "inscrever com estado inventado passou (veio: $r)";; esac
+
+Q "select marcar_avisado('+351911000002');" >/dev/null
+eq "marca que o passe seguiu"            "$(Q "select count(*) from inscricoes where conta='+351911000002' and avisado_em is not null")" "2"
+
+echo
 if [ $falhas -eq 0 ]; then echo "✅ todas as verificações passaram"; else echo "⚠️  $falhas falharam"; exit 1; fi

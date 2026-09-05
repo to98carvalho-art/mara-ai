@@ -51,7 +51,10 @@ console.log('\nListar aulas (rota pública)')
 console.log('\nInscrever')
 {
   process.env.SESSION_SECRET = ambiente.SESSION_SECRET
-  const dados = { aulaId: 'barre', nome: 'Marta', telefone: '912345678', comprovativo: 'fotos/a.jpg' }
+  const dados = {
+    aulaId: 'barre', nome: 'Marta', telefone: '912345678',
+    email: 'marta@exemplo.pt', comprovativo: 'fotos/a.jpg',
+  }
 
   let res = resposta()
   await inscreverHandler(pedido({ body: {} }), res)
@@ -86,6 +89,11 @@ console.log('\nInscrever')
   await inscreverHandler(pedido({ body: { aulaId: 'barre' }, auth: fichaValida }), res)
   assert.equal(res.statusCode, 503)
   ok('com ficha válida dispensa o comprovativo e vai à base de dados')
+
+  res = resposta()
+  await inscreverHandler(pedido({ body: { ...dados, email: 'sem-arroba' } }), res)
+  assert.equal(res.corpo.error, 'EMAIL_INVALIDO')
+  ok('sem email a que mandar o passe, recusa')
 
   res = resposta()
   await inscreverHandler(pedido({ body: dados }), res)

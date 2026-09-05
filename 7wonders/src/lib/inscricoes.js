@@ -44,16 +44,21 @@ export const ERROS_INSCRICAO = {
   SESSAO_INVALIDA:        'A tua sessão expirou. Preenche outra vez os teus dados.',
   TELEFONE_INVALIDO:      'Esse número não parece estar certo.',
   NOME_EM_FALTA:          'Falta o teu nome.',
+  EMAIL_INVALIDO:         'Esse email não parece estar certo.',
   COMPROVATIVO_EM_FALTA:  'Falta anexar o bilhete.',
+  BILHETE_RECUSADO:       'Não conseguimos confirmar este bilhete.',
   TOO_MANY_REQUESTS:      'Demasiadas tentativas. Espera um bocado.',
   INDISPONIVEL:           'Não conseguimos guardar a inscrição. Tenta daqui a pouco.',
 }
 
 export class ErroDeInscricao extends Error {
-  constructor(codigo) {
+  /* O servidor manda um motivo escrito quando o bilhete não passa —
+     "esta foto está desfocada" ajuda mais do que "não deu". */
+  constructor(codigo, motivo) {
     super(codigo)
     this.codigo = codigo
-    this.mensagem = ERROS_INSCRICAO[codigo] || ERROS_INSCRICAO.INDISPONIVEL
+    this.motivo = motivo || ''
+    this.mensagem = motivo || ERROS_INSCRICAO[codigo] || ERROS_INSCRICAO.INDISPONIVEL
   }
 }
 
@@ -69,7 +74,7 @@ async function chamar(caminho, corpo = {}) {
   })
   let dados = null
   try { dados = await resposta.json() } catch { /* vazio */ }
-  if (!resposta.ok) throw new ErroDeInscricao(dados?.error || 'INDISPONIVEL')
+  if (!resposta.ok) throw new ErroDeInscricao(dados?.error || 'INDISPONIVEL', dados?.motivo)
   return dados
 }
 
@@ -155,13 +160,24 @@ export function quantasInscricoes() {
 
 /* ── ações ── */
 
-/* dados: { nome, telefone, comprovativo, impressao }
-   Só são precisos na primeira inscrição — depois a ficha chega. */
+/* dados: { nome, telefone, email, comprovativo, impressao }
+   Só são precisos na primeira inscrição — depois a ficha chega.
+
+   Devolve { aulas, resultado }. O resultado diz o que aconteceu ao
+   bilhete: confirmado na hora, ou à espera de alguém o ver. */
 export async function inscrever(aulaId, dados = {}) {
   if (modo === 'servidor') {
     const resposta = await chamar('/api/aulas/inscrever', { aulaId, ...dados })
     if (resposta?.token) guardarSessao(resposta.token, resposta.user)
-    return carregar()
+    return {
+      aulas: await carregar(),
+      resultado: {
+        estado: resposta?.estado || 'por_validar',
+        motivo: resposta?.motivo || '',
+        passeEnviado: Boolean(resposta?.passeEnviado),
+        email: resposta?.user?.email || dados.email || '',
+      },
+    }
   }
 
   const aula = AULAS.find(a => a.id === aulaId)
@@ -175,7 +191,7 @@ export async function inscrever(aulaId, dados = {}) {
   if (aula.semLimite) {
     locais[aulaId] = { bolso: 'bilhete', quando: new Date().toISOString() }
     escreverLocal(locais)
-    return listar()
+    return { aulas: listar(), resultado: RESULTADO_LOCAL }
   }
 
   const base = aula.jaOcupado || { convite: 0, bilhete: 0 }
@@ -187,8 +203,12 @@ export async function inscrever(aulaId, dados = {}) {
 
   locais[aulaId] = { bolso, quando: new Date().toISOString() }
   escreverLocal(locais)
-  return listar()
+  return { aulas: listar(), resultado: RESULTADO_LOCAL }
 }
+
+/* Sem servidor não há bilhete para ler; damos por confirmado para o
+   ecrã se comportar como em produção. */
+const RESULTADO_LOCAL = { estado: 'valido', motivo: '', passeEnviado: false, email: '' }
 
 export async function anular(aulaId) {
   if (modo === 'servidor') {
@@ -210,6 +230,7 @@ function guardarLocalmenteQuemSou(dados) {
     accountId: dados.telefone,
     phone: dados.telefone,
     nome: dados.nome || '',
+    email: dados.email || '',
   })
 }
 

@@ -142,10 +142,52 @@ confirmação falsa perderia candidaturas de gente a sério.
 
 ---
 
+## Bilhetes
+
+A API da 3cket não fica pronta a tempo, por isso o bilhete é o
+ficheiro que a pessoa anexa: um print do telemóvel ou o PDF da
+bilheteira.
+
+Quem se inscreve deixa nome, telemóvel e email, e anexa o bilhete. A
+vaga é reservada primeiro e o bilhete é lido logo a seguir — por esta
+ordem, senão os segundos da leitura seriam tempo em que outra pessoa
+podia levar o último lugar. Três saídas:
+
+| | o que acontece |
+|---|---|
+| **válido** | inscrição confirmada e o passe segue por email |
+| **recusado** | dizemos porquê e a vaga volta a ficar livre; pode anexar-se outro |
+| **dúvida** | a vaga fica guardada e a equipa decide em `/#equipa` |
+
+O bilhete é da **pessoa**, não da aula: lê-se uma vez, e as aulas
+seguintes herdam a decisão. Validar ou recusar arrasta todas as
+inscrições da mesma pessoa.
+
+A dúvida é de propósito. Uma máquina que decide sozinha erra contra
+quem pagou bilhete, e isso é pior do que dar trabalho à equipa. O mesmo
+bilhete em duas inscrições também não é recusado automaticamente — um
+PDF com quatro bilhetes de um grupo é normal — mas passa à equipa com
+um aviso.
+
+### A área da equipa
+
+`/#equipa`, com a palavra-passe de `ADMIN_PASSWORD`. Mostra o
+comprovativo ao lado do nome, do telemóvel e da aula, com o que a
+leitura automática achou, e deixa validar, recusar ou voltar a pôr na
+fila. Fora das seis vistas do evento, para nenhum participante lá cair
+por engano.
+
+Sem `ANTHROPIC_API_KEY` nada disto pára: os bilhetes ficam todos à
+espera da equipa. Sem `RESEND_API_KEY` a inscrição faz-se na mesma, só
+não sai o email. `/api/estado` diz qual das duas falta.
+
+---
+
 ## O que falta para o dia do evento
 
-1. **Testar com a chave real da 3cket** e um número que tenha bilhete.
-2. **Pôr online** na Vercel, com as variáveis do `.env`.
+1. **Pôr online** na Vercel, com as variáveis do `.env`.
+2. **Correr os ficheiros do `supabase/`** por ordem: `schema.sql`,
+   `comprovativos.sql`, `validacao.sql`.
 
 ---
 
@@ -154,7 +196,16 @@ confirmação falsa perderia candidaturas de gente a sério.
 Deploy na Vercel a apontar para a pasta `7wonders/`.
 As variáveis vão em *Settings → Environment Variables*:
 
-| Variável | Onde |
-|---|---|
-| `THREECKET_SECRET_KEY` | servidor · dada pela 3cket |
-| `SESSION_SECRET` | servidor · `openssl rand -hex 32` |
+| Variável | Onde | Sem ela |
+|---|---|---|
+| `SUPABASE_URL` | Supabase · *Settings → API* | tudo fica no telemóvel de cada um |
+| `SUPABASE_SERVICE_ROLE_KEY` | Supabase · a chave **secreta** | idem |
+| `SESSION_SECRET` | `openssl rand -hex 32` | o servidor recusa arrancar |
+| `ADMIN_PASSWORD` | escolhida por vocês | `/#equipa` não abre |
+| `ANTHROPIC_API_KEY` | <https://console.anthropic.com> | os bilhetes esperam pela equipa |
+| `RESEND_API_KEY` | <https://resend.com> | não sai o passe por email |
+| `EMAIL_REMETENTE` | ex. `7WONDERS <bilhetes@odominio.pt>` | o email sai de um remetente emprestado |
+| `THREECKET_SECRET_KEY` | dada pela 3cket | (não é usada por agora) |
+
+Nenhuma leva prefixo `VITE_`: são todas segredos de servidor e o
+prefixo faria com que fossem parar dentro da app.

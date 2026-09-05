@@ -7,9 +7,14 @@ import { estaEmModoServidor } from '../lib/inscricoes'
 /* ────────────────────────────────────────────────────────────────
    A janela de uma aula.
 
-   Quem ainda não se identificou preenche nome, telemóvel e anexa o
-   bilhete — um print serve, ou o PDF da bilheteira. A vaga fica
-   reservada logo; a organização confirma depois.
+   Quem ainda não se identificou preenche nome, telemóvel, email e
+   anexa o bilhete — um print serve, ou o PDF da bilheteira. O
+   bilhete é lido na hora: quase sempre a inscrição sai confirmada
+   antes de a pessoa fechar o telemóvel, e o passe segue por email.
+
+   Quando a leitura fica em dúvida, a vaga fica na mesma reservada e
+   alguém da equipa confirma depois. Vale mais dar trabalho à equipa
+   do que recusar por engano quem pagou bilhete.
 
    Quem já se inscreveu antes neste telemóvel salta o formulário.
    ──────────────────────────────────────────────────────────────── */
@@ -19,14 +24,18 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
 
   const [nome, setNome] = useState(utilizador?.nome || '')
   const [telefone, setTelefone] = useState(utilizador?.phone || '')
+  const [email, setEmail] = useState(utilizador?.email || '')
   const [ficheiro, setFicheiro] = useState(null)
   const [antevisao, setAntevisao] = useState(null)
   const [erro, setErro] = useState('')
   const [passo, setPasso] = useState('')          // o que está a acontecer
+  const [resultado, setResultado] = useState(null)   // como correu o bilhete
   const escolher = useRef(null)
 
   const ocupado = Boolean(passo)
-  const completo = nome.trim() && telefone.trim() && (ficheiro || !precisaIdentificar)
+  const completo = precisaIdentificar
+    ? nome.trim() && telefone.trim() && email.trim() && ficheiro
+    : true
 
   function escolherFicheiro(evento) {
     const f = evento.target.files?.[0]
@@ -56,8 +65,11 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
         comprovativo = await enviarComprovativo(preparado)
       }
 
-      setPasso('A guardar a inscrição…')
-      await aoInscrever(aula.id, { nome: nome.trim(), telefone: telefone.trim(), comprovativo, impressao })
+      setPasso(comprovativo ? 'A confirmar o bilhete…' : 'A guardar a inscrição…')
+      setResultado(await aoInscrever(aula.id, {
+        nome: nome.trim(), telefone: telefone.trim(), email: email.trim(),
+        comprovativo, impressao,
+      }))
     } catch (e) {
       setErro(e.mensagem || 'Não foi possível concluir. Tenta outra vez.')
     } finally {
@@ -124,6 +136,22 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
           <p className="corpo" style={{ marginTop: 16 }}>
             Estás inscrito. Chega 10 minutos antes.
           </p>
+
+          {resultado?.estado === 'valido' && (
+            <p className="aviso aviso--bom" style={{ marginTop: 12 }}>
+              Bilhete confirmado.
+              {resultado.passeEnviado
+                ? ` Enviámos o passe para ${resultado.email}.`
+                : ''}
+            </p>
+          )}
+
+          {resultado?.estado === 'por_validar' && (
+            <p className="aviso aviso--nota" style={{ marginTop: 12 }}>
+              A tua vaga está guardada. Ficámos com uma dúvida no bilhete —
+              alguém confirma e avisamos-te.
+            </p>
+          )}
           {erro && <p className="aviso aviso--erro" style={{ marginTop: 12 }}>{erro}</p>}
           <button className="botao botao--recuo botao--largo" style={{ marginTop: 20 }}
                   disabled={ocupado} onClick={anular}>
@@ -154,7 +182,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
 
           <p className="corpo">
             {precisaIdentificar
-              ? 'As aulas são gratuitas para quem tem bilhete. Deixa os teus dados e anexa o bilhete — um print serve.'
+              ? 'As aulas são gratuitas para quem tem bilhete. Deixa os teus dados e anexa o bilhete — um print serve. Confirmamos na hora.'
               : 'Inscrição gratuita com bilhete.'}
           </p>
 
@@ -170,6 +198,13 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
                 <label className="campo__nome" htmlFor="telefone">TELEMÓVEL</label>
                 <input id="telefone" type="tel" inputMode="tel" autoComplete="tel" placeholder="912 345 678"
                        value={telefone} onChange={e => setTelefone(e.target.value)} required />
+              </div>
+
+              <div className="campo">
+                <label className="campo__nome" htmlFor="email">EMAIL</label>
+                <input id="email" type="email" inputMode="email" autoComplete="email"
+                       placeholder="marta@email.com"
+                       value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
 
               <div className="campo">
@@ -209,7 +244,8 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
 
           {precisaIdentificar && (
             <p className="rodape-nota">
-              A organização confere os bilhetes. Se algo não bater certo, avisamos-te pelo telemóvel.
+              O bilhete é lido automaticamente e o passe segue para o teu email.
+              Se ficar alguma dúvida, a organização confirma e avisa-te.
             </p>
           )}
         </form>

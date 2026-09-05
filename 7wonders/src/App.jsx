@@ -80,8 +80,10 @@ export default function App() {
           aula={aula}
           utilizador={utilizador}
           aoInscrever={async (id, dados) => {
-            setAulas(await inscrever(id, dados))
+            const { aulas: novas, resultado } = await inscrever(id, dados)
+            setAulas(novas)
             setUtilizador(utilizadorAtual())
+            return resultado
           }}
           aoAnular={async id => setAulas(await anular(id))}
           aoFechar={() => setAulaAberta(null)}

@@ -46,6 +46,10 @@ export default async function handler(req, res) {
     SESSION_SECRET:            existe('SESSION_SECRET'),
     chaveQueLaEsta: qualChave(process.env.SUPABASE_SERVICE_ROLE_KEY),
     THREECKET_SECRET_KEY:      existe('THREECKET_SECRET_KEY'),
+    ADMIN_PASSWORD:            existe('ADMIN_PASSWORD'),
+    ANTHROPIC_API_KEY:         existe('ANTHROPIC_API_KEY'),
+    RESEND_API_KEY:            existe('RESEND_API_KEY'),
+    EMAIL_REMETENTE:           existe('EMAIL_REMETENTE'),
   }
 
   // Ter as chaves não chega: é preciso que a base de dados responda
@@ -82,6 +86,13 @@ export default async function handler(req, res) {
     aulasNaBaseDeDados,
     avaria,
     bilheteiraReal: configuracao.THREECKET_SECRET_KEY,
+
+    /* Sem estas duas o site funciona na mesma: os bilhetes ficam
+       todos à espera da equipa em /#equipa e ninguém recebe o passe
+       por email. Vale a pena saber de fora qual delas falta. */
+    bilhetesLidosSozinhos: configuracao.ANTHROPIC_API_KEY,
+    passePorEmail: configuracao.RESEND_API_KEY,
+    remetenteProprio: configuracao.EMAIL_REMETENTE,
     versao: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || 'local',
   })
 }

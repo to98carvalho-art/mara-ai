@@ -4,9 +4,16 @@ import { entrarNaEquipa, listarInscricoes, decidir, fichaDaEquipa, sairDaEquipa 
 /* ────────────────────────────────────────────────────────────────
    A ÁREA DA EQUIPA
 
-   Onde se conferem os bilhetes anexados. Chega-se por /#equipa —
-   fora das seis vistas do evento, para nenhum participante lá cair
-   por engano.
+   Quase todos os bilhetes são lidos e decididos automaticamente no
+   momento da inscrição. Aqui fica o resto: os casos em que a leitura
+   não quis decidir sozinha, e a hipótese de voltar atrás em qualquer
+   decisão que ela tenha tomado.
+
+   Chega-se por /#equipa — fora das seis vistas do evento, para
+   nenhum participante lá cair por engano.
+
+   Uma decisão vale para a pessoa, não para a aula: o bilhete é o
+   mesmo em todas as inscrições dela.
    ──────────────────────────────────────────────────────────────── */
 
 const ETIQUETAS = {
@@ -65,8 +72,10 @@ export default function Equipa() {
   async function marcar(id, estado) {
     setADecidir(id); setErro('')
     try {
+      const pessoa = inscricoes.find(i => i.id === id)?.telefone
       await decidir(id, estado)
-      setInscricoes(lista => lista.filter(i => i.id !== id))
+      // A decisão arrasta as outras inscrições da mesma pessoa.
+      setInscricoes(lista => lista.filter(i => (pessoa ? i.telefone !== pessoa : i.id !== id)))
       setContagem(c => ({ ...c, [filtro]: Math.max(0, (c[filtro] || 1) - 1), [estado]: (c[estado] || 0) + 1 }))
     } catch (e) {
       setErro(e.mensagem)
@@ -81,7 +90,10 @@ export default function Equipa() {
       <div className="escuro">
         <main className="vista" style={{ maxWidth: 420 }}>
           <p className="sobrancelha">ÁREA DA ORGANIZAÇÃO</p>
-          <h1 className="titulo" style={{ margin: '10px 0 20px' }}>Conferir bilhetes</h1>
+          <h1 className="titulo" style={{ margin: '10px 0 12px' }}>Conferir bilhetes</h1>
+          <p className="corpo" style={{ marginBottom: 20 }}>
+            Os bilhetes são conferidos sozinhos. Aqui só aparece o que ficou em dúvida.
+          </p>
           <form className="pilha" onSubmit={entrar}>
             <div className="campo">
               <label className="campo__nome" htmlFor="palavra">PALAVRA-PASSE</label>
@@ -126,7 +138,9 @@ export default function Equipa() {
           <p className="corpo">A carregar…</p>
         ) : inscricoes.length === 0 ? (
           <p className="corpo">
-            {filtro === 'por_validar' ? 'Não há nada à espera. 👌' : 'Nada nesta lista.'}
+            {filtro === 'por_validar'
+              ? 'Não há nada à espera. Os bilhetes estão a ser conferidos sozinhos. 👌'
+              : 'Nada nesta lista.'}
           </p>
         ) : (
           <div className="pilha pilha--larga">
@@ -148,6 +162,16 @@ export default function Equipa() {
                   <p className="revisao__linha suave">
                     <a href={`tel:${i.telefone}`}>{i.telefone}</a> · {quandoPorExtenso(i.quando)}
                   </p>
+                  {i.email && <p className="revisao__linha suave">{i.email}</p>}
+                  {i.referencia && <p className="revisao__linha suave">Bilhete nº {i.referencia}</p>}
+
+                  {/* O que a leitura automática achou. Serve de ponto
+                      de partida, não de veredicto. */}
+                  {i.nota && (
+                    <p className="revisao__linha suave">
+                      {i.automatico ? '🤖 ' : ''}{i.nota}
+                    </p>
+                  )}
 
                   {i.repetido && (
                     <p className="revisao__aviso">⚠️ Este bilhete já foi usado noutra inscrição</p>

@@ -2,6 +2,10 @@
    Lista as inscrições para a equipa rever, com um endereço de curta
    duração para ver cada comprovativo.
 
+   A maior parte já vem decidida pela leitura automática. O que fica
+   por validar é o que a máquina não quis decidir sozinha — e é isso
+   que interessa à equipa.
+
    Marca também os comprovativos repetidos — o mesmo print a circular
    por um grupo inteiro é o abuso mais provável.                     */
 
@@ -23,7 +27,7 @@ export default async function handler(req, res) {
 
   let consulta = db
     .from('inscricoes')
-    .select('id, aula_id, nome, telefone, bolso, estado, comprovativo, impressao, criado_em, nota, aulas ( nome )')
+    .select('id, aula_id, nome, telefone, email, bolso, estado, referencia, automatico, comprovativo, impressao, criado_em, nota, aulas ( nome )')
     .order('criado_em', { ascending: false })
     .limit(500)
   if (estado) consulta = consulta.eq('estado', estado)
@@ -41,7 +45,10 @@ export default async function handler(req, res) {
     aula: l.aulas?.nome || l.aula_id,
     nome: l.nome,
     telefone: l.telefone,
+    email: l.email,
     estado: l.estado,
+    referencia: l.referencia,
+    automatico: l.automatico,
     quando: l.criado_em,
     nota: l.nota,
     comprovativo: await enderecoParaVer(l.comprovativo),
