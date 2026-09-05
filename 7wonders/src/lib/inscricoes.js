@@ -13,7 +13,7 @@
    ════════════════════════════════════════════════════════════════ */
 
 import { AULAS } from '../content/evento'
-import { fichaDeSessao } from './sessao'
+import { fichaDeSessao, guardarSessao } from './sessao'
 
 const CHAVE = '7wonders.inscricoes.v1'
 
@@ -38,11 +38,15 @@ const lerLocal = () => {
 const escreverLocal = estado => guardado.setItem(CHAVE, JSON.stringify(estado))
 
 export const ERROS_INSCRICAO = {
-  SEM_VAGAS:       'Esta aula já não tem vagas.',
-  JA_INSCRITO:     'Já estás inscrito nesta aula.',
-  NAO_INSCRITO:    'Não estás inscrito nesta aula.',
-  SESSAO_INVALIDA: 'A tua sessão expirou. Confirma outra vez o teu número.',
-  INDISPONIVEL:    'Não conseguimos guardar a inscrição. Tenta daqui a pouco.',
+  SEM_VAGAS:              'Esta aula já não tem vagas.',
+  JA_INSCRITO:            'Já estás inscrito nesta aula.',
+  NAO_INSCRITO:           'Não estás inscrito nesta aula.',
+  SESSAO_INVALIDA:        'A tua sessão expirou. Preenche outra vez os teus dados.',
+  TELEFONE_INVALIDO:      'Esse número não parece estar certo.',
+  NOME_EM_FALTA:          'Falta o teu nome.',
+  COMPROVATIVO_EM_FALTA:  'Falta anexar o bilhete.',
+  TOO_MANY_REQUESTS:      'Demasiadas tentativas. Espera um bocado.',
+  INDISPONIVEL:           'Não conseguimos guardar a inscrição. Tenta daqui a pouco.',
 }
 
 export class ErroDeInscricao extends Error {
@@ -151,9 +155,12 @@ export function quantasInscricoes() {
 
 /* ── ações ── */
 
-export async function inscrever(aulaId) {
+/* dados: { nome, telefone, comprovativo, impressao }
+   Só são precisos na primeira inscrição — depois a ficha chega. */
+export async function inscrever(aulaId, dados = {}) {
   if (modo === 'servidor') {
-    await chamar('/api/aulas/inscrever', { aulaId })
+    const resposta = await chamar('/api/aulas/inscrever', { aulaId, ...dados })
+    if (resposta?.token) guardarSessao(resposta.token, resposta.user)
     return carregar()
   }
 
@@ -162,6 +169,8 @@ export async function inscrever(aulaId) {
 
   const locais = lerLocal()
   if (locais[aulaId]) throw new ErroDeInscricao('JA_INSCRITO')
+
+  guardarLocalmenteQuemSou(dados)
 
   if (aula.semLimite) {
     locais[aulaId] = { bolso: 'bilhete', quando: new Date().toISOString() }
@@ -190,6 +199,18 @@ export async function anular(aulaId) {
   delete locais[aulaId]
   escreverLocal(locais)
   return listar()
+}
+
+/* Em modo local não há servidor que assine uma ficha. Guardamos na
+   mesma quem se identificou, para o ecrã se comportar como em
+   produção: só se pedem os dados na primeira inscrição. */
+function guardarLocalmenteQuemSou(dados) {
+  if (!dados?.telefone) return
+  guardarSessao('local', {
+    accountId: dados.telefone,
+    phone: dados.telefone,
+    nome: dados.nome || '',
+  })
 }
 
 export function limpar() {

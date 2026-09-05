@@ -25,13 +25,6 @@ export default function App() {
     return () => { vivo = false }
   }, [])
 
-  // Quem acaba de confirmar o número pode já ter inscrições feitas
-  // noutro dispositivo — vale a pena voltar a ler.
-  const entrou = useCallback(async pessoa => {
-    setUtilizador(pessoa)
-    setAulas(await carregar())
-  }, [])
-
   const irPara = useCallback(destino => {
     setPagina(destino)
     setAulaAberta(null)
@@ -67,8 +60,10 @@ export default function App() {
         <JanelaAula
           aula={aula}
           utilizador={utilizador}
-          aoEntrar={entrou}
-          aoInscrever={async id => setAulas(await inscrever(id))}
+          aoInscrever={async (id, dados) => {
+            setAulas(await inscrever(id, dados))
+            setUtilizador(utilizadorAtual())
+          }}
           aoAnular={async id => setAulas(await anular(id))}
           aoFechar={() => setAulaAberta(null)}
         />

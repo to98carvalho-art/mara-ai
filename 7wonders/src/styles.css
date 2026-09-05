@@ -459,3 +459,44 @@ img { max-width: 100%; }
   .topo__logo { height: 48px; }
   .topo__logo.foto--em-falta { min-width: 260px; height: 48px; font-size: 17px; }
 }
+
+/* ── anexar o bilhete ────────────────────────────────────────── */
+
+.anexo {
+  display: flex; align-items: center; gap: 12px; width: 100%;
+  padding: 12px; border-radius: var(--canto-caixa);
+  border: 1.5px dashed var(--verde-30); background: var(--branco);
+  text-align: left; color: var(--verde);
+}
+.anexo--vazio { cursor: pointer; min-height: 74px; }
+.anexo--vazio:active { background: var(--verde-10); }
+.anexo__mais {
+  display: grid; place-items: center; flex: none;
+  width: 42px; height: 42px; border-radius: 10px;
+  background: var(--verde); color: var(--creme); font-size: 22px; line-height: 1;
+}
+.anexo strong { display: block; font-size: 14px; font-weight: 700; }
+.anexo small  { display: block; font-size: 12px; color: var(--taupe); margin-top: 2px; }
+
+.anexo__imagem {
+  width: 48px; height: 48px; flex: none;
+  object-fit: cover; border-radius: 8px; border: 1px solid var(--verde-15);
+}
+.anexo__pdf {
+  display: grid; place-items: center; flex: none;
+  width: 48px; height: 48px; border-radius: 8px;
+  background: var(--verde); color: var(--creme);
+  font-size: 11px; font-weight: 800; letter-spacing: .05em;
+}
+.anexo__nome {
+  flex: 1; min-width: 0; font-size: 13px; font-weight: 600;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.anexo__trocar {
+  flex: none; font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  color: var(--verde); text-decoration: underline; cursor: pointer;
+}
+
+.rodape-nota {
+  margin: 4px 0 0; font-size: 12px; line-height: 1.45; color: var(--taupe);
+}

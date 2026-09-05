@@ -14,11 +14,14 @@ import { baseDeDados } from './aulas.js'
 
 export const BALDE = 'comprovativos'
 
+/* Uma foto do ecrã ou o PDF que a bilheteira enviou por email —
+   as duas formas em que as pessoas têm o bilhete à mão. */
 const TIPOS = {
   'image/jpeg': 'jpg',
   'image/png': 'png',
   'image/webp': 'webp',
   'image/heic': 'heic',
+  'application/pdf': 'pdf',
 }
 
 export function extensaoDe(tipo) {

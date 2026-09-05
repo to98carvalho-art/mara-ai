@@ -62,11 +62,14 @@ export async function minhasInscricoes(conta, env) {
   return (data || []).map(l => l.aula_id)
 }
 
-export async function inscrever(aulaId, conta, telefone, env) {
+export async function inscrever(aulaId, conta, telefone, extras = {}, env) {
   const db = baseDeDados(env)
   if (!db) throw new ErroDeAula(ERROS_AULA.INDISPONIVEL)
   const { error } = await db.rpc('inscrever', {
     p_aula: aulaId, p_conta: conta, p_telefone: telefone,
+    p_nome: extras.nome ?? null,
+    p_comprovativo: extras.comprovativo ?? null,
+    p_impressao: extras.impressao ?? null,
   })
   if (error) throw traduzir(error)
 }

@@ -32,7 +32,7 @@ function resposta() {
 }
 
 const ambiente = { SESSION_SECRET: 'segredo-de-teste' }
-const fichaValida = signSession({ accountId: 'conta-1', phone: '+351911111111' }, ambiente)
+const fichaValida = signSession({ accountId: '+351911111111', phone: '+351911111111', nome: 'Marta' }, ambiente)
 
 console.log('\nListar aulas (rota pública)')
 {
@@ -50,34 +50,47 @@ console.log('\nListar aulas (rota pública)')
 
 console.log('\nInscrever')
 {
-  const res = resposta()
-  await inscreverHandler(pedido({ body: { aulaId: 'barre' } }), res)
-  assert.equal(res.statusCode, 401)
-  assert.equal(res.corpo.error, 'SESSAO_INVALIDA'); ok('sem sessão, recusa')
-}
-{
-  const res = resposta()
-  await inscreverHandler(pedido({ body: { aulaId: 'barre' }, auth: 'inventado.assinatura' }), res)
-  assert.equal(res.statusCode, 401);                ok('sessão forjada, recusa')
-}
-{
-  const expirada = signSession({ accountId: 'x' }, ambiente, -1)
-  const res = resposta()
-  await inscreverHandler(pedido({ body: { aulaId: 'barre' }, auth: expirada }), res)
-  assert.equal(res.statusCode, 401);                ok('sessão expirada, recusa')
-}
-{
   process.env.SESSION_SECRET = ambiente.SESSION_SECRET
-  const res = resposta()
-  await inscreverHandler(pedido({ body: {}, auth: fichaValida }), res)
+  const dados = { aulaId: 'barre', nome: 'Marta', telefone: '912345678', comprovativo: 'fotos/a.jpg' }
+
+  let res = resposta()
+  await inscreverHandler(pedido({ body: {} }), res)
   assert.equal(res.statusCode, 400)
-  assert.equal(res.corpo.error, 'AULA_DESCONHECIDA'); ok('sem aula indicada, recusa')
-}
-{
-  const res = resposta()
+  assert.equal(res.corpo.error, 'AULA_DESCONHECIDA');   ok('sem aula indicada, recusa')
+
+  res = resposta()
+  await inscreverHandler(pedido({ body: { aulaId: 'barre' } }), res)
+  assert.equal(res.corpo.error, 'TELEFONE_INVALIDO');   ok('sem telemóvel, recusa')
+
+  res = resposta()
+  await inscreverHandler(pedido({ body: { ...dados, telefone: '12' } }), res)
+  assert.equal(res.corpo.error, 'TELEFONE_INVALIDO');   ok('telemóvel impossível, recusa')
+
+  res = resposta()
+  await inscreverHandler(pedido({ body: { ...dados, nome: '  ' } }), res)
+  assert.equal(res.corpo.error, 'NOME_EM_FALTA');       ok('sem nome, recusa')
+
+  res = resposta()
+  await inscreverHandler(pedido({ body: { ...dados, comprovativo: null } }), res)
+  assert.equal(res.corpo.error, 'COMPROVATIVO_EM_FALTA')
+  ok('primeira inscrição sem bilhete anexado, recusa')
+
+  /* Uma ficha forjada não abre porta nenhuma: é ignorada, e a pessoa
+     volta a ter de entregar o comprovativo como qualquer outra. */
+  res = resposta()
+  await inscreverHandler(pedido({ body: { aulaId: 'barre' }, auth: 'inventado.assinatura' }), res)
+  assert.equal(res.corpo.error, 'TELEFONE_INVALIDO')
+  ok('ficha forjada não substitui o comprovativo')
+
+  res = resposta()
   await inscreverHandler(pedido({ body: { aulaId: 'barre' }, auth: fichaValida }), res)
   assert.equal(res.statusCode, 503)
-  assert.equal(res.corpo.error, 'INDISPONIVEL');     ok('com sessão mas sem base de dados, 503')
+  ok('com ficha válida dispensa o comprovativo e vai à base de dados')
+
+  res = resposta()
+  await inscreverHandler(pedido({ body: dados }), res)
+  assert.equal(res.statusCode, 503)
+  assert.equal(res.corpo.error, 'INDISPONIVEL');        ok('sem base de dados, 503')
 }
 
 console.log('\nAnular')

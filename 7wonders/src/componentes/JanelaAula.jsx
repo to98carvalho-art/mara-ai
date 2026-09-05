@@ -1,73 +1,78 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Janela from './Janela'
 import { EVENTO, AULAS_LOCAL } from '../content/evento'
-import { pedirCodigo, validarCodigo, ErroDeEntrada } from '../lib/sessao'
+import { prepararComprovativo, enviarComprovativo, TIPOS_ACEITES } from '../lib/comprovativo'
+import { estaEmModoServidor } from '../lib/inscricoes'
 
 /* ────────────────────────────────────────────────────────────────
-   A janela de uma aula, em três passos:
+   A janela de uma aula.
 
-     telefone  → a 3cket manda o PIN por SMS
-     codigo    → o PIN confirma quem é, e que tem bilhete
-     confirmar → inscrever ou anular
+   Quem ainda não se identificou preenche nome, telemóvel e anexa o
+   bilhete — um print serve, ou o PDF da bilheteira. A vaga fica
+   reservada logo; a organização confirma depois.
 
-   Quem já entrou salta os dois primeiros passos.
-   As aulas só informativas mostram apenas o passo de confirmação.
+   Quem já se inscreveu antes neste telemóvel salta o formulário.
    ──────────────────────────────────────────────────────────────── */
 
-export default function JanelaAula({ aula, utilizador, aoEntrar, aoInscrever, aoAnular, aoFechar }) {
-  const precisaDeEntrar = !aula.soInformacao && !utilizador
-  const [passo, setPasso] = useState(precisaDeEntrar ? 'telefone' : 'confirmar')
-  const [telefone, setTelefone] = useState('')
-  const [codigo, setCodigo] = useState('')
+export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, aoFechar }) {
+  const precisaIdentificar = !aula.soInformacao && !utilizador
+
+  const [nome, setNome] = useState(utilizador?.nome || '')
+  const [telefone, setTelefone] = useState(utilizador?.phone || '')
+  const [ficheiro, setFicheiro] = useState(null)
+  const [antevisao, setAntevisao] = useState(null)
   const [erro, setErro] = useState('')
-  const [dica, setDica] = useState('')
-  const [ocupado, setOcupado] = useState(false)
+  const [passo, setPasso] = useState('')          // o que está a acontecer
+  const escolher = useRef(null)
 
-  async function enviarCodigo(evento) {
-    evento.preventDefault()
-    setOcupado(true); setErro(''); setDica('')
+  const ocupado = Boolean(passo)
+  const completo = nome.trim() && telefone.trim() && (ficheiro || !precisaIdentificar)
+
+  function escolherFicheiro(evento) {
+    const f = evento.target.files?.[0]
+    setErro('')
+    if (!f) return
+    setFicheiro(f)
+    setAntevisao(f.type.startsWith('image/') ? URL.createObjectURL(f) : null)
+  }
+
+  async function submeter(evento) {
+    evento?.preventDefault()
+    if (ocupado) return
+    setErro('')
+
     try {
-      const resposta = await pedirCodigo(telefone)
-      if (resposta?.mock) setDica(`Modo de teste — o código é ${resposta.mockPin}.`)
-      setPasso('codigo')
-    } catch (e) {
-      // Se já houver um PIN por expirar, seguimos para o passo do código:
-      // a pessoa recebeu-o mesmo, não vale a pena prendê-la aqui.
-      if (e instanceof ErroDeEntrada && e.codigo === 'PIN_ALREADY_SENT') {
-        setDica(e.mensagem)
-        setPasso('codigo')
-      } else {
-        setErro(e.mensagem || 'Não foi possível enviar o código.')
+      let comprovativo = null
+      let impressao = null
+
+      // Sem base de dados não há onde guardar o ficheiro. Em
+      // desenvolvimento a inscrição segue à mesma, para o ecrã poder
+      // ser percorrido de ponta a ponta.
+      if (ficheiro && estaEmModoServidor()) {
+        setPasso('A preparar o bilhete…')
+        const preparado = await prepararComprovativo(ficheiro)
+        impressao = preparado.impressao
+        setPasso('A enviar o bilhete…')
+        comprovativo = await enviarComprovativo(preparado)
       }
+
+      setPasso('A guardar a inscrição…')
+      await aoInscrever(aula.id, { nome: nome.trim(), telefone: telefone.trim(), comprovativo, impressao })
+    } catch (e) {
+      setErro(e.mensagem || 'Não foi possível concluir. Tenta outra vez.')
     } finally {
-      setOcupado(false)
+      setPasso('')
     }
   }
 
-  async function confirmarCodigo(evento) {
-    evento.preventDefault()
-    setOcupado(true); setErro('')
+  async function anular() {
+    setErro(''); setPasso('A anular…')
     try {
-      const pessoa = await validarCodigo(telefone, codigo)
-      aoEntrar(pessoa)
-      setPasso('confirmar')
+      await aoAnular(aula.id)
     } catch (e) {
-      setErro(e.mensagem || 'Não foi possível confirmar o código.')
+      setErro(e.mensagem || 'Não foi possível anular.')
     } finally {
-      setOcupado(false)
-    }
-  }
-
-  /* Inscrever e anular podem falhar — a última vaga pode ter ido
-     para outra pessoa entre abrir a janela e carregar no botão. */
-  async function agir(acao) {
-    setOcupado(true); setErro('')
-    try {
-      await acao(aula.id)
-    } catch (e) {
-      setErro(e.mensagem || 'Não foi possível guardar. Tenta outra vez.')
-    } finally {
-      setOcupado(false)
+      setPasso('')
     }
   }
 
@@ -76,122 +81,138 @@ export default function JanelaAula({ aula, utilizador, aoEntrar, aoInscrever, ao
   return (
     <Janela sobrancelha={aula.zona} titulo={aula.nome} aoFechar={aoFechar}>
 
-      {/* ── passo 1 · telefone ── */}
-      {passo === 'telefone' && (
-        <form className="pilha" onSubmit={enviarCodigo}>
-          {aula.temInscricao && !aula.esgotado && aula.livres != null && aula.livres <= 10 && (
-            <span className="pilula pilula--taupe">
+      <div className="janela__factos">
+        <div className="facto">
+          <span className="facto__nome">DIA</span>
+          <span className="facto__valor">{EVENTO.data}</span>
+        </div>
+        <div className="facto">
+          <span className="facto__nome">HORA</span>
+          <span className="facto__valor">{aula.hora}</span>
+        </div>
+        {aula.precos
+          ? aula.precos.map(([etiqueta, valor]) => (
+              <div className="facto" key={etiqueta}>
+                <span className="facto__nome">{etiqueta}</span>
+                <span className="facto__valor">{valor}</span>
+              </div>
+            ))
+          : (
+            <div className="facto">
+              <span className="facto__nome">{aula.preco ? 'PREÇO' : 'LOCAL'}</span>
+              <span className="facto__valor">{aula.preco || AULAS_LOCAL}</span>
+            </div>
+          )}
+      </div>
+
+      {/* ── só informação ── */}
+      {aula.soInformacao && (
+        <>
+          <p className="corpo" style={{ marginTop: 16 }}>
+            {(aula.nota || '').replace('{HORA}', horaPorExtenso)}
+          </p>
+          <button className="botao botao--largo" style={{ marginTop: 20, background: '#111', color: '#FBF7EB' }}
+                  onClick={aoFechar}>
+            ENTENDIDO
+          </button>
+        </>
+      )}
+
+      {/* ── já inscrito ── */}
+      {!aula.soInformacao && aula.inscrito && (
+        <>
+          <p className="corpo" style={{ marginTop: 16 }}>
+            Estás inscrito. Chega 10 minutos antes.
+          </p>
+          {erro && <p className="aviso aviso--erro" style={{ marginTop: 12 }}>{erro}</p>}
+          <button className="botao botao--recuo botao--largo" style={{ marginTop: 20 }}
+                  disabled={ocupado} onClick={anular}>
+            {ocupado ? passo.toUpperCase() : 'ANULAR INSCRIÇÃO'}
+          </button>
+        </>
+      )}
+
+      {/* ── esgotada ── */}
+      {!aula.soInformacao && !aula.inscrito && aula.esgotado && (
+        <>
+          <p className="corpo" style={{ marginTop: 16 }}>Esta aula já não tem vagas.</p>
+          <button className="botao botao--morto botao--largo" style={{ marginTop: 20 }} disabled>
+            SEM VAGAS
+          </button>
+        </>
+      )}
+
+      {/* ── inscrever ── */}
+      {!aula.soInformacao && !aula.inscrito && !aula.esgotado && (
+        <form className="pilha" style={{ marginTop: 16 }} onSubmit={submeter}>
+
+          {aula.livres != null && aula.livres <= 10 && (
+            <span className="pilula pilula--taupe" style={{ alignSelf: 'flex-start' }}>
               APENAS {aula.livres} {aula.livres === 1 ? 'VAGA LIVRE' : 'VAGAS LIVRES'}
             </span>
           )}
+
           <p className="corpo">
-            As aulas são gratuitas para quem tem bilhete. Escreve o teu número —
-            enviamos-te um código por SMS para confirmar.
+            {precisaIdentificar
+              ? 'As aulas são gratuitas para quem tem bilhete. Deixa os teus dados e anexa o bilhete — um print serve.'
+              : 'Inscrição gratuita com bilhete.'}
           </p>
-          <div className="campo">
-            <label className="campo__nome" htmlFor="telefone">NÚMERO DE TELEMÓVEL</label>
-            <input
-              id="telefone" name="telefone" type="tel" inputMode="tel" autoComplete="tel"
-              placeholder="912 345 678" value={telefone}
-              onChange={e => setTelefone(e.target.value)} required autoFocus
-            />
-          </div>
-          {erro && <p className="aviso aviso--erro">{erro}</p>}
-          <button className="botao botao--verde botao--largo" disabled={ocupado || !telefone.trim()}>
-            {ocupado ? 'A ENVIAR…' : 'ENVIAR CÓDIGO POR SMS'}
-          </button>
-        </form>
-      )}
 
-      {/* ── passo 2 · código ── */}
-      {passo === 'codigo' && (
-        <form className="pilha" onSubmit={confirmarCodigo}>
-          <p className="corpo">Enviámos um código por SMS para <strong>{telefone}</strong>.</p>
-          {dica && <p className="aviso aviso--nota">{dica}</p>}
-          <div className="campo campo--codigo">
-            <label className="campo__nome" htmlFor="codigo">CÓDIGO</label>
-            <input
-              id="codigo" name="codigo" type="text" inputMode="numeric" autoComplete="one-time-code"
-              maxLength={6} placeholder="1234" value={codigo}
-              onChange={e => setCodigo(e.target.value.replace(/\D/g, ''))} required autoFocus
-            />
-          </div>
-          {erro && <p className="aviso aviso--erro">{erro}</p>}
-          <button className="botao botao--verde botao--largo" disabled={ocupado || codigo.length < 4}>
-            {ocupado ? 'A CONFIRMAR…' : 'VALIDAR CÓDIGO'}
-          </button>
-          <button type="button" className="discreto" onClick={() => { setPasso('telefone'); setErro('') }}>
-            ← corrigir o número
-          </button>
-        </form>
-      )}
+          {precisaIdentificar && (
+            <>
+              <div className="campo">
+                <label className="campo__nome" htmlFor="nome">NOME</label>
+                <input id="nome" type="text" autoComplete="name" placeholder="Marta Ribeiro"
+                       value={nome} onChange={e => setNome(e.target.value)} required />
+              </div>
 
-      {/* ── passo 3 · confirmar ── */}
-      {passo === 'confirmar' && (
-        <>
-          <div className="janela__factos">
-            <div className="facto">
-              <span className="facto__nome">DIA</span>
-              <span className="facto__valor">{EVENTO.data}</span>
-            </div>
-            <div className="facto">
-              <span className="facto__nome">HORA</span>
-              <span className="facto__valor">{aula.hora}</span>
-            </div>
-            {aula.precos
-              ? aula.precos.map(([nome, valor]) => (
-                  <div className="facto" key={nome}>
-                    <span className="facto__nome">{nome}</span>
-                    <span className="facto__valor">{valor}</span>
+              <div className="campo">
+                <label className="campo__nome" htmlFor="telefone">TELEMÓVEL</label>
+                <input id="telefone" type="tel" inputMode="tel" autoComplete="tel" placeholder="912 345 678"
+                       value={telefone} onChange={e => setTelefone(e.target.value)} required />
+              </div>
+
+              <div className="campo">
+                <span className="campo__nome">O TEU BILHETE</span>
+
+                <input ref={escolher} type="file" accept={TIPOS_ACEITES}
+                       onChange={escolherFicheiro} hidden />
+
+                {ficheiro ? (
+                  <div className="anexo">
+                    {antevisao
+                      ? <img className="anexo__imagem" src={antevisao} alt="O bilhete que anexaste" />
+                      : <span className="anexo__pdf" aria-hidden="true">PDF</span>}
+                    <span className="anexo__nome">{ficheiro.name}</span>
+                    <button type="button" className="anexo__trocar" onClick={() => escolher.current?.click()}>
+                      Trocar
+                    </button>
                   </div>
-                ))
-              : aula.preco
-                ? (
-                  <div className="facto">
-                    <span className="facto__nome">PREÇO</span>
-                    <span className="facto__valor">{aula.preco}</span>
-                  </div>
-                )
-                : (
-                  <div className="facto">
-                    <span className="facto__nome">LOCAL</span>
-                    <span className="facto__valor">{AULAS_LOCAL}</span>
-                  </div>
+                ) : (
+                  <button type="button" className="anexo anexo--vazio" onClick={() => escolher.current?.click()}>
+                    <span className="anexo__mais" aria-hidden="true">＋</span>
+                    <span>
+                      <strong>Anexar bilhete</strong>
+                      <small>Um print do telemóvel ou o PDF da bilheteira</small>
+                    </span>
+                  </button>
                 )}
-          </div>
-
-          <p className="corpo" style={{ marginTop: 16 }}>
-            {aula.soInformacao
-              ? (aula.nota || '').replace('{HORA}', horaPorExtenso)
-              : aula.inscrito
-                ? 'Estás inscrito. Chega 10 minutos antes.'
-                : aula.esgotado
-                  ? 'Esta aula já não tem vagas.'
-                  : 'Inscrição gratuita com bilhete.'}
-          </p>
-
-          {erro && <p className="aviso aviso--erro" style={{ marginTop: 14 }}>{erro}</p>}
-
-          {aula.soInformacao ? (
-            <button className="botao botao--creme botao--largo" style={{ marginTop: 20, background: '#111', color: '#FBF7EB' }} onClick={aoFechar}>
-              ENTENDIDO
-            </button>
-          ) : aula.inscrito ? (
-            <button className="botao botao--recuo botao--largo" style={{ marginTop: 20 }}
-                    disabled={ocupado} onClick={() => agir(aoAnular)}>
-              {ocupado ? 'A ANULAR…' : 'ANULAR INSCRIÇÃO'}
-            </button>
-          ) : aula.esgotado ? (
-            <button className="botao botao--morto botao--largo" style={{ marginTop: 20 }} disabled>
-              SEM VAGAS
-            </button>
-          ) : (
-            <button className="botao botao--verde botao--largo" style={{ marginTop: 20 }}
-                    disabled={ocupado} onClick={() => agir(aoInscrever)}>
-              {ocupado ? 'A INSCREVER…' : 'INSCREVER-ME'}
-            </button>
+              </div>
+            </>
           )}
-        </>
+
+          {erro && <p className="aviso aviso--erro">{erro}</p>}
+
+          <button className="botao botao--verde botao--largo" disabled={ocupado || !completo}>
+            {ocupado ? passo.toUpperCase() : 'INSCREVER-ME'}
+          </button>
+
+          {precisaIdentificar && (
+            <p className="rodape-nota">
+              A organização confere os bilhetes. Se algo não bater certo, avisamos-te pelo telemóvel.
+            </p>
+          )}
+        </form>
       )}
     </Janela>
   )
