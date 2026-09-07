@@ -7,8 +7,9 @@
    seguir — por esta ordem, senão os segundos da leitura seriam
    tempo em que outra pessoa podia levar o último lugar.
 
-   A entrada é da pessoa, não da aula: lê-se uma vez, e as aulas
-   seguintes herdam a decisão.
+   Quem decide é o QR code: existe, é único por entrada, e não muda
+   com o nome do lote. A entrada é da pessoa, não da aula — lê-se uma
+   vez, e as aulas seguintes herdam a decisão.
 
    → 200 { ok, estado, token }      inscrito (valido ou por validar)
    → 409 já inscrito / sem vagas
@@ -77,29 +78,47 @@ export default async function handler(req, res) {
       const leitura = await validarComprovativo(comprovativo)
       motivo = leitura.motivo || ''
 
-      // O mesmo bilhete em duas inscrições pode ser batota, ou pode
-      // ser um grupo que comprou tudo junto. Não decidimos isso
-      // sozinhos: passa à equipa.
-      let repetido = 0
-      if (leitura.decisao === DECISOES.VALIDO) {
-        repetido = await contasComOMesmoBilhete(
-          { referencia: leitura.referencia, impressao }, telefone,
-        )
+      /* Quem decide é o QR.
+
+         Há convites VIP, convites normais, bilhetes normais e
+         bilhetes VIP, e o nome muda conforme o lote. Decidir pelo
+         nome era decidir por uma coisa que a organização muda quando
+         quer — e barrar quem tem entrada por ela se chamar outra
+         coisa. O QR não muda: existe, é único, e chega.
+
+         Sem QR legível (um PDF, um HEIC, uma foto tremida) volta a
+         valer a leitura do documento. */
+      if (leitura.qr) {
+        // Uma entrada é de uma pessoa. O mesmo QR noutro telemóvel é
+        // a mesma entrada a servir duas vezes, e isso não passa.
+        const jaUsado = await contasComOMesmoBilhete({ referencia: leitura.qr }, telefone)
+
+        estado = jaUsado ? 'recusado' : 'valido'
+        if (jaUsado) {
+          motivo = `Este ${leitura.entrada} já está registado noutro número de telemóvel. `
+            + 'Cada entrada dá direito a uma inscrição. Fala connosco se achas que é engano.'
+        }
+      } else {
+        estado =
+          leitura.decisao === DECISOES.VALIDO ? 'valido'
+          : leitura.decisao === DECISOES.RECUSADO ? 'recusado'
+          : 'por_validar'
+
+        // Sem QR, o mesmo ficheiro em duas inscrições não é decidido
+        // por nós: um PDF com os bilhetes de um grupo é normal, e
+        // recusar por engano custa mais do que verificar à mão.
+        if (estado === 'valido' && await contasComOMesmoBilhete({ impressao }, telefone)) {
+          estado = 'por_validar'
+          motivo = 'Este ficheiro já apareceu noutra inscrição.'
+        }
       }
 
-      estado =
-        repetido > 0 ? 'por_validar'
-        : leitura.decisao === DECISOES.VALIDO ? 'valido'
-        : leitura.decisao === DECISOES.RECUSADO ? 'recusado'
-        : 'por_validar'
-
-      if (repetido > 0) motivo = `Este ${leitura.entrada} já apareceu noutra inscrição.`
-
-      // A nota vai para a página da equipa. Dizer se era bilhete ou
-      // convite poupa-lhes abrir a foto para perceber o caso.
+      // A nota vai para a página da equipa: o que a leitura viu, e se
+      // foi o QR a decidir. Poupa-lhes abrir a foto.
       await validarConta(telefone, estado, {
-        nota: [leitura.entrada, motivo].filter(Boolean).join(' — ').slice(0, 400),
-        referencia: leitura.referencia,
+        nota: [leitura.entrada, leitura.qr ? 'QR lido' : 'sem QR', motivo]
+          .filter(Boolean).join(' — ').slice(0, 400),
+        referencia: leitura.qr || leitura.referencia,
         automatico: true,
       })
 

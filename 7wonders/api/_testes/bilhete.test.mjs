@@ -145,4 +145,24 @@ console.log('\nO passe por email')
   assert.equal(r.motivo, 'EMAIL_INVALIDO');            ok('email mal escrito não vai para a rua')
 }
 
+console.log('\nLer o QR code')
+{
+  const { lerQr } = await import('../_lib/qr.js')
+  const { readFileSync } = await import('node:fs')
+
+  // O QR é a única identidade fiável: a carteira da 3cket não mostra
+  // número de bilhete nenhum.
+  const jpeg = new Uint8Array(readFileSync(new URL('./amostras/entrada-3cket.jpg', import.meta.url)))
+  const qr = lerQr(jpeg, 'image/jpeg')
+  assert.equal(typeof qr, 'string')
+  assert.ok(qr.length >= 8);                           ok('lê o QR de um print verdadeiro da 3cket')
+  assert.equal(lerQr(jpeg, 'image/jpeg'), qr);         ok('e dá sempre o mesmo — serve de identidade')
+
+  assert.equal(lerQr(new Uint8Array([1, 2, 3]), 'image/jpeg'), null)
+  ok('ficheiro estragado devolve nada, não estoira')
+  assert.equal(lerQr(jpeg, 'application/pdf'), null);  ok('PDF não se tenta ler')
+  assert.equal(lerQr(jpeg, 'image/heic'), null);       ok('HEIC também não')
+  assert.equal(lerQr(null, 'image/jpeg'), null);       ok('sem ficheiro, nada')
+}
+
 console.log(`\n✅ ${passou} verificações passaram\n`)

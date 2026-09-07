@@ -159,11 +159,26 @@ vaga é reservada primeiro e o bilhete é lido logo a seguir — por esta
 ordem, senão os segundos da leitura seriam tempo em que outra pessoa
 podia levar o último lugar. Três saídas:
 
+### Quem decide é o QR
+
+O QR code é lido no servidor (`api/_lib/qr.js`, JavaScript puro) e é
+ele que manda:
+
 | | o que acontece |
 |---|---|
-| **válido** | inscrição confirmada e o passe segue por email |
-| **recusado** | dizemos porquê e a vaga volta a ficar livre; pode anexar-se outra |
-| **dúvida** | a vaga fica guardada e a equipa decide em `/#equipa` |
+| **QR lido, nunca visto** | válido — inscrição confirmada, passe por email |
+| **QR já usado noutro número** | recusado — a vaga volta a ficar livre |
+| **sem QR legível** | decide a leitura do documento: válido, recusado, ou dúvida para `/#equipa` |
+
+Decidir pelo QR e não pelo nome do bilhete é deliberado. Há convites
+VIP, convites normais, bilhetes normais e bilhetes VIP, e a
+organização cria lotes novos quando quer — quem decidisse pelo nome
+barrava gente sempre que aparecesse um nome novo. O QR não muda.
+
+Foi um print verdadeiro que ensinou isto: **a carteira da 3cket não
+mostra o nome do evento em lado nenhum**, só o titular, o QR, o tipo
+("Convite Vip") e a data ("sábado, 12 set"). Um deles está em
+`api/_testes/amostras/`, e é contra ele que a leitura do QR é testada.
 
 A entrada é da **pessoa**, não da aula: lê-se uma vez, e as aulas
 seguintes herdam a decisão. Validar ou recusar arrasta todas as

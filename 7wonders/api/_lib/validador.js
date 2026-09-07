@@ -25,6 +25,7 @@
    ════════════════════════════════════════════════════════════════ */
 
 import { enderecoParaVer } from './armazenamento.js'
+import { lerQr } from './qr.js'
 
 const EVENTO = {
   nome: '7WONDERS',
@@ -44,8 +45,20 @@ const IMAGENS = new Set(['image/jpeg', 'image/png', 'image/gif', 'image/webp'])
 
 export const DECISOES = { VALIDO: 'valido', RECUSADO: 'recusado', DUVIDA: 'duvida' }
 
+/* O modelo às vezes escreve "<UNKNOWN>" ou "N/A" em vez de deixar o
+   campo vazio. Guardar isso como referência do bilhete faria com que
+   duas pessoas sem referência parecessem ter o mesmo bilhete. */
+const VAZIOS = new Set(['', '-', '--', 'n/a', 'na', 'none', 'null', 'unknown',
+                        'desconhecido', 'nao aplicavel', 'não aplicável', 'sem referencia'])
+
+function textoOuNada(valor, limite) {
+  const limpo = String(valor ?? '').trim().replace(/^[<[(]|[>\])]$/g, '').trim()
+  if (VAZIOS.has(limpo.toLowerCase())) return null
+  return limpo.slice(0, limite) || null
+}
+
 const duvida = motivo => ({
-  decisao: DECISOES.DUVIDA, motivo, referencia: null,
+  decisao: DECISOES.DUVIDA, motivo, referencia: null, qr: null,
   tipo: 'indefinido', entrada: 'entrada',
 })
 
@@ -107,34 +120,51 @@ const FERRAMENTA = {
   },
 }
 
-const INSTRUCOES = `És o controlo de entradas do ${EVENTO.nome}, ${EVENTO.data}, no ${EVENTO.local}.
+const INSTRUCOES = `És o controlo de entradas do ${EVENTO.nome}, ${EVENTO.data} (um sábado), no ${EVENTO.local}.
 
 Há duas maneiras de ter entrada, e valem as duas por igual:
 
   • bilhetes comprados na ${EVENTO.bilheteira}, de vários tipos (geral, VIP,
     early bird, passes, e outros que possam existir)
-  • convites oferecidos pela organização, também de vários tipos
+  • convites da organização, também de vários tipos
 
-Saem todos da mesma bilheteira e parecem-se uns com os outros. Um convite NÃO é
-menos válido do que um bilhete pago: quem foi convidado tem direito a entrar
-exactamente como quem pagou. Nunca recuses uma entrada só por dizer "convite",
+Um convite NÃO é menos válido do que um bilhete pago: quem foi convidado tem
+direito a entrar exactamente como quem pagou. Nunca recuses por dizer "convite",
 "cortesia", "guest", "convidado", "staff" ou "oferta" em vez de "bilhete", nem
 por não ter preço, nem por o preço aparecer a zero.
 
-Olha para o que foi anexado e regista o que vês. Ao decidir:
+── COMO SÃO ESTES DOCUMENTOS ──
 
-- Aceita se lá estiver escrito o nome do evento (7WONDERS, 7 WONDERS,
-  THE 6TH WONDER) ou o local, e se parecer mesmo uma entrada: QR code,
-  código de barras, referência, data, nome da bilheteira.
-- Aceita mesmo que não haja QR code visível, que não apareça data, ou que não
-  se perceba de que tipo é. Muitos prints cortam metade do documento.
-- Recusa se não for uma entrada de todo (uma selfie, um cartaz do evento, um
-  ecrã em branco, um comprovativo de transferência bancária, o mapa do
-  recinto), se for de outro evento, ou se estiver demasiado desfocado ou
-  escuro para se ler seja o que for.
-- Fica na dúvida quando for mesmo uma entrada de algum evento mas não se
-  perceber de qual. Alguém da equipa confirma depois. Não inventes uma
-  certeza que não tens.
+Quase sempre é uma fotografia do ecrã da carteira da ${EVENTO.bilheteira}, aberta
+em my.3cket.com. Essa carteira mostra:
+
+  • o nome do titular, em cima
+  • um QR code grande, com o símbolo da 3cket ao centro
+  • uma lista "Bilhetes" com o tipo ("Convite Vip", "Bilhete Geral", …),
+    a data ("sábado, 12 set") e às vezes o nome do lote ("Amigos Joel")
+  • o logótipo 3cket em baixo, e a barra do browser em my.3cket.com
+
+**O NOME DO EVENTO NÃO APARECE NESTA CARTEIRA.** Não o procures e nunca recuses
+nem duvides por ele faltar — se o fizesses, recusavas toda a gente. O que
+identifica a entrada é o conjunto: ser da 3cket, ter QR code, e a data bater
+certo com o dia do evento.
+
+── COMO DECIDIR ──
+
+Válido quando for claramente um documento da 3cket (a carteira acima, ou um PDF
+dela) e a data for 12 de Setembro — escrita como "12 set", "sábado, 12 set",
+"12/09" ou parecido. Também é válido se não houver data nenhuma visível mas
+todo o resto encaixar: muitos prints cortam metade.
+Se estiver escrito o nome do evento (7WONDERS, 7 WONDERS, THE 6TH WONDER) ou o
+local, melhor ainda — mas é bónus, não é requisito.
+
+Recusa quando não for uma entrada de todo: uma selfie, um cartaz do evento, um
+ecrã em branco, um comprovativo de transferência bancária, o mapa do recinto.
+Recusa também se for mesmo uma entrada mas para outra data claramente
+diferente de 12 de Setembro.
+
+Fica na dúvida se for uma entrada de outra bilheteira que não a 3cket, ou se
+estiver tão desfocado ou escuro que não consigas ler o tipo nem a data.
 
 Na dúvida entre recusar e ficar na dúvida, fica na dúvida. Custa-nos um
 minuto de trabalho; recusar por engano custa a entrada a quem tem direito.
@@ -154,10 +184,8 @@ async function buscarFicheiro(caminho, env) {
   const bytes = new Uint8Array(await resposta.arrayBuffer())
   if (!bytes.length || bytes.length > TAMANHO_MAXIMO) return null
 
-  return {
-    tipo: (resposta.headers.get('content-type') || '').split(';')[0].trim().toLowerCase(),
-    dados: Buffer.from(bytes).toString('base64'),
-  }
+  const tipo = (resposta.headers.get('content-type') || '').split(';')[0].trim().toLowerCase()
+  return { tipo, bytes, dados: Buffer.from(bytes).toString('base64') }
 }
 
 function blocoDoFicheiro({ tipo, dados }) {
@@ -177,7 +205,7 @@ export function nomeDaEntrada(leitura) {
   const tipo = leitura?.tipo === 'convite' ? 'convite'
     : leitura?.tipo === 'bilhete' ? 'bilhete'
     : 'entrada'
-  const categoria = String(leitura?.categoria || '').trim().slice(0, 60)
+  const categoria = textoOuNada(leitura?.categoria, 60) || ''
   return categoria ? `${tipo} ${categoria}` : tipo
 }
 
@@ -186,9 +214,9 @@ export function decidirDaLeitura(leitura) {
   if (!leitura) return duvida('Não conseguimos ler o comprovativo.')
 
   const motivo = String(leitura.motivo || '').trim().slice(0, 300)
-  const referencia = String(leitura.referencia || '').trim().slice(0, 120) || null
+  const referencia = textoOuNada(leitura.referencia, 120)
   const entrada = nomeDaEntrada(leitura)
-  const base = { referencia, tipo: leitura.tipo || 'indefinido', entrada }
+  const base = { referencia, qr: null, tipo: leitura.tipo || 'indefinido', entrada }
 
   // Não é entrada nenhuma, ou não se lê: a pessoa consegue resolver
   // isso sozinha, e mais depressa do que nós.
@@ -215,20 +243,13 @@ export function validadorLigado(env = process.env) {
   return Boolean((env.ANTHROPIC_API_KEY || '').trim())
 }
 
-/* Lê o comprovativo. Nunca levanta exceção: se alguma coisa correr
-   mal, a inscrição fica reservada e a equipa decide. Uma falha
-   nossa não pode custar a vaga a quem tem bilhete. */
-export async function validarComprovativo(caminho, env = process.env) {
+/* Lê um ficheiro já em mãos. Separado de validarComprovativo para
+   se poder experimentar com um documento verdadeiro sem precisar do
+   armazenamento — foi assim que se descobriu que a carteira da
+   3cket não mostra o nome do evento. */
+export async function lerFicheiro(ficheiro, env = process.env) {
   const chave = (env.ANTHROPIC_API_KEY || '').trim()
   if (!chave) return duvida('Validação automática desligada.')
-  if (!caminho) return duvida('Sem comprovativo.')
-
-  let ficheiro
-  try {
-    ficheiro = await buscarFicheiro(caminho, env)
-  } catch {
-    return duvida('Não conseguimos abrir o comprovativo.')
-  }
   if (!ficheiro) return duvida('Não conseguimos abrir o comprovativo.')
 
   const bloco = blocoDoFicheiro(ficheiro)
@@ -269,4 +290,28 @@ export async function validarComprovativo(caminho, env = process.env) {
 
   const uso = (dados?.content || []).find(b => b.type === 'tool_use')
   return decidirDaLeitura(uso?.input)
+}
+
+/* Vai buscar o comprovativo ao armazenamento e lê-o. Nunca levanta
+   exceção: se alguma coisa correr mal, a inscrição fica reservada e
+   a equipa decide. Uma falha nossa não pode custar a vaga a quem tem
+   entrada. */
+export async function validarComprovativo(caminho, env = process.env) {
+  if (!(env.ANTHROPIC_API_KEY || '').trim()) return duvida('Validação automática desligada.')
+  if (!caminho) return duvida('Sem comprovativo.')
+
+  let ficheiro
+  try {
+    ficheiro = await buscarFicheiro(caminho, env)
+  } catch {
+    return duvida('Não conseguimos abrir o comprovativo.')
+  }
+  if (!ficheiro) return duvida('Não conseguimos abrir o comprovativo.')
+
+  const leitura = await lerFicheiro(ficheiro, env)
+
+  /* O QR é a identidade da entrada. A carteira da 3cket não mostra
+     número de bilhete nenhum, por isso sem ele não havia como saber
+     que duas inscrições são a mesma entrada. */
+  return { ...leitura, qr: lerQr(ficheiro.bytes, ficheiro.tipo) }
 }
