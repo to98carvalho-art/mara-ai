@@ -83,6 +83,7 @@ async function chamar(caminho, corpo = {}) {
 let modo = 'local'
 let vagasDoServidor = null      // { aulaId: { lugares, ocupados, livres } }
 let minhasDoServidor = []
+let entradaDoServidor = null    // { estado, nota } — como está o bilhete
 
 /* Lê o estado atual. Deve ser chamado no arranque e depois de cada
    inscrição ou anulação. */
@@ -92,6 +93,7 @@ export async function carregar() {
     modo = resposta.modo
     vagasDoServidor = resposta.vagas || null
     minhasDoServidor = resposta.minhas || []
+    entradaDoServidor = resposta.entrada || null
   } catch {
     modo = 'local'                // sem rede: o horário abre na mesma
   }
@@ -100,6 +102,18 @@ export async function carregar() {
 
 export function estaEmModoServidor() {
   return modo === 'servidor'
+}
+
+/* Como está a entrada de quem está a usar o site. Interessa uma
+   coisa: quem foi recusado tem de anexar outra vez, mesmo já se
+   tendo identificado antes. */
+export function entradaAtual() {
+  return entradaDoServidor
+}
+
+export function precisaDeNovaEntrada() {
+  if (modo !== 'servidor') return false
+  return entradaDoServidor?.estado === 'recusado'
 }
 
 /* Junta a cada aula o que a interface precisa de saber. */

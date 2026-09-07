@@ -2,7 +2,7 @@ import { useState, useRef } from 'react'
 import Janela from './Janela'
 import { EVENTO, AULAS_LOCAL } from '../content/evento'
 import { prepararComprovativo, enviarComprovativo, TIPOS_ACEITES } from '../lib/comprovativo'
-import { estaEmModoServidor } from '../lib/inscricoes'
+import { estaEmModoServidor, precisaDeNovaEntrada, entradaAtual } from '../lib/inscricoes'
 
 /* ────────────────────────────────────────────────────────────────
    A janela de uma aula.
@@ -21,7 +21,12 @@ import { estaEmModoServidor } from '../lib/inscricoes'
    ──────────────────────────────────────────────────────────────── */
 
 export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, aoFechar }) {
-  const precisaIdentificar = !aula.soInformacao && !utilizador
+  // Quem foi recusado tem de anexar outra entrada, mesmo já se tendo
+  // identificado. Sem isto ficava preso: o ecrã não pedia nada e o
+  // servidor recusava por falta de ficheiro.
+  const recusado = precisaDeNovaEntrada()
+  const precisaIdentificar = !aula.soInformacao && (!utilizador || recusado)
+  const soFaltaAEntrada = Boolean(utilizador) && recusado
 
   const [nome, setNome] = useState(utilizador?.nome || '')
   const [telefone, setTelefone] = useState(utilizador?.phone || '')
@@ -34,9 +39,11 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
   const escolher = useRef(null)
 
   const ocupado = Boolean(passo)
-  const completo = precisaIdentificar
-    ? nome.trim() && telefone.trim() && email.trim() && ficheiro
-    : true
+  const completo = !precisaIdentificar
+    ? true
+    : soFaltaAEntrada
+      ? Boolean(ficheiro)                       // nome e número já os temos
+      : nome.trim() && telefone.trim() && email.trim() && Boolean(ficheiro)
 
   function escolherFicheiro(evento) {
     const f = evento.target.files?.[0]
@@ -182,13 +189,21 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
           )}
 
           <p className="corpo">
-            {precisaIdentificar
-              ? 'As aulas são gratuitas para quem tem entrada. Deixa os teus dados e anexa o bilhete ou o convite — um print serve. Confirmamos na hora.'
-              : 'Inscrição gratuita com bilhete ou convite.'}
+            {soFaltaAEntrada
+              ? 'Não conseguimos confirmar a entrada que anexaste. Anexa outra e ficas logo inscrito.'
+              : precisaIdentificar
+                ? 'As aulas são gratuitas para quem tem entrada. Deixa os teus dados e anexa o bilhete ou o convite — um print serve. Confirmamos na hora.'
+                : 'Inscrição gratuita com bilhete ou convite.'}
           </p>
+
+          {soFaltaAEntrada && entradaAtual()?.nota && (
+            <p className="aviso aviso--nota">{entradaAtual().nota}</p>
+          )}
 
           {precisaIdentificar && (
             <>
+              {!soFaltaAEntrada && (
+                <>
               <div className="campo">
                 <label className="campo__nome" htmlFor="nome">NOME</label>
                 <input id="nome" type="text" autoComplete="name" placeholder="Marta Ribeiro"
@@ -207,6 +222,8 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
                        placeholder="marta@email.com"
                        value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
+                </>
+              )}
 
               <div className="campo">
                 <span className="campo__nome">O TEU BILHETE OU CONVITE</span>
