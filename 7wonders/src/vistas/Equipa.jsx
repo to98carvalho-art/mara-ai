@@ -287,17 +287,20 @@ function Aulas({ listas }) {
 
             <table className="tabela">
               <thead>
-                <tr><th>Nome</th><th>Telemóvel</th><th>Email</th><th> </th></tr>
+                <tr><th>Nome</th><th>Telemóvel</th><th>Email</th></tr>
               </thead>
               <tbody>
                 {aula.pessoas.map((p, n) => (
                   <tr key={`${p.telefone}-${n}`}>
-                    <td>{p.nome || '—'}</td>
+                    <td>
+                      <span className="tabela__nome">
+                        <span className={`ponto ${p.estado === 'valido' ? 'ponto--bom' : ''}`}
+                              title={p.estado === 'valido' ? 'Entrada confirmada' : 'Por validar'}>●</span>
+                        {p.nome || '—'}
+                      </span>
+                    </td>
                     <td><a href={`tel:${p.telefone}`}>{p.telefone}</a></td>
                     <td className="suave">{p.email || '—'}</td>
-                    <td>{p.estado === 'valido'
-                      ? <span className="ponto ponto--bom" title="Entrada confirmada">●</span>
-                      : <span className="ponto" title="Por validar">●</span>}</td>
                   </tr>
                 ))}
               </tbody>

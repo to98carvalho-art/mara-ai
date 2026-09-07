@@ -49,6 +49,9 @@ img { max-width: 100%; }
   background-color: var(--tinta);
   background-image: var(--grao-escuro);
   color: var(--creme);
+  /* Chega sempre ao fim do ecrã. Com pouco conteúdo, sem isto
+     ficava uma faixa clara por baixo. */
+  min-height: 100dvh;
 }
 
 /* ── tipos de texto ──────────────────────────────────────────── */
@@ -580,5 +583,8 @@ img { max-width: 100%; }
 .tabela a { color: var(--creme); }
 .tabela tr:last-child td { border-bottom: 0; }
 
-.ponto { color: var(--taupe-50); font-size: 11px; }
+/* O estado vai colado ao nome, e não numa coluna ao fundo: a tabela
+   rola para o lado, e uma coluna lá ao fim ninguém a vê. */
+.tabela__nome { display: flex; align-items: center; gap: 8px; }
+.ponto { flex: none; color: var(--taupe-50); font-size: 10px; line-height: 1; }
 .ponto--bom { color: #6FBF73; }
