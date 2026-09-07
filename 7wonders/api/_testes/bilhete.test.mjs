@@ -6,7 +6,7 @@
        email não pode desfazer uma inscrição que já está guardada */
 
 import assert from 'node:assert/strict'
-import { decidirDaLeitura, validarComprovativo, validadorLigado, DECISOES } from '../_lib/validador.js'
+import { decidirDaLeitura, nomeDaEntrada, validarComprovativo, validadorLigado, DECISOES } from '../_lib/validador.js'
 import { corpoDoPasse, enviarPasse, emailPlausivel, normalizarEmail, correioLigado } from '../_lib/correio.js'
 
 let passou = 0
@@ -15,27 +15,54 @@ const ok = n => { console.log('  ✓', n); passou++ }
 console.log('\nDecidir a partir do que se leu')
 {
   const d = decidirDaLeitura({
-    e_bilhete: true, legivel: true, decisao: 'valido',
+    e_entrada: true, legivel: true, decisao: 'valido', tipo: 'bilhete',
     referencia: 'ABC-123', motivo: 'Bilhete do 7WONDERS.',
   })
   assert.equal(d.decisao, DECISOES.VALIDO)
   assert.equal(d.referencia, 'ABC-123');               ok('bilhete legível do evento é válido')
 }
+
+/* Há convites e há bilhetes, de vários tipos, e valem todos. Recusar
+   um convite por não dizer "bilhete" seria barrar quem a casa
+   convidou — o erro mais caro que este código pode cometer. */
 {
-  const d = decidirDaLeitura({ e_bilhete: false, legivel: true, decisao: 'valido', motivo: 'É uma selfie.' })
-  assert.equal(d.decisao, DECISOES.RECUSADO)
-  assert.match(d.motivo, /selfie/);                    ok('não sendo bilhete, recusa mesmo que diga válido')
+  const d = decidirDaLeitura({
+    e_entrada: true, legivel: true, decisao: 'valido',
+    tipo: 'convite', categoria: 'Staff', referencia: 'CV-9',
+    motivo: 'Convite do 7WONDERS.',
+  })
+  assert.equal(d.decisao, DECISOES.VALIDO)
+  assert.equal(d.tipo, 'convite');                     ok('um convite é tão válido como um bilhete')
+  assert.equal(d.entrada, 'convite Staff');            ok('e é tratado pelo nome — "convite", não "bilhete"')
 }
 {
-  const d = decidirDaLeitura({ e_bilhete: true, legivel: false, decisao: 'valido', motivo: 'Está desfocado.' })
+  const d = decidirDaLeitura({
+    e_entrada: true, legivel: true, decisao: 'valido', tipo: 'bilhete', categoria: 'VIP',
+    motivo: '', referencia: '',
+  })
+  assert.equal(d.entrada, 'bilhete VIP')
+  assert.equal(d.referencia, null);                    ok('o tipo de bilhete aparece na nota da equipa')
+}
+{
+  assert.equal(nomeDaEntrada({ tipo: 'indefinido' }), 'entrada')
+  assert.equal(nomeDaEntrada({}), 'entrada')
+  assert.equal(nomeDaEntrada(null), 'entrada');        ok('sem tipo, chama-se-lhe só "entrada"')
+}
+{
+  const d = decidirDaLeitura({ e_entrada: false, legivel: true, decisao: 'valido', motivo: 'É uma selfie.' })
+  assert.equal(d.decisao, DECISOES.RECUSADO)
+  assert.match(d.motivo, /selfie/);                    ok('não sendo entrada, recusa mesmo que diga válido')
+}
+{
+  const d = decidirDaLeitura({ e_entrada: true, legivel: false, decisao: 'valido', motivo: 'Está desfocado.' })
   assert.equal(d.decisao, DECISOES.RECUSADO);          ok('ilegível recusa-se, para se anexar outro')
 }
 {
-  const d = decidirDaLeitura({ e_bilhete: true, legivel: true, decisao: 'duvida', motivo: 'Não se lê o evento.' })
+  const d = decidirDaLeitura({ e_entrada: true, legivel: true, decisao: 'duvida', motivo: 'Não se lê o evento.' })
   assert.equal(d.decisao, DECISOES.DUVIDA);            ok('dúvida fica para a equipa')
 }
 {
-  const d = decidirDaLeitura({ e_bilhete: true, legivel: true, decisao: 'recusado', motivo: '' })
+  const d = decidirDaLeitura({ e_entrada: true, legivel: true, decisao: 'recusado', motivo: '' })
   assert.equal(d.decisao, DECISOES.RECUSADO)
   assert.ok(d.motivo.length > 0);                      ok('recusa sem motivo escrito ganha um motivo')
 }
@@ -46,7 +73,7 @@ console.log('\nDecidir a partir do que se leu')
 }
 {
   const d = decidirDaLeitura({
-    e_bilhete: true, legivel: true, decisao: 'valido',
+    e_entrada: true, legivel: true, decisao: 'valido',
     referencia: 'x'.repeat(500), motivo: 'y'.repeat(2000),
   })
   assert.ok(d.referencia.length <= 120)

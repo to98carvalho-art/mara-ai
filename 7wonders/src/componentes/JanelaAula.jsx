@@ -8,13 +8,14 @@ import { estaEmModoServidor } from '../lib/inscricoes'
    A janela de uma aula.
 
    Quem ainda não se identificou preenche nome, telemóvel, email e
-   anexa o bilhete — um print serve, ou o PDF da bilheteira. O
-   bilhete é lido na hora: quase sempre a inscrição sai confirmada
-   antes de a pessoa fechar o telemóvel, e o passe segue por email.
+   anexa a sua entrada — o bilhete que comprou ou o convite que
+   recebeu, um print serve, ou o PDF da bilheteira. É lida na hora:
+   quase sempre a inscrição sai confirmada antes de a pessoa fechar
+   o telemóvel, e o passe segue por email.
 
    Quando a leitura fica em dúvida, a vaga fica na mesma reservada e
    alguém da equipa confirma depois. Vale mais dar trabalho à equipa
-   do que recusar por engano quem pagou bilhete.
+   do que recusar por engano quem tem direito a entrar.
 
    Quem já se inscreveu antes neste telemóvel salta o formulário.
    ──────────────────────────────────────────────────────────────── */
@@ -29,7 +30,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
   const [antevisao, setAntevisao] = useState(null)
   const [erro, setErro] = useState('')
   const [passo, setPasso] = useState('')          // o que está a acontecer
-  const [resultado, setResultado] = useState(null)   // como correu o bilhete
+  const [resultado, setResultado] = useState(null)   // como correu a entrada
   const escolher = useRef(null)
 
   const ocupado = Boolean(passo)
@@ -58,14 +59,14 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
       // desenvolvimento a inscrição segue à mesma, para o ecrã poder
       // ser percorrido de ponta a ponta.
       if (ficheiro && estaEmModoServidor()) {
-        setPasso('A preparar o bilhete…')
+        setPasso('A preparar o ficheiro…')
         const preparado = await prepararComprovativo(ficheiro)
         impressao = preparado.impressao
-        setPasso('A enviar o bilhete…')
+        setPasso('A enviar o ficheiro…')
         comprovativo = await enviarComprovativo(preparado)
       }
 
-      setPasso(comprovativo ? 'A confirmar o bilhete…' : 'A guardar a inscrição…')
+      setPasso(comprovativo ? 'A confirmar a tua entrada…' : 'A guardar a inscrição…')
       setResultado(await aoInscrever(aula.id, {
         nome: nome.trim(), telefone: telefone.trim(), email: email.trim(),
         comprovativo, impressao,
@@ -139,7 +140,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
 
           {resultado?.estado === 'valido' && (
             <p className="aviso aviso--bom" style={{ marginTop: 12 }}>
-              Bilhete confirmado.
+              Entrada confirmada.
               {resultado.passeEnviado
                 ? ` Enviámos o passe para ${resultado.email}.`
                 : ''}
@@ -148,7 +149,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
 
           {resultado?.estado === 'por_validar' && (
             <p className="aviso aviso--nota" style={{ marginTop: 12 }}>
-              A tua vaga está guardada. Ficámos com uma dúvida no bilhete —
+              A tua vaga está guardada. Ficámos com uma dúvida na tua entrada —
               alguém confirma e avisamos-te.
             </p>
           )}
@@ -182,8 +183,8 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
 
           <p className="corpo">
             {precisaIdentificar
-              ? 'As aulas são gratuitas para quem tem bilhete. Deixa os teus dados e anexa o bilhete — um print serve. Confirmamos na hora.'
-              : 'Inscrição gratuita com bilhete.'}
+              ? 'As aulas são gratuitas para quem tem entrada. Deixa os teus dados e anexa o bilhete ou o convite — um print serve. Confirmamos na hora.'
+              : 'Inscrição gratuita com bilhete ou convite.'}
           </p>
 
           {precisaIdentificar && (
@@ -208,7 +209,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
               </div>
 
               <div className="campo">
-                <span className="campo__nome">O TEU BILHETE</span>
+                <span className="campo__nome">O TEU BILHETE OU CONVITE</span>
 
                 <input ref={escolher} type="file" accept={TIPOS_ACEITES}
                        onChange={escolherFicheiro} hidden />
@@ -216,7 +217,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
                 {ficheiro ? (
                   <div className="anexo">
                     {antevisao
-                      ? <img className="anexo__imagem" src={antevisao} alt="O bilhete que anexaste" />
+                      ? <img className="anexo__imagem" src={antevisao} alt="O que anexaste" />
                       : <span className="anexo__pdf" aria-hidden="true">PDF</span>}
                     <span className="anexo__nome">{ficheiro.name}</span>
                     <button type="button" className="anexo__trocar" onClick={() => escolher.current?.click()}>
@@ -227,7 +228,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
                   <button type="button" className="anexo anexo--vazio" onClick={() => escolher.current?.click()}>
                     <span className="anexo__mais" aria-hidden="true">＋</span>
                     <span>
-                      <strong>Anexar bilhete</strong>
+                      <strong>Anexar bilhete ou convite</strong>
                       <small>Um print do telemóvel ou o PDF da bilheteira</small>
                     </span>
                   </button>
@@ -244,7 +245,7 @@ export default function JanelaAula({ aula, utilizador, aoInscrever, aoAnular, ao
 
           {precisaIdentificar && (
             <p className="rodape-nota">
-              O bilhete é lido automaticamente e o passe segue para o teu email.
+              A entrada é lida automaticamente e o passe segue para o teu email.
               Se ficar alguma dúvida, a organização confirma e avisa-te.
             </p>
           )}

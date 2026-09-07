@@ -19,7 +19,7 @@ const LADO_MAXIMO = 1800                     // chega para se ler um bilhete
 export const TIPOS_ACEITES = 'image/jpeg,image/png,image/webp,image/heic,application/pdf'
 
 export const ERROS_COMPROVATIVO = {
-  FORMATO_NAO_ACEITE: 'Aceitamos fotos (JPG, PNG) ou o PDF do bilhete.',
+  FORMATO_NAO_ACEITE: 'Aceitamos fotos (JPG, PNG) ou o PDF do bilhete ou convite.',
   FICHEIRO_GRANDE:    'Esse ficheiro é grande demais. Tenta uma foto do ecrã.',
   ENVIO_FALHOU:       'Não conseguimos enviar o ficheiro. Tenta outra vez.',
   INDISPONIVEL:       'Não conseguimos guardar o comprovativo agora. Tenta daqui a pouco.',

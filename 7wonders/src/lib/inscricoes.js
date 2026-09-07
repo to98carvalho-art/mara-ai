@@ -45,8 +45,8 @@ export const ERROS_INSCRICAO = {
   TELEFONE_INVALIDO:      'Esse número não parece estar certo.',
   NOME_EM_FALTA:          'Falta o teu nome.',
   EMAIL_INVALIDO:         'Esse email não parece estar certo.',
-  COMPROVATIVO_EM_FALTA:  'Falta anexar o bilhete.',
-  BILHETE_RECUSADO:       'Não conseguimos confirmar este bilhete.',
+  COMPROVATIVO_EM_FALTA:  'Falta anexar o bilhete ou o convite.',
+  ENTRADA_RECUSADA:       'Não conseguimos confirmar esta entrada.',
   TOO_MANY_REQUESTS:      'Demasiadas tentativas. Espera um bocado.',
   INDISPONIVEL:           'Não conseguimos guardar a inscrição. Tenta daqui a pouco.',
 }

@@ -90,9 +90,9 @@ export default function Equipa() {
       <div className="escuro">
         <main className="vista" style={{ maxWidth: 420 }}>
           <p className="sobrancelha">ÁREA DA ORGANIZAÇÃO</p>
-          <h1 className="titulo" style={{ margin: '10px 0 12px' }}>Conferir bilhetes</h1>
+          <h1 className="titulo" style={{ margin: '10px 0 12px' }}>Conferir entradas</h1>
           <p className="corpo" style={{ marginBottom: 20 }}>
-            Os bilhetes são conferidos sozinhos. Aqui só aparece o que ficou em dúvida.
+            As entradas são conferidas sozinhas. Aqui só aparece o que ficou em dúvida.
           </p>
           <form className="pilha" onSubmit={entrar}>
             <div className="campo">
@@ -115,7 +115,7 @@ export default function Equipa() {
     <div className="escuro">
       <main className="vista">
         <div className="linha-titulo">
-          <span className="sobrancelha">ORGANIZAÇÃO · CONFERIR BILHETES</span>
+          <span className="sobrancelha">ORGANIZAÇÃO · CONFERIR ENTRADAS</span>
           <span className="regua" />
           <button className="pilula pilula--tracejada" onClick={() => { sairDaEquipa(); setDentro(false) }}>
             SAIR
@@ -139,7 +139,7 @@ export default function Equipa() {
         ) : inscricoes.length === 0 ? (
           <p className="corpo">
             {filtro === 'por_validar'
-              ? 'Não há nada à espera. Os bilhetes estão a ser conferidos sozinhos. 👌'
+              ? 'Não há nada à espera. As entradas estão a ser conferidas sozinhas. 👌'
               : 'Nada nesta lista.'}
           </p>
         ) : (
@@ -151,7 +151,7 @@ export default function Equipa() {
                     ? (i.ehPdf
                         ? <a className="revisao__pdf" href={i.comprovativo} target="_blank" rel="noopener">Abrir PDF</a>
                         : <a href={i.comprovativo} target="_blank" rel="noopener">
-                            <img src={i.comprovativo} alt={`Bilhete de ${i.nome}`} />
+                            <img src={i.comprovativo} alt={`Entrada de ${i.nome}`} />
                           </a>)
                     : <span className="revisao__sem-foto">sem comprovativo</span>}
                 </div>
@@ -163,7 +163,7 @@ export default function Equipa() {
                     <a href={`tel:${i.telefone}`}>{i.telefone}</a> · {quandoPorExtenso(i.quando)}
                   </p>
                   {i.email && <p className="revisao__linha suave">{i.email}</p>}
-                  {i.referencia && <p className="revisao__linha suave">Bilhete nº {i.referencia}</p>}
+                  {i.referencia && <p className="revisao__linha suave">Nº {i.referencia}</p>}
 
                   {/* O que a leitura automática achou. Serve de ponto
                       de partida, não de veredicto. */}
@@ -174,7 +174,7 @@ export default function Equipa() {
                   )}
 
                   {i.repetido && (
-                    <p className="revisao__aviso">⚠️ Este bilhete já foi usado noutra inscrição</p>
+                    <p className="revisao__aviso">⚠️ Este ficheiro já foi usado noutra inscrição</p>
                   )}
 
                   <div className="revisao__accoes">

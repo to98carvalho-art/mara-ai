@@ -1,17 +1,18 @@
 /* POST /api/aulas/inscrever
    { aulaId, nome, telefone, email, comprovativo, impressao }
 
-   Sem a API da 3cket, a prova de bilhete é o ficheiro que a pessoa
-   anexa. A vaga é reservada primeiro e o bilhete é lido logo a
+   Sem a API da 3cket, a prova de entrada é o ficheiro que a pessoa
+   anexa — o bilhete que comprou ou o convite que recebeu, valem os
+   dois. A vaga é reservada primeiro e a entrada é lida logo a
    seguir — por esta ordem, senão os segundos da leitura seriam
    tempo em que outra pessoa podia levar o último lugar.
 
-   O bilhete é da pessoa, não da aula: lê-se uma vez, e as aulas
+   A entrada é da pessoa, não da aula: lê-se uma vez, e as aulas
    seguintes herdam a decisão.
 
    → 200 { ok, estado, token }      inscrito (valido ou por validar)
    → 409 já inscrito / sem vagas
-   → 422 o bilhete não passou — a vaga volta a ficar livre
+   → 422 a entrada não passou — a vaga volta a ficar livre
    → 503 base de dados em baixo                                      */
 
 import {
@@ -28,7 +29,7 @@ import { readJsonBody, send, onlyPost, rateLimit, clientIp } from '../_lib/http.
    pedido a meio e a pessoa fica sem resposta. */
 export const config = { maxDuration: 30 }
 
-const RECUSA_POR_OMISSAO = 'Não conseguimos confirmar este bilhete. Anexa outro.'
+const RECUSA_POR_OMISSAO = 'Não conseguimos confirmar esta entrada. Anexa outra.'
 
 export default async function handler(req, res) {
   if (onlyPost(req, res)) return
@@ -92,16 +93,20 @@ export default async function handler(req, res) {
         : leitura.decisao === DECISOES.RECUSADO ? 'recusado'
         : 'por_validar'
 
-      if (repetido > 0) motivo = 'Este bilhete já apareceu noutra inscrição.'
+      if (repetido > 0) motivo = `Este ${leitura.entrada} já apareceu noutra inscrição.`
 
+      // A nota vai para a página da equipa. Dizer se era bilhete ou
+      // convite poupa-lhes abrir a foto para perceber o caso.
       await validarConta(telefone, estado, {
-        nota: motivo, referencia: leitura.referencia, automatico: true,
+        nota: [leitura.entrada, motivo].filter(Boolean).join(' — ').slice(0, 400),
+        referencia: leitura.referencia,
+        automatico: true,
       })
 
       if (estado === 'recusado') {
         // A vaga já voltou a ficar livre: a contagem não conta
         // inscrições recusadas.
-        return send(res, 422, { error: 'BILHETE_RECUSADO', motivo: motivo || RECUSA_POR_OMISSAO })
+        return send(res, 422, { error: 'ENTRADA_RECUSADA', motivo: motivo || RECUSA_POR_OMISSAO })
       }
     }
 

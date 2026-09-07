@@ -142,13 +142,19 @@ confirmação falsa perderia candidaturas de gente a sério.
 
 ---
 
-## Bilhetes
+## Entradas
 
-A API da 3cket não fica pronta a tempo, por isso o bilhete é o
+A API da 3cket não fica pronta a tempo, por isso a entrada é o
 ficheiro que a pessoa anexa: um print do telemóvel ou o PDF da
 bilheteira.
 
-Quem se inscreve deixa nome, telemóvel e email, e anexa o bilhete. A
+**Entrada, e não bilhete.** Há bilhetes comprados e há convites da
+organização, de vários tipos uns e outros, todos emitidos pela mesma
+bilheteira. Valem todos por igual e a leitura tem de os aceitar a
+todos — recusar um convite por não dizer "bilhete" é o erro mais caro
+que este código pode cometer, porque barra quem a casa convidou.
+
+Quem se inscreve deixa nome, telemóvel e email, e anexa a entrada. A
 vaga é reservada primeiro e o bilhete é lido logo a seguir — por esta
 ordem, senão os segundos da leitura seriam tempo em que outra pessoa
 podia levar o último lugar. Três saídas:
@@ -156,18 +162,18 @@ podia levar o último lugar. Três saídas:
 | | o que acontece |
 |---|---|
 | **válido** | inscrição confirmada e o passe segue por email |
-| **recusado** | dizemos porquê e a vaga volta a ficar livre; pode anexar-se outro |
+| **recusado** | dizemos porquê e a vaga volta a ficar livre; pode anexar-se outra |
 | **dúvida** | a vaga fica guardada e a equipa decide em `/#equipa` |
 
-O bilhete é da **pessoa**, não da aula: lê-se uma vez, e as aulas
+A entrada é da **pessoa**, não da aula: lê-se uma vez, e as aulas
 seguintes herdam a decisão. Validar ou recusar arrasta todas as
 inscrições da mesma pessoa.
 
 A dúvida é de propósito. Uma máquina que decide sozinha erra contra
-quem pagou bilhete, e isso é pior do que dar trabalho à equipa. O mesmo
-bilhete em duas inscrições também não é recusado automaticamente — um
-PDF com quatro bilhetes de um grupo é normal — mas passa à equipa com
-um aviso.
+quem tem direito a entrar, e isso é pior do que dar trabalho à equipa.
+O mesmo ficheiro em duas inscrições também não é recusado
+automaticamente — um PDF com quatro bilhetes de um grupo é normal —
+mas passa à equipa com um aviso.
 
 ### A área da equipa
 
@@ -177,7 +183,7 @@ leitura automática achou, e deixa validar, recusar ou voltar a pôr na
 fila. Fora das seis vistas do evento, para nenhum participante lá cair
 por engano.
 
-Sem `ANTHROPIC_API_KEY` nada disto pára: os bilhetes ficam todos à
+Sem `ANTHROPIC_API_KEY` nada disto pára: as entradas ficam todas à
 espera da equipa. Sem `RESEND_API_KEY` a inscrição faz-se na mesma, só
 não sai o email. `/api/estado` diz qual das duas falta.
 
