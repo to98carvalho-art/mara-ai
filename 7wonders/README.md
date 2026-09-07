@@ -209,3 +209,16 @@ As variáveis vão em *Settings → Environment Variables*:
 
 Nenhuma leva prefixo `VITE_`: são todas segredos de servidor e o
 prefixo faria com que fossem parar dentro da app.
+
+### Contas de funções
+
+O plano Hobby da Vercel só publica **12 funções de servidor** por
+deploy, e cada ficheiro solto dentro de `api/` conta como uma. Passar
+o limite não dá um aviso — dá um deploy falhado.
+
+Por isso o que não é um endereço a sério vive numa pasta começada por
+`_`, que a Vercel ignora: `api/_lib/` para código partilhado e
+`api/_testes/` para as verificações. Ao acrescentar um endpoint novo,
+conta os ficheiros:
+
+    find api -name '*.js' -o -name '*.mjs' | grep -v '/_' | wc -l

@@ -6,9 +6,9 @@
    não fecha o site.                                                  */
 
 import assert from 'node:assert/strict'
-import listar from './index.js'
-import inscreverHandler from './inscrever.js'
-import anularHandler from './anular.js'
+import listar from '../aulas/index.js'
+import inscreverHandler from '../aulas/inscrever.js'
+import anularHandler from '../aulas/anular.js'
 import { signSession } from '../_lib/session.js'
 
 let passou = 0

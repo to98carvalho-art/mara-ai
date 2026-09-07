@@ -2,9 +2,9 @@
    sem a palavra-passe certa, nada se lê nem se decide. */
 
 import assert from 'node:assert/strict'
-import entrar from './entrar.js'
-import inscricoes from './inscricoes.js'
-import decidir from './decidir.js'
+import entrar from '../organizacao/entrar.js'
+import inscricoes from '../organizacao/inscricoes.js'
+import decidir from '../organizacao/decidir.js'
 import { signSession } from '../_lib/session.js'
 
 let passou = 0

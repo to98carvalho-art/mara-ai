@@ -6,8 +6,8 @@
        email não pode desfazer uma inscrição que já está guardada */
 
 import assert from 'node:assert/strict'
-import { decidirDaLeitura, validarComprovativo, validadorLigado, DECISOES } from './validador.js'
-import { corpoDoPasse, enviarPasse, emailPlausivel, normalizarEmail, correioLigado } from './correio.js'
+import { decidirDaLeitura, validarComprovativo, validadorLigado, DECISOES } from '../_lib/validador.js'
+import { corpoDoPasse, enviarPasse, emailPlausivel, normalizarEmail, correioLigado } from '../_lib/correio.js'
 
 let passou = 0
 const ok = n => { console.log('  ✓', n); passou++ }

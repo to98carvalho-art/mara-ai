@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import {
   createTicketing, createMockTicketing, normalisePhone, isPlausiblePhone,
   TicketError, TICKET_ERRORS,
-} from './3cket.js'
-import { signSession, readSession } from './session.js'
+} from '../_lib/3cket.js'
+import { signSession, readSession } from '../_lib/session.js'
 
 let passed = 0
 const ok = (name) => { console.log('  ✓', name); passed++ }

@@ -1,6 +1,6 @@
 /* Verificações da candidatura ao after party. */
 import assert from 'node:assert/strict'
-import handler, { validar } from './index.js'
+import handler, { validar } from '../after/index.js'
 
 let passou = 0
 const ok = n => { console.log('  ✓', n); passou++ }
