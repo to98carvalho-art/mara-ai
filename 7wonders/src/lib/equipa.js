@@ -56,5 +56,38 @@ export async function entrarNaEquipa(palavra) {
   return token
 }
 
-export const listarInscricoes = estado => chamar('/api/organizacao/inscricoes', { estado })
+export const listarInscricoes = estado => chamar('/api/organizacao/inscricoes', { vista: 'rever', estado })
+export const listarPorAula = () => chamar('/api/organizacao/inscricoes', { vista: 'aulas' })
+export const listarAfter = () => chamar('/api/organizacao/inscricoes', { vista: 'after' })
 export const decidir = (id, estado, nota) => chamar('/api/organizacao/decidir', { id, estado, nota })
+
+/* ── levar a lista para fora ────────────────────────────────────
+   No dia do evento a rede do recinto não é de confiar. Uma folha
+   descarregada de véspera abre-se no telemóvel sem rede nenhuma, e
+   também entra no Excel. */
+
+function paraCsv(colunas, linhas) {
+  const celula = v => {
+    const t = String(v ?? '')
+    return /[",;\n]/.test(t) ? `"${t.replace(/"/g, '""')}"` : t
+  }
+  return [
+    colunas.map(c => celula(c.titulo)).join(';'),
+    ...linhas.map(l => colunas.map(c => celula(c.ler(l))).join(';')),
+  ].join('\r\n')
+}
+
+export function descarregarCsv(nomeDoFicheiro, colunas, linhas) {
+  // O \ufeff diz ao Excel que isto é UTF-8. Sem ele, os acentos
+  // saem trocados e a lista fica com "Jo\u00e3o" em vez de "João".
+  const ficheiro = new Blob(['\ufeff' + paraCsv(colunas, linhas)],
+    { type: 'text/csv;charset=utf-8' })
+  const endereco = URL.createObjectURL(ficheiro)
+  const link = document.createElement('a')
+  link.href = endereco
+  link.download = nomeDoFicheiro
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  setTimeout(() => URL.revokeObjectURL(endereco), 1000)
+}

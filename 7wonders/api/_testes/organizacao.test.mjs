@@ -94,4 +94,34 @@ for (const [nome, funcao, corpo] of [
   assert.equal(res.statusCode, 400);                   ok('decidir: estado inventado, recusa')
 }
 
+/* As listas passam pelo mesmo portão. Uma lista de inscritos com
+   nomes, números e emails não pode sair sem palavra-passe. */
+console.log('\nAs listas')
+for (const vista of ['aulas', 'after']) {
+  {
+    const res = resposta()
+    await inscricoes(pedido({ vista }), res)
+    assert.equal(res.statusCode, 401);                 ok(`${vista}: sem ficha, recusa`)
+  }
+  {
+    const res = resposta()
+    await inscricoes(pedido({ vista }, signSession({ accountId: '+351911111111' }, ambiente)), res)
+    assert.equal(res.statusCode, 401)
+    ok(`${vista}: ficha de participante não serve`)
+  }
+  {
+    const res = resposta()
+    await inscricoes(pedido({ vista }, fichaDaEquipa), res)
+    assert.equal(res.statusCode, 503)
+    ok(`${vista}: com ficha da equipa, chega à base de dados`)
+  }
+}
+{
+  // Uma vista inventada não pode devolver a tabela toda por engano.
+  const res = resposta()
+  await inscricoes(pedido({ vista: 'seja-o-que-for' }, fichaDaEquipa), res)
+  assert.equal(res.statusCode, 503)
+  ok('vista desconhecida cai na revisão, não escancara nada')
+}
+
 console.log(`\n✅ ${passou} verificações passaram\n`)

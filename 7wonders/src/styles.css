@@ -534,3 +534,51 @@ img { max-width: 100%; }
   .revisao__foto img, .revisao__pdf, .revisao__sem-foto { width: 76px; height: 96px; }
   .revisao__accoes .botao { flex: 1; padding: 0 10px; }
 }
+
+/* ── as listas da equipa ─────────────────────────────────────────
+   A tabela rola para o lado em vez de espremer as colunas: um
+   telemóvel a 360px não chega para nome, número e email, e um email
+   cortado a meio não serve para contactar ninguém. */
+
+.linha-lista {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap;
+}
+.linha-lista .botao { min-height: 40px; padding: 0 18px; font-size: 11px; }
+
+.lista {
+  padding: 16px; border-radius: var(--canto-caixa);
+  background: var(--claro-05); border: 1px solid rgba(255,255,255,.1);
+}
+.lista__topo {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 12px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.lista__topo .botao { min-height: 36px; padding: 0 16px; font-size: 11px; }
+.lista__nome   { margin: 0 0 2px; font-size: 18px; font-weight: 800; color: var(--creme); }
+.lista__conta  { margin: 0; font-size: 12px; color: var(--taupe); }
+.lista__conta a { color: var(--taupe); }
+.lista__razoes {
+  margin: 0; font-size: 14px; line-height: 1.55; color: var(--creme);
+  white-space: pre-wrap; border-top: 1px solid rgba(255,255,255,.1); padding-top: 12px;
+}
+
+.tabela {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+  display: block; overflow-x: auto; white-space: nowrap;
+}
+.tabela th {
+  text-align: left; font-size: 10px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--taupe); font-weight: 700; padding: 0 14px 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+}
+.tabela td {
+  padding: 9px 14px 9px 0; color: var(--creme);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.tabela td.suave { color: var(--taupe); }
+.tabela a { color: var(--creme); }
+.tabela tr:last-child td { border-bottom: 0; }
+
+.ponto { color: var(--taupe-50); font-size: 11px; }
+.ponto--bom { color: #6FBF73; }
