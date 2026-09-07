@@ -163,6 +163,15 @@ console.log('\nLer o QR code')
   assert.equal(lerQr(jpeg, 'application/pdf'), null);  ok('PDF não se tenta ler')
   assert.equal(lerQr(jpeg, 'image/heic'), null);       ok('HEIC também não')
   assert.equal(lerQr(null, 'image/jpeg'), null);       ok('sem ficheiro, nada')
+
+  /* O outro formato: o passe guardado na Wallet do telemóvel. Fundo
+     preto, QR pequeno ao centro. Nada a ver com a carteira da 3cket,
+     e o leitor tem de dar conta dos dois. */
+  const wallet = new Uint8Array(readFileSync(new URL('./amostras/passe-wallet.jpg', import.meta.url)))
+  assert.equal(lerQr(wallet, 'image/jpeg'), 'ensaio-passe-wallet-0001')
+  ok('lê o QR de um passe da Wallet, fundo preto e tudo')
+  assert.notEqual(lerQr(wallet, 'image/jpeg'), qr)
+  ok('e dois passes diferentes dão códigos diferentes')
 }
 
 console.log(`\n✅ ${passou} verificações passaram\n`)
