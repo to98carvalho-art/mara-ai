@@ -102,7 +102,7 @@ export default function Equipa() {
   /* ── porta ── */
   if (!dentro) {
     return (
-      <div className="escuro">
+      <div className="escuro escuro--pagina">
         <main className="vista" style={{ maxWidth: 420 }}>
           <p className="sobrancelha">ÁREA DA ORGANIZAÇÃO</p>
           <h1 className="titulo" style={{ margin: '10px 0 12px' }}>Listas e entradas</h1>
@@ -126,7 +126,7 @@ export default function Equipa() {
   }
 
   return (
-    <div className="escuro">
+    <div className="escuro escuro--pagina">
       <main className="vista">
         <div className="linha-titulo">
           <span className="sobrancelha">ORGANIZAÇÃO</span>

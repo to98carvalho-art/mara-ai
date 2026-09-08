@@ -49,10 +49,12 @@ img { max-width: 100%; }
   background-color: var(--tinta);
   background-image: var(--grao-escuro);
   color: var(--creme);
-  /* Chega sempre ao fim do ecrã. Com pouco conteúdo, sem isto
-     ficava uma faixa clara por baixo. */
-  min-height: 100dvh;
 }
+
+/* Só para uma página escura inteira, nunca para a barra do topo —
+   que também é escura. Sem esta distinção, o cabeçalho passa a
+   ocupar o ecrã todo e empurra o site inteiro para baixo. */
+.escuro--pagina { min-height: 100dvh; }
 
 /* ── tipos de texto ──────────────────────────────────────────── */
 
