@@ -16,6 +16,15 @@ import { baseDeDados } from '../_lib/aulas.js'
 import { enderecoParaVer } from '../_lib/armazenamento.js'
 import { readSession } from '../_lib/session.js'
 import { readJsonBody, send, onlyPost } from '../_lib/http.js'
+import { AULAS } from '../../src/content/evento.js'
+
+/* O nome de uma aula vive no conteúdo, não na base de dados. Mudar
+   "Cacau's Ritual" para "Cocoa Ritual" é mudar uma linha de texto —
+   não tem de obrigar ninguém a correr SQL. A base de dados guarda o
+   nome à mesma, e serve de recurso se aparecer uma aula que o
+   conteúdo já não conheça. */
+const NOMES = new Map(AULAS.map(a => [a.id, a.nome]))
+const nomeDaAula = linha => NOMES.get(linha.aula_id) || linha.aulas?.nome || linha.aula_id
 
 const CAMPOS = 'id, aula_id, nome, telefone, email, bolso, estado, referencia, automatico,' +
                ' comprovativo, impressao, criado_em, nota, aulas ( nome )'
@@ -57,7 +66,7 @@ async function paraRever(db, estado) {
 
   const inscricoes = await Promise.all((data || []).map(async l => ({
     id: l.id,
-    aula: l.aulas?.nome || l.aula_id,
+    aula: nomeDaAula(l),
     nome: l.nome,
     telefone: l.telefone,
     email: l.email,
@@ -90,7 +99,7 @@ async function porAula(db) {
   for (const a of aulas || []) {
     porId.set(a.id, {
       id: a.id,
-      nome: a.nome,
+      nome: NOMES.get(a.id) || a.nome,
       lugares: a.sem_limite ? null : a.capacidade_convite + a.capacidade_bilhete,
       pessoas: [],
     })
@@ -98,7 +107,7 @@ async function porAula(db) {
 
   for (const l of linhas || []) {
     const aula = porId.get(l.aula_id) || porId.set(l.aula_id, {
-      id: l.aula_id, nome: l.aulas?.nome || l.aula_id, lugares: null, pessoas: [],
+      id: l.aula_id, nome: nomeDaAula(l), lugares: null, pessoas: [],
     }).get(l.aula_id)
     aula.pessoas.push({
       nome: l.nome, telefone: l.telefone, email: l.email,

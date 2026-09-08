@@ -11,7 +11,7 @@ insert into public.aulas (id, nome, capacidade_convite, capacidade_bilhete, ocup
   ('ice', 'Ice Bath & Sauna', 0, 0, 0, false),
   ('reiki', 'Reiki · Tarot · Massagens', 0, 0, 0, false),
   ('yoga', 'Yoga', 0, 15, 0, false),
-  ('cacau', 'Cacau''s Ritual', 0, 15, 0, false)
+  ('cacau', 'Cocoa Ritual', 0, 15, 0, false)
 on conflict (id) do update set
   nome               = excluded.nome,
   capacidade_convite = excluded.capacidade_convite,

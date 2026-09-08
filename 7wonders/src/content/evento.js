@@ -58,7 +58,7 @@ export const ZONAS = [
     linhas: ['VENDA DE DISCOS', 'SHOW AO VIVO', 'RUBEN G.'] },
   { id: 'art',      nome: 'ART & CULTURE',      hora: '',              imagem: 'zone-art.jpg', legenda: 'foto — exposição',
     linhas: ['EXPOSIÇÃO', 'OBRA COLETIVA', 'PARTICIPAÇÃO LIVRE'] },
-  { id: 'spirit',   nome: 'SPIRIT & SOUL',      hora: '16H — 18H',     imagem: 'zone-spirit.jpg', legenda: 'foto — yoga',
+  { id: 'spirit',   nome: 'SPIRIT & SOUL',      hora: '15H — 18H',     imagem: 'zone-spirit.jpg', legenda: 'foto — yoga',
     linhas: ['YOGA', 'RITUAIS DE CURA', 'REIKI', 'TAROT'] },
   { id: 'food',     nome: 'FOOD TRUCK VILLAGE', hora: '',              imagem: 'zone-food.jpg', legenda: 'foto — food trucks',
     linhas: ['3 FOOD TRUCKS', 'CAFÉ ORGÂNICO', 'COMIDA VEGAN'] },
@@ -112,7 +112,7 @@ export const AULAS = [
     zona: 'SPIRIT & SOUL', tom: 'tinta', por: '@mantayoga',
     capacidade: { convite: 0, bilhete: 15 }, jaOcupado: { convite: 0, bilhete: 0 } },
 
-  { id: 'cacau', coluna: 5, inicio: 4, duracao: 3, hora: '16H30 — 18H', nome: "Cacau's Ritual",
+  { id: 'cacau', coluna: 5, inicio: 4, duracao: 3, hora: '16H30 — 18H', nome: 'Cocoa Ritual',
     zona: 'SPIRIT & SOUL', tom: 'tinta', por: '@mae__natureza',
     capacidade: { convite: 0, bilhete: 15 }, jaOcupado: { convite: 0, bilhete: 0 } },
 ]
