@@ -89,11 +89,11 @@ export const AULAS = [
 
   { id: 'rob', coluna: 2, inicio: 4, duracao: 2, hora: '16H30 — 17H30', nome: 'Fitness Class',
     zona: 'WELLNESS', tom: 'verde', por: '@robfitness',
-    capacidade: { convite: 15, bilhete: 15 }, jaOcupado: { convite: 15, bilhete: 0 } },
+    capacidade: { convite: 0, bilhete: 30 }, jaOcupado: { convite: 0, bilhete: 0 } },
 
   { id: 'crossfit', coluna: 2, inicio: 6, duracao: 2, hora: '17H30 — 18H30', nome: 'CrossFit Class',
     zona: 'WELLNESS', tom: 'verde', por: '@bracaracf',
-    capacidade: { convite: 24, bilhete: 11 }, jaOcupado: { convite: 24, bilhete: 0 } },
+    capacidade: { convite: 0, bilhete: 35 }, jaOcupado: { convite: 0, bilhete: 0 } },
 
   { id: 'run', coluna: 3, inicio: 2, duracao: 2, hora: '15H30 — 16H30', nome: 'Run Club',
     zona: 'WELLNESS', tom: 'contorno', por: '@pacenlovehealthclub @bamobora',
